@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>
+        {% block title %}
+        {% endblock title %}
+    </title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="all,follow">
+
+    <!-- Link-->
+        {% include 'components/_link.html' %}     
+  </head>
+  <body>
+      {% include 'components/_leftbar.html' %}     
+      {% block main %}
+      {% endblock main %}
+      <!-- JavaScript files-->
+        {% include 'components/_javascripts.html' %}     
+
+      <!-- FontAwesome CSS - loading as last, so it doesn't block rendering-->
+      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    </div>
+  </body>
+</html>

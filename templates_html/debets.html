@@ -1,0 +1,256 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+<title>Долги – Экономка Онлайн</title>
+<meta name="description" content="Список долгов: кому должен, сумма, когда вернуть. Облачная домашняя бухгалтерия «Экономка Онлайн». Учет доходов и расходов семейного бюджета." />
+
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content="" />
+<meta property="og:url" content="" />
+<meta property="og:image" content="https://enomka.ru/pic/logo.jpg" />
+<meta property="og:description" content=""/>
+
+
+
+<link rel="stylesheet" href="css/rub.css" />
+<link rel="stylesheet" href="css/reg.css" />
+<link rel="icon" href="/favicon.ico" type="image/x-icon" />
+
+<script src="js/main.js"></script>
+
+</head>
+<body>
+
+<div class="main-block"> <!-- main-block -->
+
+
+<div class="m_menu">
+    <div>
+    <img id="top_menu_img" alt="Меню" src="pic/m_menu_open.png" height="36" Onclick="TopMenu()" />
+    </div>
+    <div class="m_menu1" id="top_menu_text">
+    Долги – Экономка Онлайн
+    </div>
+</div>
+
+
+<div class="left_menu_block"> <!-- left_menu_block -->
+
+<a href="/"><img class="logo_pic" alt="Домашняя бухгалтерия Руб21 – расходы и доходы" src="pic/logo.png"/></a>
+
+<div class="user_block">
+<a class="txt22" href="options.php"><b>Demo</b></a>
+<br />
+<a class="txt16" href="register.php">[Регистрация]</a>
+</div>
+
+<!-- выход -->
+<div id="my_exit_modal" class="del_modal">
+<div class="del_modal_content">
+  <span class="del_close_modal_window" Onclick="CloseExit()">×</span>
+  <p>Выйти из системы?</p>
+  <p class="txt20"><span class="del_modal_abort" Onclick="ExitNow()">Да</span> &nbsp;&nbsp;&nbsp; <span class="del_modal_abort" Onclick="CloseExit()">Нет</span></p>
+ </div>
+</div>
+<!-- /выход -->
+
+
+
+
+<div class="bmenu txt18">
+<a href="rash.php"><img alt="Расходы" src="pic/rash2.png"/></a><a href="rash.php">Расходы</a>
+</div>
+
+<div class="bmenu txt18">
+<a href="dohod.php"><img alt="Доходы" src="pic/doh.png"/></a><a href="dohod.php">Доходы</a>
+</div>
+
+<div class="bmenu txt18">
+<a href="counts.php"><img alt="Счета" src="pic/counts.png"/></a><a href="counts.php">Счета</a>
+</div>
+
+<div class="bmenu_active txt18">
+<a href="#"><img alt="Долги" src="pic/dolg.png" /></a><span>Долги</span>&nbsp;<span><b>&bull;</b></span>
+</div>
+
+<div class="bmenu txt18">
+<a href="budget.php"><img alt="Бюджет" src="pic/budget.png"/></a><a href="budget.php">Бюджет</a>
+</div>
+
+<div class="bmenu txt18">
+<a href="options.php"><img alt="Настройки" src="pic/options.png"/></a><a href="options.php">Настройки</a>
+</div>
+
+<div class="bmenu txt18">
+<a href="cat.php"><img alt="Категории" src="pic/cat.png"/></a><a href="cat.php">Категории</a>
+</div>
+
+<div class="bmenu txt18">
+<a href="help.php"><img alt="Справка" src="pic/help.png"/></a><a href="help.php">Справка</a>
+</div>
+
+<div class="bmenu txt18">
+<a href="report.php"><img alt="Отчеты" src="pic/report.png"/></a><a href="report.php">Отчеты</a>
+</div>
+<br /><hr><br /><div class="bot_menu">
+<div class="bmenu mar_top">
+<a href="price.php"><img alt="Цены" src="pic/price.png"/></a><a href="price.php">Цены</a>
+</div>
+
+<div class="bmenu mar_top">
+<a href="telegram.php"><img alt="Telegram-бот" src="pic/telegram2.png"/></a><a href="telegram.php">Telegram-бот</a>
+</div>
+
+<div class="bmenu mar_top">
+<a href="windows.php"><img alt="Windows-версия" src="pic/windows.png"/></a><a href="windows.php">Windows</a>
+</div>
+
+<div class="bmenu mar_top">
+<a href="about.php"><img alt="О проекте" src="pic/info.png"/></a><a href="about.php">О проекте</a>
+</div>
+</div>
+
+</div><!-- /left_menu_block -->
+
+<div class="right-block opt_bg"> <!-- right-block -->
+<input id="UserStatus" type="hidden" value="0" />
+
+<div class="opt_div">  
+
+  <div class="tabs">
+
+  <input type="radio" name="tabs" id="tabone" checked="checked" />
+  <label for="tabone">Мои долги</label>
+
+  <div class="tab opt_left">
+
+   <div id="dolg1" class="opt_cell tlist">
+   </div>
+  </div>
+  
+  <input type="radio" name="tabs" id="tabtwo" />
+  <label for="tabtwo">Мне должны</label>
+  
+  <div class="tab opt_left">
+
+   <div id="dolg2" class="opt_cell tlist">
+    
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    </div>
+  </div>
+
+  
+
+</div>
+  
+</div>
+
+<script>
+LoadDolg('1');
+LoadDolg('2');
+</script>
+
+<!-- модалка D1 -->
+  <div id="del1" class="del_modal">
+    <div class="del_modal_content">
+      <span class="del_close_modal_window" Onclick="CloseModalID('del1')">×</span>
+      <p>Удалить запись?</p>
+      <p style="color: red; font-weight:normal;">Внимание! Запись о долге будет удалена.</p>
+      <p class="txt20"><span id="del_url1" class="del_modal_abort" title="id" Onclick="DeleteDD(1)">Да</span> &nbsp;&nbsp;&nbsp; <span class="del_modal_abort" Onclick="CloseModalID('del1')">Нет</span></p>
+    </div>
+  </div>
+  <!-- /модалка -->
+
+
+  <!-- модалка D2 -->
+  <div id="del2" class="del_modal">
+    <div class="del_modal_content">
+      <span class="del_close_modal_window" Onclick="CloseModalID('del2')">×</span>
+      <p>Удалить запись?</p>
+      <p style="color: red; font-weight:normal;">Внимание! Запись о должнике будет удалена.</p>
+      <p class="txt20"><span id="del_url2" class="del_modal_abort" title="id" Onclick="DeleteDD(2)">Да</span> &nbsp;&nbsp;&nbsp; <span class="del_modal_abort" Onclick="CloseModalID('del2')">Нет</span></p>
+    </div>
+  </div>
+  <!-- /модалка -->
+
+
+  <!-- комментарий -->
+  <div id="my_comm_modal" class="del_modal">
+    <div class="del_modal_content">
+      <span class="del_close_modal_window" Onclick="CloseModalComm()">×</span>
+      <br />
+      <p id="comm_body">Тело комментария</p>
+      <br />
+    </div>
+  </div>
+  <!-- /комментарий -->
+
+
+  <!-- регистрация -->
+  <div id="my_reg_modal" class="del_modal">
+    <div class="del_modal_content">
+      <span class="del_close_modal_window" Onclick="CloseModalReg()">×</span>
+      <br />
+      <p id="reg_body">Изменять данные могут только зарегистрированные пользователи!<br /><br />
+      <a href="register.php" class="txt18 del_modal_abort">Регистрация</a>
+      </p>
+      <br />
+    </div>
+  </div>
+  <!-- /регистрация -->
+<!--noindex-->
+<div style="display:none;">
+<br />
+<p>&nbsp;</p>
+.
+<!--LiveInternet counter--><a href="https://www.liveinternet.ru/click"
+target="_blank"><img id="licntCFD3" width="88" height="31" style="border:0" 
+title="LiveInternet: показано число просмотров за 24 часа, посетителей за 24 часа и за сегодня"
+src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+alt=""/></a><script>(function(d,s){d.getElementById("licntCFD3").src=
+"https://counter.yadro.ru/hit?t14.1;r"+escape(d.referrer)+
+((typeof(s)=="undefined")?"":";s"+s.width+"*"+s.height+"*"+
+(s.colorDepth?s.colorDepth:s.pixelDepth))+";u"+escape(d.URL)+
+";h"+escape(d.title.substring(0,150))+";"+Math.random()})
+(document,screen)</script><!--/LiveInternet-->
+</div>
+
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript" >
+   (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+   m[i].l=1*new Date();
+   for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+   k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+   (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+   ym(90359573, "init", {
+        clickmap:true,
+        trackLinks:true,
+        accurateTrackBounce:true,
+        webvisor:true
+   });
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/90359573" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+
+
+<!--/noindex-->
+</div> <!-- /right-block -->
+
+
+
+</div> <!-- /main-block -->
+
+
+
+
+
+</body>
+</html>
