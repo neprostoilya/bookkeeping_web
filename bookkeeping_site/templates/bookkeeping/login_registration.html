@@ -24,7 +24,7 @@
     <div class="d-flex justify-content-center">
         <div class="register">
             <div class="card-body">
-                <h2 class="text-center">Создать Аккаунт</h2>
+                <h2 class="text-center fw-bolder">Создать Аккаунт</h2>
                 <form action="{% url 'register' %}" class="login-form" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                    <div class="form-group">
@@ -39,7 +39,7 @@
                    <div class="form-group">
                        {{ registration_form.password2 }}
                    </div>
-                   <button class="btn btn-primary" type="submit">Создать аккаунт</button>
+                   <button class="btn btn-primary" style="margin-left: 20%;" type="submit">  Создать аккаунт</button>
                </form>
             </div>
         </div>

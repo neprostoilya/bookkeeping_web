@@ -34,7 +34,7 @@ hr {
 .sidenav .nav-link {
     padding: 10px 10px 10px 16px;
     text-decoration: none;
-    font-size: 18px;
+    font-size: 28px;
     display: block;
     color: #ffffff;
 }
@@ -60,18 +60,19 @@ hr {
 <body class="body-class">
 <div class="sidenav">
     {% if not request.user.is_authenticated %}
+    <br>
     <div class="d-flex">
-        <a href="{% url 'login' %}" class="fs-6 nav-link">Войти</a>
-        <a class="fs-6 nav-link">/</a>
-        <a href="{% url 'register' %}" class="fs-6 nav-link">Зарегистрироваться</a>
+        <a href="{% url 'login' %}" class="fs-5 nav-link font-monospace p-1">Войти</a>
+        <a class="fs-5 nav-link p-1">/</a>
+        <a href="{% url 'register' %}" class="fs-5 nav-link font-monospace p-1">Зарегистрироваться</a>
     </div> 
     <br>
     {% else %}
     <div class="d-flex flex-column">
-        <h3 class="px-3" style="color: #858181;">{{ request.user.username }}</h3>
-        <a href="{% url 'logout' %}" class="fs-6 nav-link">
-            <i class="fs-4 bi-arrow-bar-left"></i>
-            <span class="ms-1 d-none d-sm-inline" href="{% url 'logout' %}">
+        <h3 class="px-3 font-monospace" style="color: #858181;">{{ request.user.username }}</h3>
+        <a href="{% url 'logout' %}" class="fs-5 nav-link">
+            <i class="fs-5 bi-arrow-bar-left"></i>
+            <span class="fs-5 d-none d-sm-inline font-monospace" href="{% url 'logout' %}">
                 Выйти
             </span>
         </a>
@@ -82,37 +83,39 @@ hr {
         <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">            
             <a href="{% url 'index' %}" class="nav-link align-middle px-0">
                 <i class="fs-4 bi-house"></i>
-                <span class="ms-1 d-none d-sm-inline">
+                <span class="ms-1 d-none d-sm-inline font-monospace">
                     Главная
                 </span>
             </a>
             <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
                 <i class="fs-4 bi-plus-circle"></i>
                 <span
-                    class="ms-1 d-none d-sm-inline">Доход
+                    class="ms-1 d-none d-sm-inline font-monospace">
+                    Доход
                 </span> 
             </a>
             <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
                 <i class="fs-4 bi-dash-circle"></i>
                 <span
-                    class="ms-1 d-none d-sm-inline">Расход
+                    class="ms-1 d-none d-sm-inline font-monospace">
+                    Расход
                 </span> 
             </a>
             <a href="#" class="nav-link px-0 align-middle">
                 <i class="fs-4 bi-cash"></i> 
-                <span class="ms-1 d-none d-sm-inline">
+                <span class="ms-1 d-none d-sm-inline font-monospace">
                     Долги
                 </span>
             </a>
             <a href="#" class="nav-link px-0 align-middle">
                 <i class="fs-4 bi-credit-card"></i> 
-                <span class="ms-1 d-none d-sm-inline">
+                <span class="ms-1 d-none d-sm-inline font-monospace">
                     Счета
                 </span>
             </a>
             <a href="#" class="nav-link px-0 align-middle">
                 <i class="fs-4 bi-bar-chart-line"></i> 
-                <span class="ms-1 d-none d-sm-inline">
+                <span class="ms-1 d-none d-sm-inline font-monospace">
                     Статистика
                 </span>
             </a>
