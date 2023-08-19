@@ -61,4 +61,3 @@ def register(request):
             messages.error(request, form.errors[error].as_text())
     return redirect('login_registration')
 
-# TODO доделать логику

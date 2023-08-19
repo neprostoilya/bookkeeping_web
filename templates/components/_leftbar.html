@@ -1,61 +1,10 @@
-
+{% include 'components/_link.html' %}     
 <!DOCTYPE html>
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
-<style>
-.body-class {
-    font-family: "Lato", sans-serif;
-}
-hr {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-  border: 0;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  color: #ffffff;
-}
-.sidenav {
-    height: 100%;
-    width: 300px;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    background-color: #1e1e1e;
-    overflow-x: hidden;
-    overflow-y: hidden; 
-    padding-top: 20px;
-    padding-left: 3px;
-}
- 
-
-.sidenav .nav-link {
-    padding: 10px 10px 10px 16px;
-    text-decoration: none;
-    font-size: 28px;
-    display: block;
-    color: #ffffff;
-}
-
-.sidenav .nav-link  i {
-    color: #ffffff;
-}
-.sidenav a:hover {
-    color: #858181;
-}
-.main {
-    margin-left: 160px; /* Same as the width of the sidenav */
-    font-size: 28px; /* Increased text to enable scrolling */
-    padding: 0px 10px;
-}
-
-@media screen and (max-height: 450px) {
-    .sidenav {padding-top: 15px;}
-    .sidenav a {font-size: 18px;}
-}
-</style>
 </head>
 <body class="body-class">
 <div class="sidenav">
@@ -80,7 +29,7 @@ hr {
     {% endif %} 
     <hr>
     <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark "></div>
-        <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">            
+        <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100 divadaptive">            
             <a href="{% url 'index' %}" class="nav-link align-middle px-0">
                 <i class="fs-4 bi-house"></i>
                 <span class="ms-1 d-none d-sm-inline font-monospace">
