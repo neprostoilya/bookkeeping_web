@@ -3,6 +3,13 @@ from django.contrib.auth.models import User
 
 class CategoryIncome(models.Model):
     """Категории доходов по дефолту"""
+    user = models.ForeignKey(
+        User,
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        verbose_name='Пользователь'
+    )
     title = models.CharField(
         max_length=150, 
         verbose_name='Название категории дохода'
@@ -30,6 +37,13 @@ class CategoryIncome(models.Model):
 
 class CategoryExpenses(models.Model):
     """Категории расходов по дефолту"""
+    user = models.ForeignKey(
+        User,
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        verbose_name='Пользователь'
+    )
     title = models.CharField(
         max_length=150, 
         verbose_name='Название категории расхода'
@@ -57,6 +71,13 @@ class CategoryExpenses(models.Model):
 
 class CategoryCurrency(models.Model):
     """Категории единиц валют"""
+    user = models.ForeignKey(
+        User,
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        verbose_name='Пользователь'
+    )
     title = models.CharField(
         max_length=150, 
         verbose_name='Название категории валюты'
@@ -75,16 +96,46 @@ class CategoryCurrency(models.Model):
         verbose_name = 'Категория Валюты'
         verbose_name_plural = 'Категории Валют'
 
+class CategoryAccounts(models.Model):
+    """Категории счетов по дефолту"""
+    user = models.ForeignKey(
+        User,
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        verbose_name='Пользователь'
+    )
+    title = models.CharField(
+        max_length=150, 
+        verbose_name='Название категории'
+    )
+    def __str__(self):
+        """Строковое представление"""
+        return str(self.title)
+
+    def __repr__(self):
+        """Подобие строкового представления"""
+        return f'Категория: pk={self.pk}, title={self.title}'
+
+    class Meta:
+        """Характер Класса"""
+        verbose_name = 'Категория Счета'
+        verbose_name_plural = 'Категории Счетов'
+
 class UserAccount(models.Model):
     """Счета пользователя"""
     user = models.ForeignKey(
         User,
+        blank=True,
+        null=True,
         on_delete=models.CASCADE,
         verbose_name='Пользователь'
     )
-    account = models.CharField(
+    account = models.ForeignKey(
+        CategoryAccounts,
+        on_delete=models.CASCADE,
         null=False,
-        verbose_name='Название cчета'
+        verbose_name='Cчета'
     )
     course = models.FloatField(
         null=False,
@@ -102,7 +153,8 @@ class UserAccount(models.Model):
 
     def __str__(self):
         """Строковое представление"""
-        return self.account
+        return self.account.title
+    
     def __repr__(self):
         """Подобие строкового представления"""
         return f'Категория: pk={self.pk}, account={self.account}, currency={self.currency}'
@@ -111,6 +163,13 @@ class UserAccount(models.Model):
         """Характер Класса"""
         verbose_name = 'Счет Пользователя'
         verbose_name_plural = 'Счета Пользователя'
+
+    @property # используется для создания <<специальной>> функциональности определеным методам
+    def get_total_course_sum(self):
+        """Получение полной суммы счета с учетом курса валют"""
+        sum = self.sum
+        course = self.course
+        return course*sum
 
 class UserExpenses(models.Model):
     """Расходы пользователя"""
@@ -156,7 +215,7 @@ class UserExpenses(models.Model):
         verbose_name_plural = 'Расходы пользователей'
 
     @property # используется для создания <<специальной>> функциональности определеным методам
-    def get__total_price(self):
+    def get_total_price(self):
         """Для получения суммы Расходов"""
         expenses = UserExpenses.objects.all()
         total_price = sum(
@@ -208,7 +267,7 @@ class UserIncomes(models.Model):
         verbose_name_plural = 'Доходы пользователей'
     
     @property # используется для создания <<специальной>> функциональности определеным методам
-    def get__total_price(self):
+    def get_total_price(self):
         """Для получения суммы доходов"""
         incomes = UserIncomes.objects.all()
         total_price = sum(

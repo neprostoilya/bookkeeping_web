@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ title }}
+{% endblock title %}
+
+{% block main %}
+<main class="main-margin">
+    <div class="d-flex justify-content-center">
+        <div class="create_account" style="margin-top: 20%;">
+            <div class="card-body">
+                <form action="{% url 'create_account' %}" class="login-form" method="post" enctype="multipart/form-data">
+                    <h2 class="text-center fw-bold">Создать Счет</h2>
+                    <div><div style="margin-top: 10%;"></div></div>
+                    {% csrf_token %}
+                    <div class="form-group">
+                        {{ account_form.account  }}
+                    </div>
+                    <div class="form-group">
+                        {{ account_form.course }}
+                    </div>
+                    <div class="form-group">
+                        {{ account_form.currency }}
+                    </div>
+                    <div class="form-group">
+                        {{ account_form.sum }}
+                    </div>            
+                    <div><div style="margin-top: 5%;"></div></div>
+                    <div class="d-flex justify-content-center">
+                        <button class="btn btn-primary"type="submit">Создать</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+{% endblock main %}

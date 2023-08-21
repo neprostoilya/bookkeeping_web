@@ -43,3 +43,29 @@ class RegistrationForm(UserCreationForm):
                 'placeholder': 'Почта'
             })
         }
+
+class AccountForm(forms.ModelForm):
+    """Форма создания счета"""
+
+    class Meta:
+        """Поведенческий харакатер класса"""
+        model = UserAccount
+        fields = ('account', 'course', 'currency', 'sum')
+        widgets = {
+            'account': forms.Select(attrs={
+                'class': 'form-control',
+                'placeholder': 'Название Счета'
+            }),
+            'course': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Курс'
+            }),
+            'currency': forms.Select(attrs={
+                'class': 'form-control',
+                'placeholder': 'Валюта'
+            }),
+            'sum': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Сумма'
+            }),
+        }

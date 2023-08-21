@@ -8,4 +8,7 @@ urlpatterns = [
     path('login', user_login, name='login'),
     path('logout', user_logout, name='logout'),
     path('register', register, name='register'),
+    path('accounts/', UserAccount.as_view(), name='accounts'),
+    # path('create_accounts/', account, name='account'),
+    # path('create_account', create_account, name='create_account') # TODO Доделать
 ]

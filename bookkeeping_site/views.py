@@ -3,8 +3,8 @@ from django.contrib import messages
 from django.views.generic import DetailView, ListView
 from django.shortcuts import render, redirect
 
-from .forms import LoginForm, RegistrationForm
-from .models import CategoryExpenses, CategoryIncome
+from .forms import LoginForm, RegistrationForm, AccountForm
+from .models import UserAccount
 
 class Page(ListView):
     """Главная страница"""
@@ -61,3 +61,43 @@ def register(request):
             messages.error(request, form.errors[error].as_text())
     return redirect('login_registration')
 
+class UserAccount(ListView):
+    """Вывод счетов пользователя"""
+    model = UserAccount
+    context_object_name = 'accounts'
+    template_name = 'bookkeeping/accounts.html'
+
+    def get_queryset(self):
+        """Получаем все счета конкретного пользователя"""
+        from .models import UserAccount
+        user = self.request.user
+        accounts = UserAccount.objects.filter(
+            user=user
+        )
+        return accounts
+    
+# def account(request):
+#     """Страница создания счета"""
+#     context = {
+#         'title': 'Создание счета',
+#         'account_form': AccountForm()
+#     }
+#     return render(request, 'bookkeeping/create_account.html', context)
+
+# def create_account(request):
+#     """Создание счета"""
+#     form = AccountForm(data=request.POST)
+#     if form.is_valid():
+#         from .models import UserAccount
+#         account = UserAccount.objects.get(
+#             user=request.user
+#         )
+#         account.account = request.account
+#         account.course = request.course
+#         account.currency = request.currency
+#         account.save
+#         return redirect('accounts')
+#     else:
+#         messages.error(request, 'Не верное имя пользователя или пароль')
+#         return redirect('create_accounts')
+# TODO Доделать до конца
