@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect
 
 from .forms import LoginForm, RegistrationForm, AccountForm
 from .models import UserAccount
+from .utils import get_total_sum_account
 
 class Page(ListView):
     """Главная страница"""
@@ -67,37 +68,33 @@ class UserAccount(ListView):
     context_object_name = 'accounts'
     template_name = 'bookkeeping/accounts.html'
 
-    def get_queryset(self):
+    def get_context_data(self):
         """Получаем все счета конкретного пользователя"""
         from .models import UserAccount
-        user = self.request.user
+        context = super().get_context_data()
         accounts = UserAccount.objects.filter(
-            user=user
+            user=self.request.user
         )
-        return accounts
-    
-# def account(request):
-#     """Страница создания счета"""
-#     context = {
-#         'title': 'Создание счета',
-#         'account_form': AccountForm()
-#     }
-#     return render(request, 'bookkeeping/create_account.html', context)
+        context['accounts'] = accounts
+        context['total_sum'] = get_total_sum_account(self.request)
+        return context
 
-# def create_account(request):
-#     """Создание счета"""
-#     form = AccountForm(data=request.POST)
-#     if form.is_valid():
-#         from .models import UserAccount
-#         account = UserAccount.objects.get(
-#             user=request.user
-#         )
-#         account.account = request.account
-#         account.course = request.course
-#         account.currency = request.currency
-#         account.save
-#         return redirect('accounts')
-#     else:
-#         messages.error(request, 'Не верное имя пользователя или пароль')
-#         return redirect('create_accounts')
-# TODO Доделать до конца
+def account(request):
+    """Страница создания счета"""
+    context = {
+        'title': 'Создание счета',
+        'account_form': AccountForm(),
+    }
+    return render(request, 'bookkeeping/create_account.html', context)
+
+def create_account(request):
+    """Создание счета"""
+    form = AccountForm(data=request.POST)
+    if form.is_valid():
+        account = form.save(commit=False)
+        account.user = request.user
+        account.save()
+        return redirect('accounts')
+    else:
+        messages.error(request, 'Не верное заполнение формы!')
+        return redirect('accounts')

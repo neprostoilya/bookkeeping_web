@@ -7,8 +7,8 @@
 {% block main %}
 <main class="main-margin">
     <div class="div-btn-accounts">
-        <button class="btn btn-primary btn-lg"><i class="bi bi-plus"></i>Добавить</button>
-        <button class="btn btn-success btn-lg"><i class="bi bi-arrow-left-right"></i> Перевести</button>
+        <a href="{% url 'account' %}"><button class="btn btn-primary btn-lg"><i class="bi bi-plus"></i>Добавить</button></a>
+        <a href="#!"><button class="btn btn-success btn-lg"><i class="bi bi-arrow-left-right"></i> Перевести</button></a>
     </div>
     <div class="table-div d-flex justify-content-center">
         {% include 'bookkeeping/components/_table.html' %}     

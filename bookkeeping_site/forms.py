@@ -69,3 +69,5 @@ class AccountForm(forms.ModelForm):
                 'placeholder': 'Сумма'
             }),
         }
+
+

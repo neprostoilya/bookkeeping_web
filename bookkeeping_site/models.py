@@ -126,8 +126,6 @@ class UserAccount(models.Model):
     """Счета пользователя"""
     user = models.ForeignKey(
         User,
-        blank=True,
-        null=True,
         on_delete=models.CASCADE,
         verbose_name='Пользователь'
     )
@@ -165,12 +163,12 @@ class UserAccount(models.Model):
         verbose_name_plural = 'Счета Пользователя'
 
     @property # используется для создания <<специальной>> функциональности определеным методам
-    def get_total_course_sum(self):
+    def get_course_sum(self):
         """Получение полной суммы счета с учетом курса валют"""
         sum = self.sum
         course = self.course
         return course*sum
-
+    
 class UserExpenses(models.Model):
     """Расходы пользователя"""
     user = models.ForeignKey(

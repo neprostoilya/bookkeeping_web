@@ -1,22 +1,40 @@
-<table class="table table-hover table-bordered" id="table">
-<thead>
+<table class="table table-bordered table-hover" id="table">
+<thead class="table-dark">
     <tr>
     <th scope="col">Название</th>
     <th scope="col">Курс</th>
     <th scope="col">Валюта</th>
-    <th scope="col">Сумма
-        
-    </th>
+    <th scope="col">Сумма</th>
     </tr>
 </thead>
 <tbody>
-    <tr>
     {% for account in accounts %}
-    <td>{{ account.account }}</td>
-    <td>{{ account.course }}</td>
-    <td>{{ account.currency }}</td>
-    <td>{{ account.get_total_course_sum }}</td>
+    <tr>
+        <td>
+            {{ account.account }}
+        </td>
+        <td>
+            {{ account.course }}
+        </td>
+        <td>
+            {{ account.currency }}
+        </td>
+        <td>
+            {{ account.get_course_sum }}
+        </td>
     {% endfor %}
+    </tr>
+    <tr>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+            <strong>Остаток:</strong> 
+        </td>
+        <td>
+            <strong>{{ total_sum }}</strong>
+        </td>
     </tr>
 </tbody>
 </table>

@@ -40,7 +40,7 @@ class UserIncomesAdmin(admin.ModelAdmin):
 @admin.register(UserAccount)
 class UserAccountAdmin(admin.ModelAdmin):
     """Счета пользователя"""
-    list_display = ('pk', 'user', 'account', 'course', 'currency', 'sum')
+    list_display = ('pk', 'user', 'account', 'course', 'currency', 'get_course_sum')
     list_filter = ('sum',)
     list_editable = ('account',)
     list_display_links = ('user', 'pk')
