@@ -155,7 +155,7 @@ class UserAccount(models.Model):
     
     def __repr__(self):
         """Подобие строкового представления"""
-        return f'Категория: pk={self.pk}, account={self.account}, currency={self.currency}'
+        return f'Счет: pk={self.pk}, account={self.account}, currency={self.currency}, sum={self.sum}'
 
     class Meta:
         """Характер Класса"""
@@ -205,7 +205,7 @@ class UserExpenses(models.Model):
 
     def __repr__(self):
         """Подобие строкового представления"""
-        return f'Категория: pk={self.pk}, category={self.category}, parent={self.parent}, sum={self.sum}'
+        return f'Расход: pk={self.pk}, category={self.category}, account={self.account}, currency={self.currency} sum={self.sum}'
 
     class Meta:
         """Характер Класса"""
@@ -257,7 +257,7 @@ class UserIncomes(models.Model):
 
     def __repr__(self):
         """Подобие строкового представления"""
-        return f'Категория: pk={self.pk}, category={self.category}, parent={self.parent}, sum={self.sum}'
+        return f'Доходы: pk={self.pk}, category={self.category}, account={self.account}, currency={self.currency} sum={self.sum}'
     
     class Meta:
         """Характер Класса"""
@@ -265,7 +265,7 @@ class UserIncomes(models.Model):
         verbose_name_plural = 'Доходы пользователей'
     
     @property # используется для создания <<специальной>> функциональности определеным методам
-    def get_total_price(self):
+    def get_total_sum(self):
         """Для получения суммы доходов"""
         incomes = UserIncomes.objects.all()
         total_price = sum(
@@ -273,5 +273,45 @@ class UserIncomes(models.Model):
         )
         return total_price
 
+class UserTransferToAccount(models.Model):
+    """Переводы пользователя с счета на счет"""
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Пользователь'
+    )
+    account1 = models.ForeignKey(
+        UserAccount,
+        on_delete=models.CASCADE,
+        related_name='account1',
+        null=False,
+        verbose_name='C счета'
+    )
+    account2 = models.ForeignKey(
+        UserAccount,
+        on_delete=models.CASCADE,
+        related_name='account2',
+        null=False,
+        verbose_name='На счет счета'
+    )
+    course = models.FloatField(
+        null=False,
+        verbose_name='Курс'
+    )
+    sum = models.IntegerField(
+        verbose_name='Сумма'
+    )
 
+    def __str__(self):
+        """Строковое представление"""
+        return self.user.username
+    
+    def __repr__(self):
+        """Подобие строкового представления"""
+        return f'Переводы: pk={self.pk}, account1={self.account1}, account2={self.account2}, course={self.course}, sum={self.sum}'
 
+    class Meta:
+        """Характер Класса"""
+        verbose_name = 'Перевод Денег Пользователя'
+        verbose_name_plural = 'Переводы Денег Пользователя'
+    

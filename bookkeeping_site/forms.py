@@ -54,7 +54,7 @@ class AccountForm(forms.ModelForm):
         widgets = {
             'account': forms.Select(attrs={
                 'class': 'form-control',
-                'placeholder': 'Название Счета'
+                'placeholder': 'Счет'
             }),
             'course': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -69,5 +69,33 @@ class AccountForm(forms.ModelForm):
                 'placeholder': 'Сумма'
             }),
         }
+
+class TransferToAccountForm(forms.ModelForm):
+    """Форма создания счета"""
+    som = forms.CharField(widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'placeholder': 'Сумма'
+    }))
+
+    class Meta:
+        """Поведенческий харакатер класса"""
+        model = UserTransferToAccount
+        fields = ('account1', 'account2', 'course')
+        widgets = {
+            'account1': forms.Select(attrs={
+                'class': 'form-control',
+                'placeholder': 'Списать с счета'
+            }),
+            'account2': forms.Select(attrs={
+                'class': 'form-control',
+                'placeholder': 'Зачислить на счет'
+            }),
+            'course': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Курс перевода'
+            }),
+
+        }
+
 
 

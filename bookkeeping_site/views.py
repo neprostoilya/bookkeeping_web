@@ -3,9 +3,9 @@ from django.contrib import messages
 from django.views.generic import DetailView, ListView
 from django.shortcuts import render, redirect
 
-from .forms import LoginForm, RegistrationForm, AccountForm
+from .forms import LoginForm, RegistrationForm, AccountForm, TransferToAccountForm
 from .models import UserAccount
-from .utils import get_total_sum_account
+from .utils import get_total_sum_account, get_total_sum_transfer
 
 class Page(ListView):
     """Главная страница"""
@@ -92,8 +92,29 @@ def create_account(request):
     form = AccountForm(data=request.POST)
     if form.is_valid():
         account = form.save(commit=False)
-        account.user = request.user
         account.save()
+        return redirect('accounts')
+    else:
+        messages.error(request, 'Не верное заполнение формы!')
+        return redirect('accounts')
+    
+def transfer_to_account(request):
+    """Страница перевода с счета на счет"""
+    context = {
+        'title': 'Перевести на счет',
+        'transfer_form': TransferToAccountForm(),
+    }
+    return render(request, 'bookkeeping/transfer_to_account.html', context)
+
+def transfer(request):
+    """Перевод на счет"""
+    form = TransferToAccountForm(data=request.POST)
+    if form.is_valid():
+        transfer = form.save(commit=False)
+        transfer.user = request.user
+        transfer.sum = int(form.cleaned_data['som']) 
+        get_total_sum_transfer(transfer)
+        # transfer.save()
         return redirect('accounts')
     else:
         messages.error(request, 'Не верное заполнение формы!')
