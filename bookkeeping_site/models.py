@@ -122,6 +122,33 @@ class CategoryAccounts(models.Model):
         verbose_name = 'Категория Счета'
         verbose_name_plural = 'Категории Счетов'
 
+class CategoryCourse(models.Model):
+    """Категории счетов по дефолту"""
+    user = models.ForeignKey(
+        User,
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        verbose_name='Пользователь'
+    )
+    title = models.CharField(
+        max_length=150, 
+        verbose_name='Название курса'
+    )
+    course = models.FloatField
+    def __str__(self):
+        """Строковое представление"""
+        return str(self.title)
+
+    def __repr__(self):
+        """Подобие строкового представления"""
+        return f'Категория: pk={self.pk}, title={self.title}'
+
+    class Meta:
+        """Характер Класса"""
+        verbose_name = 'Категория Счета'
+        verbose_name_plural = 'Категории Счетов'
+
 class UserAccount(models.Model):
     """Счета пользователя"""
     user = models.ForeignKey(
@@ -177,18 +204,28 @@ class UserExpenses(models.Model):
         verbose_name='Пользователь'
     )
     category = models.ForeignKey(
-        CategoryExpenses,
+        CategoryIncome,
+        related_name='category_expenses',
         on_delete=models.CASCADE, 
         verbose_name='Категория'
+    )
+    subcategory = models.ForeignKey(
+        CategoryIncome,
+        related_name='subcategory_expenses',
+        on_delete=models.CASCADE, 
+        verbose_name='Подкатегория',
+        null=True,
+        blank=True
     )
     account = models.ForeignKey(
         UserAccount,
         on_delete=models.CASCADE,
         verbose_name='Счет'
     )
-    created_at = models.DateField(
-        auto_now=True, 
-        verbose_name='Дата'
+    comment = models.CharField(
+        max_length=350,
+        null=True,
+        blank=True
     )
     currency = models.ForeignKey(
         CategoryCurrency,
@@ -198,6 +235,10 @@ class UserExpenses(models.Model):
     sum = models.IntegerField(
         verbose_name='Сумма'
     )
+    created_at = models.DateField(
+        auto_now=True, 
+        verbose_name='Дата'
+    )
 
     def __str__(self):
         """Строковое представление"""
@@ -205,12 +246,12 @@ class UserExpenses(models.Model):
 
     def __repr__(self):
         """Подобие строкового представления"""
-        return f'Расход: pk={self.pk}, category={self.category}, account={self.account}, currency={self.currency} sum={self.sum}'
+        return f'Расход: pk={self.pk}, category={self.category}, subcategory={self.subcategory}, account={self.account}, currency={self.currency} sum={self.sum}'
 
     class Meta:
         """Характер Класса"""
         verbose_name = 'Расход пользователя'
-        verbose_name_plural = 'Расходы пользователей'
+        verbose_name_plural = 'Расходы пользователя'
 
     @property # используется для создания <<специальной>> функциональности определеным методам
     def get_total_price(self):
@@ -230,17 +271,27 @@ class UserIncomes(models.Model):
     )
     category = models.ForeignKey(
         CategoryIncome,
+        related_name='category_incomes',
         on_delete=models.CASCADE, 
         verbose_name='Категория'
+    )
+    subcategory = models.ForeignKey(
+        CategoryIncome,
+        related_name='subcategory_incomes',
+        on_delete=models.CASCADE, 
+        verbose_name='Подкатегория',
+        null=True,
+        blank=True
     )
     account = models.ForeignKey(
         UserAccount,
         on_delete=models.CASCADE,
         verbose_name='Счет'
     )
-    created_at = models.DateField(
-        auto_now=True, 
-        verbose_name='Дата'
+    comment = models.CharField(
+        max_length=350,
+        null=True,
+        blank=True
     )
     currency = models.ForeignKey(
         CategoryCurrency,
@@ -250,6 +301,9 @@ class UserIncomes(models.Model):
     sum = models.IntegerField(
         verbose_name='Сумма'
     )
+    created_at = models.DateField(
+        verbose_name='Дата'
+    )
 
     def __str__(self):
         """Строковое представление"""
@@ -257,12 +311,12 @@ class UserIncomes(models.Model):
 
     def __repr__(self):
         """Подобие строкового представления"""
-        return f'Доходы: pk={self.pk}, category={self.category}, account={self.account}, currency={self.currency} sum={self.sum}'
+        return f'Доходы: pk={self.pk}, category={self.category}, subcategory={self.subcategory}, account={self.account}, currency={self.currency} sum={self.sum}'
     
     class Meta:
         """Характер Класса"""
         verbose_name = 'Доходы пользователя'
-        verbose_name_plural = 'Доходы пользователей'
+        verbose_name_plural = 'Доходы Пользователя'
     
     @property # используется для создания <<специальной>> функциональности определеным методам
     def get_total_sum(self):
@@ -312,6 +366,6 @@ class UserTransferToAccount(models.Model):
 
     class Meta:
         """Характер Класса"""
-        verbose_name = 'Перевод Денег Пользователя'
-        verbose_name_plural = 'Переводы Денег Пользователя'
+        verbose_name = 'Перевод Пользователя'
+        verbose_name_plural = 'Перевод Пользователя'
     

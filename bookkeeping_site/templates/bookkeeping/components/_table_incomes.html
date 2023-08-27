@@ -1,0 +1,52 @@
+<table class="table table-bordered table-hover table-striped" id="table">
+    <thead class="table-dark">
+        <tr>
+        <th scope="col">Категория</th>
+        <th scope="col">Подкатегория</th>
+        <th scope="col">Счет</th>
+        <th scope="col">Валюта</th>
+        <th scope="col">Сумма</th>
+        <th scope="col">Дата</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for income in incomes %}
+        <tr>
+            <td>
+                {{ income.category }}
+            </td>
+            <td>
+                {{ income.subcategrory }}
+            </td>
+            <td>
+                {{ income.account }}
+            </td>
+            <td>
+                {{ income.currency }}
+            </td>
+            <td>
+                {{ income.sum }}
+            </td>
+            <td>
+                {{ income.created_at }}
+            </td>
+
+        {% endfor %}
+        </tr>
+        <tr>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+        </tr>
+    </tbody>
+    </table>
+    

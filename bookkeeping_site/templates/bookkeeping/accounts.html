@@ -5,13 +5,12 @@
 {% endblock title %}
 
 {% block main %}
-<main class="main-margin">
+<div class="content-wrapper">
+<br>
     <div class="div-btn-accounts">
-        <a href="{% url 'account' %}"><button class="btn btn-primary btn-lg"><i class="bi bi-plus"></i>Добавить</button></a>
-        <a href="#!"><button class="btn btn-success btn-lg"><i class="bi bi-arrow-left-right"></i> Перевести</button></a>
+        <a href="{% url 'account' %}"><button class="btn btn-primary btn-lg mr-2"><i class="bi bi-plus"></i>Добавить</button></a>
+        <a href="{% url 'transfer_to_account' %}"><button class="btn btn-success btn-lg"><i class="bi bi-arrow-left-right"></i> Перевести</button></a>
     </div>
-    <div class="table-div d-flex justify-content-center">
-        {% include 'bookkeeping/components/_table.html' %}     
-    </div>
-</main>
+    {% include 'bookkeeping/components/_table.html' %}     
+</div>
 {% endblock main %}

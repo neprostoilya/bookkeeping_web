@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-
-from .models import *
+        
+from .models import UserAccount, UserTransferToAccount, User, UserIncomes
 
 
 class LoginForm(AuthenticationForm):
@@ -46,11 +46,15 @@ class RegistrationForm(UserCreationForm):
 
 class AccountForm(forms.ModelForm):
     """Форма создания счета"""
-
+    som = forms.CharField(widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'placeholder': 'Сумма'
+    }))
+    
     class Meta:
         """Поведенческий харакатер класса"""
         model = UserAccount
-        fields = ('account', 'course', 'currency', 'sum')
+        fields = ('account', 'course', 'currency')
         widgets = {
             'account': forms.Select(attrs={
                 'class': 'form-control',
@@ -63,10 +67,6 @@ class AccountForm(forms.ModelForm):
             'currency': forms.Select(attrs={
                 'class': 'form-control',
                 'placeholder': 'Валюта'
-            }),
-            'sum': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Сумма'
             }),
         }
 
@@ -94,8 +94,44 @@ class TransferToAccountForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': 'Курс перевода'
             }),
-
         }
 
+class UserIncomesForm(forms.ModelForm):
+    """Форма создания дохода"""
+
+    class Meta:
+        """Поведенческий харакатер класса"""
+        model = UserIncomes
+        fields = ('category', 'subcategory', 'account', 'comment', 'currency', 'sum', 'created_at')
+        widgets = {
+            'category': forms.Select(attrs={
+                'class': 'form-control',
+                'placeholder': 'Категория'
+            }),
+            'subcategory': forms.Select(attrs={
+                'class': 'form-control',
+                'placeholder': 'Зачислить на счет'
+            }),
+            'account': forms.Select(attrs={
+                'class': 'form-control',
+                'placeholder': 'Счет'
+            }),
+            'comment': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'Коментарий'
+            }),
+            'currency': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Валюта'
+            }),
+            'sum': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Сумма'
+            }),
+            'created_at': forms.DateInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Дата'
+            })        
+        }
 
 

@@ -755,22 +755,6 @@ body.no-sidebar .main-header {
     max-width: 100%;
 }
 
-#jazzy-collapsible .collapsible-header:hover {
-    background: #007bff;
-    color: white;
-}
-
-#jazzy-collapsible .collapsible-header {
-    cursor: pointer;
-}
-
-#jazzy-carousel .carousel-indicators li {
-    background-color: #007bfe;
-}
-
-#jazzy-carousel .carousel-indicators {
-    position: initial;
-}
 
 form ul.radiolist li {
     list-style-type: none;

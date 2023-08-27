@@ -5,13 +5,14 @@
 {% endblock title %}
 
 {% block main %}
-<main class="main-margin">
+<div class="content-wrapper">
+    <br>
     <div class="d-flex justify-content-center">
-        <div class="transfer_to_account" style="margin-top: 20%;">
+        <div class="transfer_to_account" style="margin-top: 17%;">
             <div class="card-body">
                 <form action="{% url 'transfer' %}" class="login-form" method="post" enctype="multipart/form-data">
-                    <h2 class="text-center fw-bold">Перевести на счет</h2>
-                    <div><div style="margin-top: 10%;"></div></div>
+                    <h2 class="font-monospace text-center fw-bolder">Перевести</h2>
+                    <div><div style="margin-top: 4%;"></div></div>
                     {% csrf_token %}
                     <div class="form-group">
                         {{ transfer_form.account1  }}
@@ -33,5 +34,5 @@
             </div>
         </div>
     </div>
-</main>
+</div>
 {% endblock main %}

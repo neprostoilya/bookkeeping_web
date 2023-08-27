@@ -1,40 +1,30 @@
-<table class="table table-bordered table-hover" id="table">
-<thead class="table-dark">
-    <tr>
-    <th scope="col">Название</th>
-    <th scope="col">Курс</th>
-    <th scope="col">Валюта</th>
-    <th scope="col">Сумма</th>
-    </tr>
-</thead>
-<tbody>
-    {% for account in accounts %}
-    <tr>
-        <td>
-            {{ account.account }}
-        </td>
-        <td>
-            {{ account.course }}
-        </td>
-        <td>
-            {{ account.currency }}
-        </td>
-        <td>
-            {{ account.sum }}
-        </td>
-    {% endfor %}
-    </tr>
-    <tr>
-        <td>
-        </td>
-        <td>
-        </td>
-        <td>
-            <strong>Остаток:</strong> 
-        </td>
-        <td>
-            <strong>{{ total_sum }}</strong>
-        </td>
-    </tr>
-</tbody>
-</table>
+<div class="table-div">
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th class="text-light md font-monospace">Название</th>
+                    <th class="text-light md font-monospace">Курс</th>
+                    <th class="text-light md font-monospace">Валюта</th>
+                    <th class="text-light md font-monospace">Сумма</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for account in accounts %}
+                <tr> 
+                    <td>{{ account.account }}</td>
+                    <td>{{ account.course }}</td>
+                    <td>{{ account.currency }}</td>
+                    <td>{{ account.sum }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td><strong>Остаток:</strong></td>
+                    <td><strong>{{ total_sum }}:</strong></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

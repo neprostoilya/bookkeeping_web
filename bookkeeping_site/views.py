@@ -3,8 +3,9 @@ from django.contrib import messages
 from django.views.generic import DetailView, ListView
 from django.shortcuts import render, redirect
 
-from .forms import LoginForm, RegistrationForm, AccountForm, TransferToAccountForm
-from .models import UserAccount
+from .forms import LoginForm, RegistrationForm, AccountForm, TransferToAccountForm,  \
+        UserIncomesForm
+from .models import UserAccount, UserIncomes
 from .utils import get_total_sum_account, get_total_sum_transfer
 
 class Page(ListView):
@@ -62,15 +63,13 @@ def register(request):
             messages.error(request, form.errors[error].as_text())
     return redirect('login_registration')
 
-class UserAccount(ListView):
-    """Вывод счетов пользователя"""
+class UserAccountPage(ListView):
+    """Страничка счетов пользователя"""
     model = UserAccount
     context_object_name = 'accounts'
     template_name = 'bookkeeping/accounts.html'
 
     def get_context_data(self):
-        """Получаем все счета конкретного пользователя"""
-        from .models import UserAccount
         context = super().get_context_data()
         accounts = UserAccount.objects.filter(
             user=self.request.user
@@ -92,6 +91,8 @@ def create_account(request):
     form = AccountForm(data=request.POST)
     if form.is_valid():
         account = form.save(commit=False)
+        account.user = request.user
+        account.sum = int(form.cleaned_data['som']) * account.course
         account.save()
         return redirect('accounts')
     else:
@@ -119,3 +120,18 @@ def transfer(request):
     else:
         messages.error(request, 'Не верное заполнение формы!')
         return redirect('accounts')
+
+class UserIncomesPage(ListView):
+    """Страничка доходов пользователя"""
+    model = UserIncomes
+    context_object_name = 'incomes'
+    template_name = 'bookkeeping/incomes.html'
+
+    def get_context_data(self):
+        """Вывод дополнительных элементов на главную страничку"""
+        context = super().get_context_data()
+        incomes = UserIncomes.objects.filter(
+            user=self.request.user
+        )
+        context['incomes'] = incomes
+        return context

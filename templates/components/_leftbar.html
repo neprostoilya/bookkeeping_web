@@ -1,79 +1,93 @@
-{% include 'components/_link.html' %}     
 <!DOCTYPE html>
-<html>
+<html lang="ru-ru" >
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <!--  Prevent admin panel being crawled by search engines -->
+    <meta name="robots" content="none, noarchive">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="/static/vendor/fontawesome-free/css/all.min.css">
+    <!-- Bootstrap and adminLTE -->
+    <link rel="stylesheet" href="/static/vendor/adminlte/css/adminlte.min.css" id="adminlte-css">
+    <!-- Custom fixes for django -->
+    <link rel="stylesheet" href="/static/jazzmin/css/main.css">
+    <!-- favicons -->
+    <link rel="shortcut icon" href="/static/vendor/adminlte/img/AdminLTELogo.png" type="image/png">
+    <link rel="icon" href="/static/vendor/adminlte/img/AdminLTELogo.png" sizes="32x32" type="image/png">
+    <!-- Google Font: Source Sans Pro -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 </head>
-<body class="body-class">
-<div class="sidenav">
-    {% if not request.user.is_authenticated %}
-    <br>
-    <div class="d-flex">
-        <a href="{% url 'login' %}" class="fs-5 nav-link font-monospace p-1">Войти</a>
-        <a class="fs-5 nav-link p-1">/</a>
-        <a href="{% url 'register' %}" class="fs-5 nav-link font-monospace p-1">Зарегистрироваться</a>
-    </div> 
-    <br>
-    {% else %}
-    <div class="d-flex flex-column">
-        <h3 class="px-3 font-monospace" style="color: #858181;">{{ request.user.username }}</h3>
-        <a href="{% url 'logout' %}" class="fs-5 nav-link">
-            <i class="fs-5 bi-arrow-bar-left"></i>
-            <span class="fs-5 d-none d-sm-inline font-monospace" href="{% url 'logout' %}">
-                Выйти
-            </span>
-        </a>
-    </div>
-    {% endif %} 
-    <hr>
-    <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark "></div>
-        <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100 divadaptive">            
-            <a href="{% url 'index' %}" class="nav-link align-middle px-0">
-                <i class="fs-4 bi-house"></i>
-                <span class="ms-1 d-none d-sm-inline font-monospace">
-                    Главная
-                </span>
-            </a>
-            <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                <i class="fs-4 bi-plus-circle"></i>
-                <span
-                    class="ms-1 d-none d-sm-inline font-monospace">
-                    Доход
-                </span> 
-            </a>
-            <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                <i class="fs-4 bi-dash-circle"></i>
-                <span
-                    class="ms-1 d-none d-sm-inline font-monospace">
-                    Расход
-                </span> 
-            </a>
-            <a href="#" class="nav-link px-0 align-middle">
-                <i class="fs-4 bi-cash"></i> 
-                <span class="ms-1 d-none d-sm-inline font-monospace">
-                    Долги
-                </span>
-            </a>
-            <a href="{% url 'accounts' %}" class="nav-link px-0 align-middle">
-                <i class="fs-4 bi-credit-card"></i> 
-                <span class="ms-1 d-none d-sm-inline font-monospace">
-                    Счета
-                </span>
-            </a>
-            <a href="#" class="nav-link px-0 align-middle">
-                <i class="fs-4 bi-bar-chart-line"></i> 
-                <span class="ms-1 d-none d-sm-inline font-monospace">
-                    Статистика
-                </span>
-            </a>
-        </div>
-    </div>   
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
+<body class="hold-transition sidebar-mini  dashboard accent-primary theme-default " >
+<div class="wrapper">
+        <nav class="main-header navbar navbar-expand navbar-white navbar-light" id="jazzy-navbar">
+            <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+                    </li>
+            </ul>
+        </nav>
+            <aside class="main-sidebar elevation-4 sidebar-dark-primary">
+                <div class="sidebar">
+                    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                        <div class="image">
+                            <i class="fas fa-inverse user-profile fa-user-circle"></i>
+                        </div>
+                        <div class="info">
+                            <a href="#!" class="d-block">{{ request.user.username }}</a>
+                        </div>
+                    </div>
+                    <nav class="mt-2">
+                        <ul class="nav nav-pills nav-sidebar flex-column " data-widget="treeview" role="menu" data-collapsible="false">
+                            <li class="nav-item">
+                                <a href="#!" class="nav-link">
+                                    <i class="nav-icon fas fa-th-large"></i>
+                                    <p>Главная</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#!" class="nav-link">
+                                    <i class="nav-icon fas fa-circle"></i> <p>Доходы</p>
+                                </a>                           
+                            </li>
+                            <li class="nav-item">
+                                <a href="#!" class="nav-link">
+                                    <i class="nav-icon fas fa-circle"></i> <p>Расходы</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#!" class="nav-link">
+                                    <i class="nav-icon fas fa-circle"></i> <p>Долги</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#!" class="nav-link">
+                                    <i class="nav-icon fas fa-circle"></i> <p>Счета</p>
+                                </a>
+                            
+                            </li>
+                            <li class="nav-item">
+                                <a href="#!" class="nav-link">
+                                    <i class="nav-icon fas fa-circle"></i> <p>Статистика</p>
+                                </a>
+                            </li>
+                            <br>
+                        </ul>
+                    </nav>
+                </div>
+            </aside>
+    
+
+
+
+<!-- jQuery -->
+<script src="/static/admin/js/vendor/jquery/jquery.js"></script>
+<!-- Bootstrap 4 -->
+<script src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
+<!-- AdminLTE App -->
+<script src="/static/vendor/adminlte/js/adminlte.min.js"></script>
+<!-- Django customisations -->
+<script src="/static/jazzmin/js/main.js"></script>
+
 </body>
-</html> 
-
-
-
-
+</html>

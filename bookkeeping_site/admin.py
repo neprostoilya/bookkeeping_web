@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import CategoryExpenses, CategoryIncome, CategoryCurrency, \
-                    UserExpenses, UserIncomes, UserAccount, CategoryAccounts
+                    UserExpenses, UserIncomes, UserAccount, CategoryAccounts, UserTransferToAccount
 
 @admin.register(CategoryIncome)
 class CategoryIncomesAdmin(admin.ModelAdmin):
@@ -40,9 +40,8 @@ class UserIncomesAdmin(admin.ModelAdmin):
 @admin.register(UserAccount)
 class UserAccountAdmin(admin.ModelAdmin):
     """Счета пользователя"""
-    list_display = ('pk', 'user', 'account', 'course', 'currency', 'get_course_sum')
+    list_display = ('pk', 'user', 'account', 'course', 'currency', 'sum')
     list_filter = ('sum',)
-    list_editable = ('account',)
     list_display_links = ('user', 'pk')
 
 @admin.register(CategoryAccounts)
@@ -50,4 +49,12 @@ class CategoryAccountsAdmin(admin.ModelAdmin):
     """Категории Счетов"""
     list_display = ('pk', 'user', 'title')
     list_editable = ('title',)
+
+@admin.register(UserTransferToAccount)
+class UserTransferToAccountAdmin(admin.ModelAdmin):
+    """Переводы пользователей"""
+    list_display = ('pk', 'user', 'account1', 'account2', 'course', 'sum')
+    list_filter = ('sum',)
+    list_display_links = ('user', 'pk')
+
 

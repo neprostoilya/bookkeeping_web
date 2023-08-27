@@ -8,9 +8,10 @@ urlpatterns = [
     path('login', user_login, name='login'),
     path('logout', user_logout, name='logout'),
     path('register', register, name='register'),
-    path('accounts/', UserAccount.as_view(), name='accounts'),
+    path('accounts/', UserAccountPage.as_view(), name='accounts'),
     path('accounts/create_accounts/', account, name='account'),
     path('accounts/create_account', create_account, name='create_account'),
     path('accounts/transfer_to_account/', transfer_to_account, name='transfer_to_account'),
     path('accounts/transfer', transfer, name='transfer'),
+    path('incomes/', UserIncomesPage.as_view(), name='incomes'),
 ]
