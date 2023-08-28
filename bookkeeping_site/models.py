@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -289,7 +291,7 @@ class UserIncomes(models.Model):
         verbose_name='Счет'
     )
     comment = models.CharField(
-        max_length=350,
+        max_length=150,
         null=True,
         blank=True
     )

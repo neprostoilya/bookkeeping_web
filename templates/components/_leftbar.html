@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru-ru" >
 <head>
@@ -17,6 +18,7 @@
     <link rel="icon" href="/static/vendor/adminlte/img/AdminLTELogo.png" sizes="32x32" type="image/png">
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+    <!-- KIt Icons -->
 </head>
 <body class="hold-transition sidebar-mini  dashboard accent-primary theme-default " >
 <div class="wrapper">
@@ -40,37 +42,37 @@
                     <nav class="mt-2">
                         <ul class="nav nav-pills nav-sidebar flex-column " data-widget="treeview" role="menu" data-collapsible="false">
                             <li class="nav-item">
-                                <a href="#!" class="nav-link">
-                                    <i class="nav-icon fas fa-th-large"></i>
+                                <a href="{% url 'index' %}" class="nav-link">
+                                    <i class="nav-icon fa-solid fa-house"></i>
                                     <p>Главная</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#!" class="nav-link">
-                                    <i class="nav-icon fas fa-circle"></i> <p>Доходы</p>
+                                <a href="{% url 'incomes' %}" class="nav-link">
+                                    <i class="nav-icon fa-regular fa-square-plus"></i> <p>Доходы</p>
                                 </a>                           
                             </li>
                             <li class="nav-item">
                                 <a href="#!" class="nav-link">
-                                    <i class="nav-icon fas fa-circle"></i> <p>Расходы</p>
+                                    <i class="nav-icon fa-regular fa-square-minus"></i> <p>Расходы</p>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a href="#!" class="nav-link">
-                                    <i class="nav-icon fas fa-circle"></i> <p>Долги</p>
+                                    <i class="nav-icon fa-solid fa-money-bill"></i> <p>Долги</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'accounts' %}" class="nav-link">
+                                    <i class="nav-icon fa-regular fa-credit-card"></i> <p>Счета</p>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a href="#!" class="nav-link">
-                                    <i class="nav-icon fas fa-circle"></i> <p>Счета</p>
-                                </a>
-                            
-                            </li>
-                            <li class="nav-item">
-                                <a href="#!" class="nav-link">
-                                    <i class="nav-icon fas fa-circle"></i> <p>Статистика</p>
+                                    <i class="nav-icon fa-solid fa-chart-column"></i> <p>Статистика</p>
                                 </a>
                             </li>
+
                             <br>
                         </ul>
                     </nav>
@@ -84,6 +86,8 @@
 <script src="/static/admin/js/vendor/jquery/jquery.js"></script>
 <!-- Bootstrap 4 -->
 <script src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="https://kit.fontawesome.com/cb75f5bd43.js" crossorigin="anonymous"></script>
+
 <!-- AdminLTE App -->
 <script src="/static/vendor/adminlte/js/adminlte.min.js"></script>
 <!-- Django customisations -->

@@ -1,3 +1,5 @@
+import datetime
+
 from django.contrib.auth import login, logout
 from django.contrib import messages
 from django.views.generic import DetailView, ListView
@@ -78,7 +80,7 @@ class UserAccountPage(ListView):
         context['total_sum'] = get_total_sum_account(self.request)
         return context
 
-def account(request):
+def create_account_page(request):
     """Страница создания счета"""
     context = {
         'title': 'Создание счета',
@@ -99,8 +101,8 @@ def create_account(request):
         messages.error(request, 'Не верное заполнение формы!')
         return redirect('accounts')
     
-def transfer_to_account(request):
-    """Страница перевода с счета на счет"""
+def transfer_to_account_page(request):
+    """Страничка перевода с счета на счет"""
     context = {
         'title': 'Перевести на счет',
         'transfer_form': TransferToAccountForm(),
@@ -115,7 +117,7 @@ def transfer(request):
         transfer.user = request.user
         transfer.sum = int(form.cleaned_data['som']) 
         get_total_sum_transfer(transfer)
-        # transfer.save()
+        transfer.save()
         return redirect('accounts')
     else:
         messages.error(request, 'Не верное заполнение формы!')
@@ -135,3 +137,14 @@ class UserIncomesPage(ListView):
         )
         context['incomes'] = incomes
         return context
+
+def add_income_page(request):
+    """Страничка добавления дохода"""
+    initial_data = {
+        'created_at' : datetime.datetime.now().strftime("%d-%m-%Y"),
+    }
+    context = {
+        'title': 'Добавление дохода',
+        'income_form': UserIncomesForm(initial=initial_data),
+    }
+    return render(request, 'bookkeeping/add_income.html', context)

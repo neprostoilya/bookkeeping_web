@@ -1,3 +1,4 @@
+import datetime
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
         
@@ -110,13 +111,13 @@ class UserIncomesForm(forms.ModelForm):
             }),
             'subcategory': forms.Select(attrs={
                 'class': 'form-control',
-                'placeholder': 'Зачислить на счет'
+                'placeholder': 'Подкатегория'
             }),
             'account': forms.Select(attrs={
                 'class': 'form-control',
                 'placeholder': 'Счет'
             }),
-            'comment': forms.Textarea(attrs={
+            'comment': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Коментарий'
             }),
@@ -130,7 +131,8 @@ class UserIncomesForm(forms.ModelForm):
             }),
             'created_at': forms.DateInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Дата'
+                'placeholder': 'Дата',
+                'value': '2017-06-01'
             })        
         }
 
