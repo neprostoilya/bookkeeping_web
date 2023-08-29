@@ -2,13 +2,13 @@ import datetime
 
 from django.contrib.auth import login, logout
 from django.contrib import messages
-from django.views.generic import DetailView, ListView
+from django.views.generic import DetailView, ListView, UpdateView
 from django.shortcuts import render, redirect
 
 from .forms import LoginForm, RegistrationForm, AccountForm, TransferToAccountForm,  \
         UserIncomesForm
 from .models import UserAccount, UserIncomes
-from .utils import get_total_sum_account, get_total_sum_transfer
+from .utils import get_total_sum_account, save_transfer_sum, save_income_sum, get_total_sum_incomes
 
 class Page(ListView):
     """Главная страница"""
@@ -116,7 +116,7 @@ def transfer(request):
         transfer = form.save(commit=False)
         transfer.user = request.user
         transfer.sum = int(form.cleaned_data['som']) 
-        get_total_sum_transfer(transfer)
+        save_transfer_sum(transfer)
         transfer.save()
         return redirect('accounts')
     else:
@@ -136,15 +136,33 @@ class UserIncomesPage(ListView):
             user=self.request.user
         )
         context['incomes'] = incomes
+        total_sum = get_total_sum_incomes(self.request)
+        context['total_sum'] = total_sum
         return context
 
 def add_income_page(request):
     """Страничка добавления дохода"""
-    initial_data = {
-        'created_at' : datetime.datetime.now().strftime("%d-%m-%Y"),
-    }
     context = {
         'title': 'Добавление дохода',
-        'income_form': UserIncomesForm(initial=initial_data),
+        'income_form': UserIncomesForm(),
     }
     return render(request, 'bookkeeping/add_income.html', context)
+
+def add_income(request):
+    """Добавление"""
+    form = UserIncomesForm(data=request.POST)
+    if form.is_valid():
+        incomes = form.save(commit=False)
+        incomes.user = request.user
+        save_income_sum(incomes)
+        incomes.save()
+        return redirect('incomes')
+    else:
+        messages.error(request, 'Не верное заполнение формы!')
+        return redirect('incomes')
+    
+# class UpdateIncomes(UpdateView):
+#     """Изменение дохода в таблице"""
+#     model = UserIncomes
+#     form_class = UserIncomesForm
+#     template_name = 'bookkeeping/add_income.html'

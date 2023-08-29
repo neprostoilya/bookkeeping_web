@@ -93,7 +93,8 @@ class TransferToAccountForm(forms.ModelForm):
             }),
             'course': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Курс перевода'
+                'placeholder': 'Курс перевода',
+                'value': '1'
             }),
         }
 
@@ -121,7 +122,7 @@ class UserIncomesForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': 'Коментарий'
             }),
-            'currency': forms.TextInput(attrs={
+            'currency': forms.Select(attrs={
                 'class': 'form-control',
                 'placeholder': 'Валюта'
             }),
@@ -130,10 +131,9 @@ class UserIncomesForm(forms.ModelForm):
                 'placeholder': 'Сумма'
             }),
             'created_at': forms.DateInput(attrs={
+                'type': 'date',
                 'class': 'form-control',
-                'placeholder': 'Дата',
-                'value': '2017-06-01'
+                'placeholder': 'Дата'
             })        
         }
-
 

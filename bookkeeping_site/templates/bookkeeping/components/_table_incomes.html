@@ -1,3 +1,4 @@
+
 <div class="table-div">
     <div class="table-responsive">
         <table class="table table-bordered table-striped table-dark table-hover">
@@ -5,20 +6,30 @@
             <tr>
                 <th class="text-light md font-monospace">Категория</th>
                 <th class="text-light md font-monospace">Подкатегория</th>
+                <th class="text-light md font-monospace">Дата</th>
                 <th class="text-light md font-monospace">Счет</th>
                 <th class="text-light md font-monospace">Валюта</th>
                 <th class="text-light md font-monospace">Сумма</th>
-                <th class="text-light md font-monospace">Дата</th>
             </tr>
-        </thead>
-        <tbody>
+            </thead>
+            <tbody>
             {% for income in incomes %}
             <tr>
-                <td>
-                    {{ income.category }}
+                <td class="d-flex">
+                    <div class="px-1">
+                        {{ income.category }}  
+                    </div>
+                    {% if income.comment %}
+                    <div class="icon" onclick="showPopup(this)" data-comment="{{ income.comment }}">
+                        <i class="fas fa-question-circle fa-blue" style="color:rgb(71, 71, 237)"></i>
+                    </div>
+                    {% endif %}
                 </td>
                 <td>
                     {{ income.subcategrory }}
+                </td>
+                <td>
+                    {{ income.created_at }}
                 </td>
                 <td>
                     {{ income.account }}
@@ -29,10 +40,6 @@
                 <td>
                     {{ income.sum }}
                 </td>
-                <td>
-                    {{ income.created_at }}
-                </td>
-
             {% endfor %}
             </tr>
             <tr>
@@ -45,10 +52,15 @@
                 <td>
                 </td>
                 <td>
+                    <strong>
+                        Итого:
+                    </strong>
                 </td>
                 <td>
+                    {{ total_sum }}
                 </td>
             </tr>
-        </tbody>
+            </tbody>
         </table>
-        
+    </div>
+</div>

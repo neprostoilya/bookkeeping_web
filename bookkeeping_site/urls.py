@@ -14,5 +14,6 @@ urlpatterns = [
     path('accounts/transfer_to_account/', transfer_to_account_page, name='transfer_to_account'),
     path('accounts/transfer', transfer, name='transfer'),
     path('incomes/', UserIncomesPage.as_view(), name='incomes'),
-    path('incomes/add_income/', add_income_page, name='add_income'),
+    path('incomes/add_incomes/', add_income_page, name='add_incomes'),
+    path('incomes/add_income', add_income, name='add_income'),
 ]
