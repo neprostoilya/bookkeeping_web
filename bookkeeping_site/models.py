@@ -206,13 +206,13 @@ class UserExpenses(models.Model):
         verbose_name='Пользователь'
     )
     category = models.ForeignKey(
-        CategoryIncome,
+        CategoryExpenses,
         related_name='category_expenses',
         on_delete=models.CASCADE, 
         verbose_name='Категория'
     )
     subcategory = models.ForeignKey(
-        CategoryIncome,
+        CategoryExpenses,
         related_name='subcategory_expenses',
         on_delete=models.CASCADE, 
         verbose_name='Подкатегория',
@@ -225,7 +225,7 @@ class UserExpenses(models.Model):
         verbose_name='Счет'
     )
     comment = models.CharField(
-        max_length=350,
+        max_length=150,
         null=True,
         blank=True
     )
@@ -238,7 +238,6 @@ class UserExpenses(models.Model):
         verbose_name='Сумма'
     )
     created_at = models.DateField(
-        auto_now=True, 
         verbose_name='Дата'
     )
 

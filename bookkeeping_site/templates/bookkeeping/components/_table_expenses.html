@@ -12,37 +12,37 @@
           </tr>
         </thead>
         <tbody>
-          {% for income in incomes %}
+          {% for expense in expenses %}
           <tr>
             <td class="d-flex">
               <div class="px-1">
-                {{ income.category }}
+                {{ expense.category }}
               </div>
-              {% if income.comment %}
-              <div class="icon" onclick="showPopup(this)" data-comment="{{ income.comment }}">
+              {% if expense.comment %}
+              <div class="icon" onclick="showPopup(this)" data-comment="{{ expense.comment }}">
                 <i class="fas fa-question-circle fa-blue" style="color:rgb(101, 101, 241)"></i>
               </div>
               {% endif %}
             </td>
             <td>
-              {% if income.subcategory %} 
-              {{ income.subcategory }} 
+              {% if expense.subcategory %} 
+              {{ expense.subcategory }} 
               {% else %} 
               - 
               {% endif %}
   
             </td>
             <td>
-              {{ income.created_at }}
+              {{ expense.created_at }}
             </td>
             <td>
-              {{ income.account }}
+              {{ expense.account }}
             </td>
             <td>
-              {{ income.currency }}
+              {{ expense.currency }}
             </td>
             <td>
-              {{ income.sum }}
+              {{ expense.sum }}
             </td>
             {% endfor %}
           </tr>
@@ -58,7 +58,7 @@
             <td>
               <strong>
                           Итого:
-              </strong>
+                      </strong>
             </td>
             <td>
               {{ total_sum }}

@@ -8,9 +8,9 @@
 <div class="content-wrapper" >
     <br>
     <div class="div-btn-accounts">
-        <a href="{% url 'add_incomes' %}"><button class="btn btn-primary btn-lg"><i class="bi bi-plus"></i>Добавить</button></a>
+        <a href="{% url 'add_expenses' %}"><button class="btn btn-primary btn-lg"><i class="bi bi-plus"></i>Добавить</button></a>
     </div>
-    {% include 'bookkeeping/components/_table_incomes.html' %}   
+    {% include 'bookkeeping/components/_table_expenses.html' %}   
     {% include 'bookkeeping/components/_popup.html' %}   
 </div>
 {% endblock main %} 

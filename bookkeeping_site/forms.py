@@ -1,8 +1,8 @@
-import datetime
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
         
-from .models import UserAccount, UserTransferToAccount, User, UserIncomes
+from .models import UserAccount, UserTransferToAccount, User, UserIncomes, \
+    UserExpenses
 
 
 class LoginForm(AuthenticationForm):
@@ -132,8 +132,48 @@ class UserIncomesForm(forms.ModelForm):
             }),
             'created_at': forms.DateInput(attrs={
                 'type': 'date',
+                'id': 'date_sel',
                 'class': 'form-control',
                 'placeholder': 'Дата'
             })        
         }
 
+class UserExpensesForm(forms.ModelForm):
+    """Форма создания расхода"""
+
+    class Meta:
+        """Поведенческий харакатер класса"""
+        model = UserExpenses
+        fields = ('category', 'subcategory', 'account', 'comment', 'currency', 'sum', 'created_at')
+        widgets = {
+            'category': forms.Select(attrs={
+                'class': 'form-control',
+                'placeholder': 'Категория'
+            }),
+            'subcategory': forms.Select(attrs={
+                'class': 'form-control',
+                'placeholder': 'Подкатегория'
+            }),
+            'account': forms.Select(attrs={
+                'class': 'form-control',
+                'placeholder': 'Счет'
+            }),
+            'comment': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Коментарий'
+            }),
+            'currency': forms.Select(attrs={
+                'class': 'form-control',
+                'placeholder': 'Валюта'
+            }),
+            'sum': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Сумма'
+            }),
+            'created_at': forms.DateInput(attrs={
+                'type': 'date',
+                'id': 'date_sel',
+                'class': 'form-control',
+                'placeholder': 'Дата'
+            })        
+        }

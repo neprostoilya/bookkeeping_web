@@ -16,4 +16,7 @@ urlpatterns = [
     path('incomes/', UserIncomesPage.as_view(), name='incomes'),
     path('incomes/add_incomes/', add_income_page, name='add_incomes'),
     path('incomes/add_income', add_income, name='add_income'),
+    path('expenses/', UserExpensesPage.as_view(), name='expenses'),
+    path('expenses/add_expenses/', add_expenses_page, name='add_expenses'),
+    path('expenses/add_expense', add_expense, name='add_expense'),
 ]

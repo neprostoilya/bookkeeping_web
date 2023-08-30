@@ -1,14 +1,17 @@
 import datetime
+from typing import Any
 
 from django.contrib.auth import login, logout
 from django.contrib import messages
-from django.views.generic import DetailView, ListView, UpdateView
+from django.db.models.query import QuerySet
+from django.views.generic import ListView
 from django.shortcuts import render, redirect
 
 from .forms import LoginForm, RegistrationForm, AccountForm, TransferToAccountForm,  \
-        UserIncomesForm
-from .models import UserAccount, UserIncomes
-from .utils import get_total_sum_account, save_transfer_sum, save_income_sum, get_total_sum_incomes
+        UserIncomesForm, UserExpensesForm
+from .models import UserAccount, UserIncomes, UserExpenses
+from .utils import get_total_sum_account, save_transfer_sum, save_income_sum, save_expenses_sum, \
+        get_total_sum_incomes, get_total_sum_expenses
 
 class Page(ListView):
     """Главная страница"""
@@ -67,6 +70,9 @@ def register(request):
 
 class UserAccountPage(ListView):
     """Страничка счетов пользователя"""
+    extra_context = {
+        'title': 'Счета',
+    }
     model = UserAccount
     context_object_name = 'accounts'
     template_name = 'bookkeeping/accounts.html'
@@ -125,9 +131,16 @@ def transfer(request):
 
 class UserIncomesPage(ListView):
     """Страничка доходов пользователя"""
+    extra_context = {
+        'title': 'Доходы',
+    }
     model = UserIncomes
     context_object_name = 'incomes'
     template_name = 'bookkeeping/incomes.html'
+
+    # def get_queryset(self):
+    #   """Сортировка по месяцам""" 
+    #   pass
 
     def get_context_data(self):
         """Вывод дополнительных элементов на главную страничку"""
@@ -161,8 +174,47 @@ def add_income(request):
         messages.error(request, 'Не верное заполнение формы!')
         return redirect('incomes')
     
-# class UpdateIncomes(UpdateView):
-#     """Изменение дохода в таблице"""
-#     model = UserIncomes
-#     form_class = UserIncomesForm
-#     template_name = 'bookkeeping/add_income.html'
+class UserExpensesPage(ListView):
+    """Страничка Расходов пользователя"""
+    extra_context = {
+        'title': 'Расходы',
+    }
+    model = UserExpenses
+    context_object_name = 'expenses'
+    template_name = 'bookkeeping/expenses.html'
+
+    def get_context_data(self):
+        """Вывод дополнительных элементов на главную страничку"""
+        context = super().get_context_data()
+        expenses = UserExpenses.objects.filter(
+            user=self.request.user
+        )
+        context['expenses'] = expenses
+        total_sum = get_total_sum_expenses(self.request)
+        context['total_sum'] = total_sum
+        return context
+    
+def add_expenses_page(request):
+    """Страничка добавления расхода"""
+    context = {
+        'title': 'Добавление расхода',
+        'expenses_form': UserExpensesForm(),
+    }
+    return render(request, 'bookkeeping/add_expenses.html', context)
+
+def add_expense(request):
+    """Добавление расхода"""
+    form = UserExpensesForm(data=request.POST)
+    if form.is_valid():
+        expenses = form.save(commit=False)
+        expenses.user = request.user
+        save_expenses_sum(expenses)
+        expenses.save()
+        return redirect('expenses')
+    else:
+        messages.error(request, 'Не верное заполнение формы!')
+        return redirect('expenses')
+    
+
+
+       

@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.shortcuts import redirect
 
-from .models import UserAccount, UserIncomes
+from .models import UserAccount, UserIncomes, UserExpenses
 
 def get_total_sum_account(request):
     """Получение полной суммы всех счетов"""
@@ -52,6 +52,29 @@ def get_total_sum_incomes(request):
         )
         total_sum = sum(
             [_.sum for _ in incomes]
+        )
+        return total_sum
+    else:
+        messages.error(request, 'Авторизуйтесь или Зарегистрируйтесь чтобы совершать покупки!')
+        return redirect('login_registration')
+    
+def save_expenses_sum(expenses):
+    """Сохранение расхода в базу данных"""
+    account = UserAccount.objects.get(
+        user = expenses.user,
+        pk = expenses.account.pk
+    )
+    account.sum = account.sum - expenses.sum
+    account.save()
+
+def get_total_sum_expenses(request):
+    """Получение полной суммы доходов"""
+    if request.user.is_authenticated:
+        expenses = UserExpenses.objects.filter(
+            user=request.user
+        )
+        total_sum = sum(
+            [_.sum for _ in expenses]
         )
         return total_sum
     else:
