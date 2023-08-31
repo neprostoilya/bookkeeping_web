@@ -1,12 +1,29 @@
+{% load tags %}
+{% get_sorted_table_accounts as data %}
 <div class="table-div">
     <div class="table-responsive">
         <table class="table table-bordered table-striped  table-dark table-hover">
             <thead>
                 <tr>
-                    <th class="text-light md font-monospace">Название</th>
-                    <th class="text-light md font-monospace">Курс</th>
-                    <th class="text-light md font-monospace">Валюта</th>
-                    <th class="text-light md font-monospace">Сумма</th>
+                    <th class="text-light md font-monospace">
+                        <div class="d-flex p-1">
+                          Название
+                        </div>
+                    </th>
+                    {% for key in data %}
+                    <th class="text-light md font-monospace arrowsdiv">
+                      <div class="d-flex ">
+                        <div class="p-1">{{ key.title }}</div>
+                        <div class="d-flex flex-column ">
+                          {% for sorter in key.sorters %}
+                          <a class="arrowstable" style="color: rgb(236, 234, 234);" href="?sort={{ sorter.0 }}">
+                            {{ sorter.1 }}
+                          </a>
+                          {% endfor %}
+                        </div>
+                      </div>
+                    </th>
+                    {% endfor %}
                 </tr>
             </thead>
             <tbody>

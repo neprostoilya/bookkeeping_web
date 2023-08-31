@@ -1,4 +1,3 @@
-import datetime
 from typing import Any
 
 from django.contrib.auth import login, logout
@@ -77,12 +76,20 @@ class UserAccountPage(ListView):
     context_object_name = 'accounts'
     template_name = 'bookkeeping/accounts.html'
 
-    def get_context_data(self):
-        context = super().get_context_data()
+    def get_queryset(self):
+        """Сортировка в таблице""" 
         accounts = UserAccount.objects.filter(
             user=self.request.user
+        ).order_by(
+            '?'
         )
-        context['accounts'] = accounts
+        sort_field = self.request.GET.get('sort')
+        if sort_field:
+            accounts = accounts.order_by(sort_field)
+        return accounts[:6]
+    
+    def get_context_data(self):
+        context = super().get_context_data()
         context['total_sum'] = get_total_sum_account(self.request)
         return context
 
@@ -138,17 +145,21 @@ class UserIncomesPage(ListView):
     context_object_name = 'incomes'
     template_name = 'bookkeeping/incomes.html'
 
-    # def get_queryset(self):
-    #   """Сортировка по месяцам""" 
-    #   pass
+    def get_queryset(self):
+        """Сортировка в таблице""" 
+        incomes = UserIncomes.objects.filter(
+            user=self.request.user
+        ).order_by(
+            '?'
+        )
+        sort_field = self.request.GET.get('sort')
+        if sort_field:
+            incomes = incomes.order_by(sort_field)
+        return incomes[:6]
 
     def get_context_data(self):
         """Вывод дополнительных элементов на главную страничку"""
         context = super().get_context_data()
-        incomes = UserIncomes.objects.filter(
-            user=self.request.user
-        )
-        context['incomes'] = incomes
         total_sum = get_total_sum_incomes(self.request)
         context['total_sum'] = total_sum
         return context
@@ -183,13 +194,21 @@ class UserExpensesPage(ListView):
     context_object_name = 'expenses'
     template_name = 'bookkeeping/expenses.html'
 
+    def get_queryset(self):
+        """Сортировка в таблице""" 
+        expenses = UserExpenses.objects.filter(
+            user=self.request.user
+        ).order_by(
+            '?'
+        )
+        sort_field = self.request.GET.get('sort')
+        if sort_field:
+            expenses = expenses.order_by(sort_field)
+        return expenses[:6] 
+    
     def get_context_data(self):
         """Вывод дополнительных элементов на главную страничку"""
         context = super().get_context_data()
-        expenses = UserExpenses.objects.filter(
-            user=self.request.user
-        )
-        context['expenses'] = expenses
         total_sum = get_total_sum_expenses(self.request)
         context['total_sum'] = total_sum
         return context

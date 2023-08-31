@@ -124,32 +124,6 @@ class CategoryAccounts(models.Model):
         verbose_name = 'Категория Счета'
         verbose_name_plural = 'Категории Счетов'
 
-class CategoryCourse(models.Model):
-    """Категории счетов по дефолту"""
-    user = models.ForeignKey(
-        User,
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-        verbose_name='Пользователь'
-    )
-    title = models.CharField(
-        max_length=150, 
-        verbose_name='Название курса'
-    )
-    course = models.FloatField
-    def __str__(self):
-        """Строковое представление"""
-        return str(self.title)
-
-    def __repr__(self):
-        """Подобие строкового представления"""
-        return f'Категория: pk={self.pk}, title={self.title}'
-
-    class Meta:
-        """Характер Класса"""
-        verbose_name = 'Категория Счета'
-        verbose_name_plural = 'Категории Счетов'
 
 class UserAccount(models.Model):
     """Счета пользователя"""
@@ -254,15 +228,6 @@ class UserExpenses(models.Model):
         verbose_name = 'Расход пользователя'
         verbose_name_plural = 'Расходы пользователя'
 
-    @property # используется для создания <<специальной>> функциональности определеным методам
-    def get_total_price(self):
-        """Для получения суммы Расходов"""
-        expenses = UserExpenses.objects.all()
-        total_price = sum(
-            [expense.sum for expense in expenses]
-        )
-        return total_price
-
 class UserIncomes(models.Model):
     """Доходы пользователя"""
     user = models.ForeignKey(
@@ -319,15 +284,6 @@ class UserIncomes(models.Model):
         verbose_name = 'Доходы пользователя'
         verbose_name_plural = 'Доходы Пользователя'
     
-    @property # используется для создания <<специальной>> функциональности определеным методам
-    def get_total_sum(self):
-        """Для получения суммы доходов"""
-        incomes = UserIncomes.objects.all()
-        total_price = sum(
-            [income.sum for income in incomes]
-        )
-        return total_price
-
 class UserTransferToAccount(models.Model):
     """Переводы пользователя с счета на счет"""
     user = models.ForeignKey(
