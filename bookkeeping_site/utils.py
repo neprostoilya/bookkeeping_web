@@ -5,17 +5,14 @@ from .models import UserAccount, UserIncomes, UserExpenses
 
 def get_total_sum_account(request):
     """Получение полной суммы всех счетов"""
-    if request.user.is_authenticated:
-        account = UserAccount.objects.filter(
-            user=request.user
-        )
-        total_sum = sum(
-            [_.get_course_sum for _ in account]
-        )
-        return total_sum
-    else:
-        messages.error(request, 'Авторизуйтесь или Зарегистрируйтесь чтобы совершать покупки!')
-        return redirect('login_registration')
+    account = UserAccount.objects.filter(
+        user=request.user
+    )
+    total_sum = sum(
+        [_.get_course_sum for _ in account]
+    )
+    total_sum = '{0:,}'.format(int(total_sum)).replace(',', ' ')
+    return total_sum
     
 def save_transfer_sum(transfer):
     """Сохранение перевода в базу данных"""
@@ -80,3 +77,4 @@ def get_total_sum_expenses(request):
     else:
         messages.error(request, 'Авторизуйтесь или Зарегистрируйтесь чтобы совершать покупки!')
         return redirect('login_registration')
+    

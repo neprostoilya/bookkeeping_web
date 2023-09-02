@@ -30,16 +30,14 @@
                 {% for account in accounts %}
                 <tr> 
                     <td>{{ account.account }}</td>
-                    <td>{{ account.course }}</td>
                     <td>{{ account.currency }}</td>
                     <td>{{ account.sum }}</td>
                 </tr>
                 {% endfor %}
                 <tr>
                     <td></td>
-                    <td></td>
                     <td><strong>Остаток:</strong></td>
-                    <td><strong>{{ total_sum }}:</strong></td>
+                    <td>{{ total_sum }}<strong>Σ</strong></td>
                 </tr>
             </tbody>
         </table>

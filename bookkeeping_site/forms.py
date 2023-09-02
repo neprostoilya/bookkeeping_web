@@ -47,41 +47,33 @@ class RegistrationForm(UserCreationForm):
 
 class AccountForm(forms.ModelForm):
     """Форма создания счета"""
-    som = forms.CharField(widget=forms.TextInput(attrs={
-        'class': 'form-control',
-        'placeholder': 'Сумма'
-    }))
     
     class Meta:
         """Поведенческий харакатер класса"""
         model = UserAccount
-        fields = ('account', 'course', 'currency')
+        fields = ('account', 'currency', 'sum')
         widgets = {
             'account': forms.Select(attrs={
                 'class': 'form-control',
                 'placeholder': 'Счет'
             }),
-            'course': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Курс'
-            }),
             'currency': forms.Select(attrs={
                 'class': 'form-control',
                 'placeholder': 'Валюта'
             }),
+            'sum': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Сумма'
+            })
         }
 
 class TransferToAccountForm(forms.ModelForm):
     """Форма создания счета"""
-    som = forms.CharField(widget=forms.TextInput(attrs={
-        'class': 'form-control',
-        'placeholder': 'Сумма'
-    }))
 
     class Meta:
         """Поведенческий харакатер класса"""
         model = UserTransferToAccount
-        fields = ('account1', 'account2', 'course')
+        fields = ('account1', 'account2', 'sum')
         widgets = {
             'account1': forms.Select(attrs={
                 'class': 'form-control',
@@ -91,11 +83,10 @@ class TransferToAccountForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': 'Зачислить на счет'
             }),
-            'course': forms.TextInput(attrs={
+            'sum': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Курс перевода',
-                'value': '1'
-            }),
+                'placeholder': 'Сумма'
+            })
         }
 
 class UserIncomesForm(forms.ModelForm):

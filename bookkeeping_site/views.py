@@ -107,8 +107,8 @@ def create_account(request):
     if form.is_valid():
         account = form.save(commit=False)
         account.user = request.user
-        account.sum = int(form.cleaned_data['som']) * account.course
         account.save()
+        messages.success(request, 'Счет успешно создан!')
         return redirect('accounts')
     else:
         messages.error(request, 'Не верное заполнение формы!')
@@ -128,9 +128,8 @@ def transfer(request):
     if form.is_valid():
         transfer = form.save(commit=False)
         transfer.user = request.user
-        transfer.sum = int(form.cleaned_data['som']) 
         save_transfer_sum(transfer)
-        transfer.save()
+        # transfer.save()
         return redirect('accounts')
     else:
         messages.error(request, 'Не верное заполнение формы!')

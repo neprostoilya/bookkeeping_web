@@ -18,7 +18,7 @@ class CategoryExpensesAdmin(admin.ModelAdmin):
 @admin.register(CategoryCurrency)
 class CategoryCurrencyAdmin(admin.ModelAdmin):
     """Категории валют"""
-    list_display = ('pk', 'user', 'title')
+    list_display = ('pk', 'user', 'title', 'course')
     list_display_links = ('title', 'pk')
 
 @admin.register(UserExpenses)
@@ -40,7 +40,7 @@ class UserIncomesAdmin(admin.ModelAdmin):
 @admin.register(UserAccount)
 class UserAccountAdmin(admin.ModelAdmin):
     """Счета пользователя"""
-    list_display = ('pk', 'user', 'account', 'course', 'currency', 'sum')
+    list_display = ('pk', 'user', 'account', 'currency', 'sum')
     list_filter = ('sum',)
     list_display_links = ('user', 'pk')
 
@@ -53,7 +53,7 @@ class CategoryAccountsAdmin(admin.ModelAdmin):
 @admin.register(UserTransferToAccount)
 class UserTransferToAccountAdmin(admin.ModelAdmin):
     """Переводы пользователей"""
-    list_display = ('pk', 'user', 'account1', 'account2', 'course', 'sum')
+    list_display = ('pk', 'user', 'account1', 'account2', 'sum')
     list_filter = ('sum',)
     list_display_links = ('user', 'pk')
 

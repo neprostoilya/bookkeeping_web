@@ -84,7 +84,11 @@ class CategoryCurrency(models.Model):
         max_length=150, 
         verbose_name='Название категории валюты'
     )
-
+    course = models.FloatField(
+        default=0,
+        null=False,
+        verbose_name='Курс'
+    )
     def __str__(self):
         """Строковое представление"""
         return self.title
@@ -124,7 +128,6 @@ class CategoryAccounts(models.Model):
         verbose_name = 'Категория Счета'
         verbose_name_plural = 'Категории Счетов'
 
-
 class UserAccount(models.Model):
     """Счета пользователя"""
     user = models.ForeignKey(
@@ -134,13 +137,10 @@ class UserAccount(models.Model):
     )
     account = models.ForeignKey(
         CategoryAccounts,
-        on_delete=models.CASCADE,
+        on_delete=models.OneToOneField,
         null=False,
+        unique=True,
         verbose_name='Cчета'
-    )
-    course = models.FloatField(
-        null=False,
-        verbose_name='Курс'
     )
     currency = models.ForeignKey(
         CategoryCurrency,
@@ -158,7 +158,7 @@ class UserAccount(models.Model):
     
     def __repr__(self):
         """Подобие строкового представления"""
-        return f'Счет: pk={self.pk}, account={self.account}, currency={self.currency}, sum={self.sum}'
+        return f'Счет: pk={self.pk}, account={self.account}, course={self.currency.course}, currency={self.currency}, sum={self.sum}'
 
     class Meta:
         """Характер Класса"""
@@ -169,7 +169,7 @@ class UserAccount(models.Model):
     def get_course_sum(self):
         """Получение полной суммы счета с учетом курса валют"""
         sum = self.sum
-        course = self.course
+        course = self.currency.course
         return course*sum
     
 class UserExpenses(models.Model):
@@ -304,10 +304,6 @@ class UserTransferToAccount(models.Model):
         related_name='account2',
         null=False,
         verbose_name='На счет счета'
-    )
-    course = models.FloatField(
-        null=False,
-        verbose_name='Курс'
     )
     sum = models.IntegerField(
         verbose_name='Сумма'

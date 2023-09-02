@@ -30,14 +30,6 @@ def get_sorted_table_accounts():
     """Сортировка по курсу и цене"""
     sorters = [
         {
-            'title': 'Курс',
-            'sorters': [
-                ('course', '▲'),
-                ('-course', '▼'),
-
-            ]
-        },
-        {
             'title': 'Валюта',
             'sorters': [
                 ('currency', '▲'),
