@@ -129,7 +129,7 @@ def transfer(request):
         transfer = form.save(commit=False)
         transfer.user = request.user
         save_transfer_sum(transfer)
-        # transfer.save()
+        transfer.save()
         return redirect('accounts')
     else:
         messages.error(request, 'Не верное заполнение формы!')
@@ -179,6 +179,7 @@ def add_income(request):
         incomes.user = request.user
         save_income_sum(incomes)
         incomes.save()
+        messages.success(request, 'Доход успешно добавлен!')
         return redirect('incomes')
     else:
         messages.error(request, 'Не верное заполнение формы!')
@@ -228,6 +229,7 @@ def add_expense(request):
         expenses.user = request.user
         save_expenses_sum(expenses)
         expenses.save()
+        messages.success(request, 'Расход успешно добавлен!')
         return redirect('expenses')
     else:
         messages.error(request, 'Не верное заполнение формы!')

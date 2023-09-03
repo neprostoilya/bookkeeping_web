@@ -3,6 +3,10 @@ from django.shortcuts import redirect
 
 from .models import UserAccount, UserIncomes, UserExpenses
 
+def decimal(total_sum):
+    """Функция которая возвращает сумму с пробелами"""
+    return '{0:,}'.format(int(total_sum)).replace(',', ' ')    
+
 def get_total_sum_account(request):
     """Получение полной суммы всех счетов"""
     account = UserAccount.objects.filter(
@@ -26,7 +30,8 @@ def save_transfer_sum(transfer):
             pk = transfer.account2.pk
         )
         account_1.sum = account_1.sum - transfer.sum
-        account_2.sum = account_2.sum + transfer.sum
+        transfer_sum2 = int((transfer.sum * transfer.account1.currency.course) / transfer.account2.currency.course)
+        account_2.sum = account_2.sum + transfer_sum2
         account_1.save()
         account_2.save()
     else:
@@ -38,7 +43,8 @@ def save_income_sum(incomes):
         user = incomes.user,
         pk = incomes.account.pk
     )
-    account.sum = account.sum + incomes.sum
+    account_sum = int((incomes.sum * incomes.currency.course) / incomes.account.currency.course)
+    account.sum = account.sum + account_sum
     account.save()
 
 def get_total_sum_incomes(request):
@@ -48,9 +54,9 @@ def get_total_sum_incomes(request):
             user=request.user
         )
         total_sum = sum(
-            [_.sum for _ in incomes]
+            [_.get_total_sum_income for _ in incomes]
         )
-        return total_sum
+        return decimal(total_sum)  
     else:
         messages.error(request, 'Авторизуйтесь или Зарегистрируйтесь чтобы совершать покупки!')
         return redirect('login_registration')
@@ -61,7 +67,8 @@ def save_expenses_sum(expenses):
         user = expenses.user,
         pk = expenses.account.pk
     )
-    account.sum = account.sum - expenses.sum
+    account_sum = int((expenses.sum * expenses.currency.course) / expenses.account.currency.course)
+    account.sum = account.sum - account_sum
     account.save()
 
 def get_total_sum_expenses(request):
@@ -71,9 +78,9 @@ def get_total_sum_expenses(request):
             user=request.user
         )
         total_sum = sum(
-            [_.sum for _ in expenses]
+            [_.get_total_sum_expenses for _ in expenses]
         )
-        return total_sum
+        return decimal(total_sum)  
     else:
         messages.error(request, 'Авторизуйтесь или Зарегистрируйтесь чтобы совершать покупки!')
         return redirect('login_registration')

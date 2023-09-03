@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import CategoryExpenses, CategoryIncome, CategoryCurrency, \
+from .models import CategoryExpenses, CategoryIncome, CategoryCurrency, UserDebt,  \
                     UserExpenses, UserIncomes, UserAccount, CategoryAccounts, UserTransferToAccount
 
 @admin.register(CategoryIncome)
@@ -56,5 +56,12 @@ class UserTransferToAccountAdmin(admin.ModelAdmin):
     list_display = ('pk', 'user', 'account1', 'account2', 'sum')
     list_filter = ('sum',)
     list_display_links = ('user', 'pk')
+
+@admin.register(UserDebt)
+class UserDebtAdmin(admin.ModelAdmin):
+    """Долги пользователей"""
+    list_display = ('pk', 'user', 'name', 'data_1', 'data_2', 'account', 'comment', 'currency', 'sum')
+    list_filter = ('sum', 'data_1', 'data_2')
+    list_display_links = ('user', 'pk', 'name')
 
 
