@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
         
 from .models import UserAccount, UserTransferToAccount, User, UserIncomes, \
-    UserExpenses
+    UserExpenses, UserDebt
 
 
 class LoginForm(AuthenticationForm):
@@ -166,5 +166,47 @@ class UserExpensesForm(forms.ModelForm):
                 'id': 'date_sel',
                 'class': 'form-control',
                 'placeholder': 'Дата'
+            })        
+        }
+
+class UserDebtsForm(forms.ModelForm):
+    """Форма создания долга"""
+
+    class Meta:
+        """Поведенческий харакатер класса"""
+        model = UserDebt
+        fields = ('name', 'data_1', 'data_2', 'account', 'comment', 'currency', 'sum')
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Имя'
+            }),
+            'data_1': forms.DateInput(attrs={
+                'type': 'date',
+                'id': 'date_sel',
+                'class': 'form-control',
+                'placeholder': 'Дата выдачи'
+            }),
+            'data_2': forms.DateInput(attrs={
+                'type': 'date',
+                'id': 'date_sel2',
+                'class': 'form-control',
+                'placeholder': 'Дата возврата'
+            }),
+            'comment': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Коментарий'
+            }),
+            'account': forms.Select(attrs={
+                'class': 'form-control',
+                'placeholder': 'Счет'
+            }),
+            'currency': forms.Select(attrs={
+                'class': 'form-control',
+                'placeholder': 'Валюта'
+            }),
+            'sum': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Сумма'
             })        
         }

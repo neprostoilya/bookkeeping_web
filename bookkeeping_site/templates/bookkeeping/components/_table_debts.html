@@ -1,0 +1,107 @@
+{% load tags %}
+{% get_sorted_table as data %}
+<div class="table-div">
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped table-dark table-hover">
+        <thead>
+          <tr>
+            <th class="text-light md font-monospace">
+              <div class="d-flex p-1">
+                Имя
+              </div>
+            </th> 
+            <th class="text-light md font-monospace">
+              <div class="d-flex p-1">
+                Дата выдачи
+              </div>
+            </th> 
+            <th class="text-light md font-monospace">
+              <div class="d-flex p-1">
+                Дата возврата
+              </div>
+            </th>            
+            <th class="text-light md font-monospace">
+              <div class="d-flex p-1">
+                Счет
+              </div>
+            </th>      
+            <th class="text-light md font-monospace">
+                <div class="d-flex p-1">
+                  Валюта
+                </div>
+            </th>        
+            <th class="text-light md font-monospace">
+                <div class="d-flex p-1">
+                  Сумма
+                </div>
+            </th>        
+              <!-- {% for key in data %}
+              <th class="text-light md font-monospace arrowsdiv">
+                <div class="d-flex ">
+                  <div class="p-1">{{ key.title }}</div>
+                  <div class="d-flex flex-column ">
+                    {% for sorter in key.sorters %}
+                    <a class="arrowstable" style="color: rgb(236, 234, 234);" href="?sort={{ sorter.0 }}">
+                      {{ sorter.1 }}
+                    </a>
+                    {% endfor %}
+                  </div>
+                </div>
+              </th>
+              {% endfor %} -->
+          </tr>
+        </thead>
+        <tbody>
+          {% for debt in debts %}
+          <tr>
+            <td class="d-flex">
+              <div class="px-1">
+                {{ debt.name }}
+              </div>
+              {% if debt.comment %}
+              <div class="icon" onclick="showPopup(this)" data-comment="{{ debt.comment }}">
+                <i class="fas fa-question-circle fa-blue" style="color:rgb(101, 101, 241)"></i>
+              </div>
+              {% endif %}
+            </td>
+            <td>
+              {{ debt.data_1 }} 
+            </td>
+            <td>
+              {{ debt.data_2 }}
+            </td>
+            <td>
+              {{ debt.account }}
+            </td>
+            <td>
+              {{ debt.currency }}
+            </td>
+            <td>
+              {{ debt.sum }}
+            </td>
+            {% endfor %}
+          </tr>
+          <tr>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+              <strong>
+                Итого:
+              </strong>
+            </td>
+            <td>
+              <!-- {{ total_sum }} <strong>Σ</strong> -->
+              333
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  

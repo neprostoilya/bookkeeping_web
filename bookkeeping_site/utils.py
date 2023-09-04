@@ -1,7 +1,9 @@
+import datetime
+
 from django.contrib import messages
 from django.shortcuts import redirect
 
-from .models import UserAccount, UserIncomes, UserExpenses
+from .models import UserAccount, UserIncomes, UserExpenses, UserDebt
 
 def decimal(total_sum):
     """Функция которая возвращает сумму с пробелами"""
@@ -37,13 +39,13 @@ def save_transfer_sum(transfer):
     else:
         pass
 
-def save_income_sum(incomes):
-    """Сохранение дохода в базу данных"""
+def save_incomes_or_debts_sum(object):
+    """Сохранение дохода или возвращение долга в базу данных"""
     account = UserAccount.objects.get(
-        user = incomes.user,
-        pk = incomes.account.pk
+        user = object.user,
+        pk = object.account.pk
     )
-    account_sum = int((incomes.sum * incomes.currency.course) / incomes.account.currency.course)
+    account_sum = int((object.sum * object.currency.course) / object.account.currency.course)
     account.sum = account.sum + account_sum
     account.save()
 
@@ -61,14 +63,14 @@ def get_total_sum_incomes(request):
         messages.error(request, 'Авторизуйтесь или Зарегистрируйтесь чтобы совершать покупки!')
         return redirect('login_registration')
     
-def save_expenses_sum(expenses):
-    """Сохранение расхода в базу данных"""
+def save_expenses_or_debts_sum(object):
+    """Сохранение расхода или возвращение долга в базу данных"""
     account = UserAccount.objects.get(
-        user = expenses.user,
-        pk = expenses.account.pk
+        user = object.user,
+        pk = object.account.pk
     )
-    account_sum = int((expenses.sum * expenses.currency.course) / expenses.account.currency.course)
-    account.sum = account.sum - account_sum
+    account_sum = int((object.sum * object.currency.course) / object.account.currency.course)
+    account.sum = account.sum + account_sum
     account.save()
 
 def get_total_sum_expenses(request):
@@ -84,4 +86,4 @@ def get_total_sum_expenses(request):
     else:
         messages.error(request, 'Авторизуйтесь или Зарегистрируйтесь чтобы совершать покупки!')
         return redirect('login_registration')
-    
+

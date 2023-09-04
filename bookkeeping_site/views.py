@@ -7,10 +7,10 @@ from django.views.generic import ListView
 from django.shortcuts import render, redirect
 
 from .forms import LoginForm, RegistrationForm, AccountForm, TransferToAccountForm,  \
-        UserIncomesForm, UserExpensesForm
-from .models import UserAccount, UserIncomes, UserExpenses
-from .utils import get_total_sum_account, save_transfer_sum, save_income_sum, save_expenses_sum, \
-        get_total_sum_incomes, get_total_sum_expenses
+        UserIncomesForm, UserExpensesForm, UserDebtsForm
+from .models import UserAccount, UserIncomes, UserExpenses, UserDebt
+from .utils import get_total_sum_account, save_transfer_sum, save_incomes_or_debts_sum,  \
+        get_total_sum_incomes, get_total_sum_expenses, save_expenses_or_debts_sum
 
 class Page(ListView):
     """Главная страница"""
@@ -177,7 +177,7 @@ def add_income(request):
     if form.is_valid():
         incomes = form.save(commit=False)
         incomes.user = request.user
-        save_income_sum(incomes)
+        save_incomes_or_debts_sum(incomes)
         incomes.save()
         messages.success(request, 'Доход успешно добавлен!')
         return redirect('incomes')
@@ -227,7 +227,7 @@ def add_expense(request):
     if form.is_valid():
         expenses = form.save(commit=False)
         expenses.user = request.user
-        save_expenses_sum(expenses)
+        save_expenses_or_debts_sum(expenses)
         expenses.save()
         messages.success(request, 'Расход успешно добавлен!')
         return redirect('expenses')
@@ -235,6 +235,52 @@ def add_expense(request):
         messages.error(request, 'Не верное заполнение формы!')
         return redirect('expenses')
     
+class UserDebtsPage(ListView):
+    """Страничка Долгов пользователя"""
+    extra_context = {
+        'title': 'Долги',
+    }
+    model = UserDebt
+    context_object_name = 'debts'
+    template_name = 'bookkeeping/debts.html'
 
+    # def get_queryset(self):
+    #     """Сортировка в таблице""" 
+    #     expenses = UserExpenses.objects.filter(
+    #         user=self.request.user
+    #     ).order_by(
+    #         '?'
+    #     )
+    #     sort_field = self.request.GET.get('sort')
+    #     if sort_field:
+    #         expenses = expenses.order_by(sort_field)
+    #     return expenses[:6] 
+    
+    # def get_context_data(self):
+    #     """Вывод дополнительных элементов на главную страничку"""
+    #     context = super().get_context_data()
+    #     total_sum = get_total_sum_expenses(self.request)
+    #     context['total_sum'] = total_sum
+    #     return context
 
-       
+def add_debts_page(request):
+    """Страничка создания долга"""
+    context = {
+        'title': 'Добавление долга',
+        'debts_form': UserDebtsForm(),
+    }
+    return render(request, 'bookkeeping/add_debts.html', context)
+
+def add_debt(request):
+    """Добавление долга"""
+    form = UserDebtsForm(data=request.POST)
+    if form.is_valid():
+        debts = form.save(commit=False)
+        debts.user = request.user
+        save_incomes_or_debts_sum(debts)
+        debts.save()
+        messages.success(request, 'Расход успешно добавлен!')
+        return redirect('debts')
+    else:
+        messages.error(request, 'Не верное заполнение формы!')
+        return redirect('debts')

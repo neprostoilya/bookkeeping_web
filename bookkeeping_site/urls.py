@@ -19,4 +19,7 @@ urlpatterns = [
     path('expenses/', UserExpensesPage.as_view(), name='expenses'),
     path('expenses/add_expenses/', add_expenses_page, name='add_expenses'),
     path('expenses/add_expense', add_expense, name='add_expense'),
+    path('debts/', UserDebtsPage.as_view(), name='debts'),    
+    path('debts/add_debts/', add_debts_page, name='add_debts'),    
+    path('debts/add_debt', add_debt, name='add_debt'), 
 ]

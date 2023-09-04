@@ -357,7 +357,6 @@ class UserDebt(models.Model):
     account = models.ForeignKey(
         UserAccount,
         on_delete=models.CASCADE,
-        default='[Зачислить на счет]',
         verbose_name='Счет'
     )
     comment = models.CharField(
@@ -386,4 +385,4 @@ class UserDebt(models.Model):
     class Meta:
         """Характер Класса"""
         verbose_name = 'Долги Пользователя'
-        verbose_name_plural = 'Долг Пользователя'
+        verbose_name_plural = 'Долги Пользователя'
