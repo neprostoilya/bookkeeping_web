@@ -336,6 +336,57 @@ class UserTransferToAccount(models.Model):
         verbose_name = 'Перевод Пользователя'
         verbose_name_plural = 'Перевод Пользователя'
     
+class UserOweDebt(models.Model):
+    """Долги y пользователя"""
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Пользователь'
+    )
+    name = models.CharField(
+        null=False,
+        max_length=100,
+        verbose_name='Имя'
+    )
+    data_1 = models.DateField(
+        verbose_name='С даты'
+    )
+    data_2 = models.DateField(
+        verbose_name='До даты'
+    )
+    account = models.ForeignKey(
+        UserAccount,
+        on_delete=models.CASCADE,
+        verbose_name='Счет'
+    )
+    comment = models.CharField(
+        max_length=150,
+        null=True,
+        blank=True
+    )
+    currency = models.ForeignKey(
+        CategoryCurrency,
+        on_delete=models.CASCADE,
+        verbose_name='Валюта'
+    )
+    sum = models.IntegerField(
+        verbose_name='Сумма'
+    )
+
+    def __str__(self):
+        """Строковое представление"""
+        return self.user.username
+    
+    def __repr__(self):
+        """Подобие строкового представления"""
+        return f'Переводы: pk={self.pk}, data_1={self.data_1}, data_2={self.data_2},    \
+                account={self.account}, currency={self}, comment={self.comment}, sum={self.sum}'
+
+    class Meta:
+        """Характер Класса"""
+        verbose_name = 'Долги у Пользователя'
+        verbose_name_plural = 'Долги у Пользователя'
+
 class UserDebt(models.Model):
     """Долги пользователя"""
     user = models.ForeignKey(

@@ -70,7 +70,7 @@ def save_expenses_or_debts_sum(object):
         pk = object.account.pk
     )
     account_sum = int((object.sum * object.currency.course) / object.account.currency.course)
-    account.sum = account.sum + account_sum
+    account.sum = account.sum - account_sum
     account.save()
 
 def get_total_sum_expenses(request):

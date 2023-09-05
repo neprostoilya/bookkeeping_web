@@ -26,12 +26,30 @@
     <aside class="main-sidebar elevation-4 sidebar-dark-primary">
       <div class="sidebar">
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-          <div class="image">
-            <i class="fas fa-inverse user-profile fa-user-circle"></i>
-          </div>
-          <div class="info">
-            <a href="#!" class="d-block">{{ request.user.username }}</a>
-          </div>
+            {% if not request.user.is_authenticated %}
+            <div class="info">
+              <div class="d-flex"> 
+                <a href="{% url 'login_authentication' %}" class="font-monospace">Войти</a>
+                &ensp;
+                <a>/</a>
+                &ensp;
+                <a href="{% url 'login_registration' %}" class="font-monospace">Зарегистрироваться</a>
+              </div>
+            </div>
+            {% else %}
+            <div class="image">
+              <i class="fas fa-inverse user-profile fa-user-circle"></i>
+            </div>
+            <div class="info">
+              <div class="d-flex flex-column p-1">
+                  <a href="#!" class="d-block fs-3">{{ request.user.username }}</a>
+              </div>
+              <a href="{% url 'logout' %}" class="fs-4">
+                  <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                  Выйти
+              </a>    
+            </div>
+            {% endif %}
         </div>
         <nav class="mt-2">
           <ul class="nav nav-pills nav-sidebar flex-column " data-widget="treeview" role="menu" data-collapsible="false">
@@ -54,10 +72,18 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="#!" class="nav-link">
+              <a href="#submenu3" data-bs-toggle="collapse" class="nav-link px-10 align-middle">
                 <i class="nav-icon fa-solid fa-money-bill"></i>
                 <p>Долги</p>
               </a>
+              <ul class="nav-link collapse nav flex-column ms-1" id="submenu3" data-bs-parent="#menu">
+                  <li class="w-100">
+                      <a href="{% url 'owe_debts' %}" class="nav-link px-0"> <span class="d-none d-sm-inline">Мои Долги</span></a>
+                  </li>
+                  <li>
+                      <a href="{% url 'debts' %}" class="nav-link px-0"> <span class="d-none d-sm-inline">Мне Должны</span></a>
+                  </li>
+              </ul>
             </li>
             <li class="nav-item">
               <a href="{% url 'accounts' %}" class="nav-link">
@@ -85,6 +111,7 @@
     <script src="https://kit.fontawesome.com/cb75f5bd43.js" crossorigin="anonymous"></script>
     <!-- AdminLTE App -->
     <script src="/static/vendor/adminlte/js/adminlte.min.js"></script>
+    
 
 </body>
 
