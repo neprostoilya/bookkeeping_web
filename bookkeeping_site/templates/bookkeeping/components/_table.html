@@ -24,6 +24,9 @@
                       </div>
                     </th>
                     {% endfor %}
+                    <th style="width:5%" class="text-light font-monospace text-center">
+                        Ω
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -32,13 +35,23 @@
                     <td>{{ account.account }}</td>
                     <td>{{ account.currency }}</td>
                     <td>{{ account.sum }}</td>
+                    <td>
+                      <div class="d-flex">
+                        <a href="{% url 'update_account' account.pk %}"><i class="fa-solid fa-pen p-1" style="color: #e1a35b;"></i></a>
+                        <a href="{% url 'delete_account' account.pk %}"><i class="fa-solid fa-xmark fa-lg p-1" style="color: #ff0000;"></i></a>
+                      </div>
+                    </td>
                 </tr>
                 {% endfor %}
                 <tr>
                     <td></td>
                     <td><strong>Остаток:</strong></td>
                     <td>{{ total_sum }} <strong>Σ</strong></td>
+                    <td>
+                      ->
+                    </td>
                 </tr>
+                
             </tbody>
         </table>
     </div>

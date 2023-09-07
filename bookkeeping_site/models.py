@@ -154,6 +154,7 @@ class UserAccount(models.Model):
     )
 
     def get_absolute_url(self): 
+        """Ссылка на страницу"""
         return reverse('update_account', args=[str(self.id)])
 
     def __str__(self):
@@ -205,7 +206,8 @@ class UserExpenses(models.Model):
     comment = models.CharField(
         max_length=150,
         null=True,
-        blank=True
+        blank=True,
+        verbose_name='Коментарий'
     )
     currency = models.ForeignKey(
         CategoryCurrency,
@@ -268,7 +270,8 @@ class UserIncomes(models.Model):
     comment = models.CharField(
         max_length=150,
         null=True,
-        blank=True
+        blank=True,
+        verbose_name='Коментарий'
     )
     currency = models.ForeignKey(
         CategoryCurrency,
@@ -366,7 +369,8 @@ class UserOweDebt(models.Model):
     comment = models.CharField(
         max_length=150,
         null=True,
-        blank=True
+        blank=True,
+        verbose_name='Коментарий'
     )
     currency = models.ForeignKey(
         CategoryCurrency,

@@ -2,7 +2,8 @@ from typing import Any
 
 from django.contrib.auth import login, logout
 from django.contrib import messages
-from django.views.generic import ListView, UpdateView
+from django.urls import reverse_lazy
+from django.views.generic import ListView, UpdateView, DeleteView
 from django.shortcuts import render, redirect
 
 from .forms import LoginForm, RegistrationForm, AccountForm, TransferToAccountForm,  \
@@ -92,12 +93,20 @@ class UserAccountPage(ListView):
         context['total_sum'] = get_total_sum_account(self.request)
         return context
 
-class AccountUpdate(UpdateView):
+class UserAccountUpdate(UpdateView):
     """Редактирование счета"""
     model = UserAccount
     form_class = AccountForm
     template_name = 'bookkeeping/create_account.html'
-    
+    success_url = '/accounts'
+
+class UserAccountDelete(DeleteView):
+    """Удаление счета"""
+    model = UserAccount
+    success_url = reverse_lazy('accounts')
+    template_name = 'bookkeeping/useraccount_confirm_delete.html'
+    context_object_name = 'accounts'
+
 def create_account_page(request):
     """Страница создания счета"""
     context = {
@@ -168,6 +177,20 @@ class UserIncomesPage(ListView):
         total_sum = get_total_sum_incomes(self.request)
         context['total_sum'] = total_sum
         return context
+
+# class UserIncomesUpdate(UpdateView):
+#     """Редактирование дохода"""
+#     model = UserIncomes
+#     form_class = UserIncomesForm
+#     template_name = 'bookkeeping/create_account.html'
+#     success_url = '/accounts'
+
+# class UserIncomesDelete(DeleteView):
+#     """Удаление дохода"""
+#     model = UserIncomes
+#     success_url = reverse_lazy('accounts')
+#     template_name = 'bookkeeping/useraccount_confirm_delete.html'
+#     context_object_name = 'accounts'
 
 def add_income_page(request):
     """Страничка добавления дохода"""
