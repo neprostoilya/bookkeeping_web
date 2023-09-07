@@ -13,6 +13,7 @@ urlpatterns = [
     path('accounts/create_account', create_account, name='create_account'),
     path('accounts/transfer_to_account/', transfer_to_account_page, name='transfer_to_account'),
     path('accounts/transfer', transfer, name='transfer'),
+    path('accounts/update/<int:pk>/', AccountUpdate.as_view(), name='update_account'),
     path('incomes/', UserIncomesPage.as_view(), name='incomes'),
     path('incomes/add_incomes/', add_income_page, name='add_incomes'),
     path('incomes/add_income', add_income, name='add_income'),

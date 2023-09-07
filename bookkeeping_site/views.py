@@ -2,8 +2,7 @@ from typing import Any
 
 from django.contrib.auth import login, logout
 from django.contrib import messages
-from django.db.models.query import QuerySet
-from django.views.generic import ListView
+from django.views.generic import ListView, UpdateView
 from django.shortcuts import render, redirect
 
 from .forms import LoginForm, RegistrationForm, AccountForm, TransferToAccountForm,  \
@@ -93,11 +92,17 @@ class UserAccountPage(ListView):
         context['total_sum'] = get_total_sum_account(self.request)
         return context
 
+class AccountUpdate(UpdateView):
+    """Редактирование счета"""
+    model = UserAccount
+    form_class = AccountForm
+    template_name = 'bookkeeping/create_account.html'
+    
 def create_account_page(request):
     """Страница создания счета"""
     context = {
         'title': 'Создание счета',
-        'account_form': AccountForm(),
+        'form': AccountForm(),
     }
     return render(request, 'bookkeeping/create_account.html', context)
 
@@ -118,7 +123,7 @@ def transfer_to_account_page(request):
     """Страничка перевода с счета на счет"""
     context = {
         'title': 'Перевести на счет',
-        'transfer_form': TransferToAccountForm(),
+        'form': TransferToAccountForm(),
     }
     return render(request, 'bookkeeping/transfer_to_account.html', context)
 
@@ -134,6 +139,7 @@ def transfer(request):
     else:
         messages.error(request, 'Не верное заполнение формы!')
         return redirect('accounts')
+
 
 class UserIncomesPage(ListView):
     """Страничка доходов пользователя"""
@@ -167,7 +173,7 @@ def add_income_page(request):
     """Страничка добавления дохода"""
     context = {
         'title': 'Добавление дохода',
-        'income_form': UserIncomesForm(),
+        'form': UserIncomesForm(),
     }
     return render(request, 'bookkeeping/add_income.html', context)
 
@@ -217,7 +223,7 @@ def add_expenses_page(request):
     """Страничка добавления расхода"""
     context = {
         'title': 'Добавление расхода',
-        'expenses_form': UserExpensesForm(),
+        'form': UserExpensesForm(),
     }
     return render(request, 'bookkeeping/add_expenses.html', context)
 
@@ -248,7 +254,7 @@ def add_owe_debts_page(request):
     """Страничка создания долга"""
     context = {
         'title': 'Добавление долга',
-        'debts_form': UserOweDebtsForm(),
+        'form': UserOweDebtsForm(),
     }
     return render(request, 'bookkeeping/add_owe_debts.html', context)
 
@@ -279,7 +285,7 @@ def add_debts_page(request):
     """Страничка создания долга"""
     context = {
         'title': 'Добавление долга',
-        'debts_form': UserOweDebtsForm(),
+        'form': UserOweDebtsForm(),
     }
     return render(request, 'bookkeeping/add_debts.html', context)
 
