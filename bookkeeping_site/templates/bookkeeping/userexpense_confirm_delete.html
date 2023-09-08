@@ -11,9 +11,9 @@
     <div class="d-flex justify-content-center">
         <form action="" method="post">
             {% csrf_token %}
-            <p>Вы действительно хотите удалить счет с названием: <strong>{{ accounts.account.title }}</strong>?</p>
+            <p>Вы действительно хотите удалить расход?</p>
             <input type="submit" value="Да, удалить" class="btn btn-danger">
-            <a href="{% url 'accounts' %}" class="btn btn-dark">Назад</a>
+            <a href="{% url 'expenses' %}" class="btn btn-dark">Назад</a>
         </form>
     </div>
 

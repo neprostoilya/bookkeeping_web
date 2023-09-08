@@ -221,6 +221,10 @@ class UserExpenses(models.Model):
         verbose_name='Дата'
     )
 
+    def get_absolute_url(self): 
+        """Ссылка на страницу"""
+        return reverse('update_expense', args=[str(self.id)])
+
     def __str__(self):
         """Строковое представление"""
         return self.user.username
@@ -284,6 +288,10 @@ class UserIncomes(models.Model):
     created_at = models.DateField(
         verbose_name='Дата'
     )
+
+    def get_absolute_url(self): 
+        """Ссылка на страницу"""
+        return reverse('update_income', args=[str(self.id)])
 
     def __str__(self):
         """Строковое представление"""

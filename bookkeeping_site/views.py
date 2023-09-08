@@ -95,13 +95,19 @@ class UserAccountPage(ListView):
 
 class UserAccountUpdate(UpdateView):
     """Редактирование счета"""
+    extra_context = {
+        'title': 'Изменения счета'
+    }
     model = UserAccount
     form_class = AccountForm
-    template_name = 'bookkeeping/create_account.html'
-    success_url = '/accounts'
+    template_name = 'bookkeeping/update_accounts.html'
+    success_url = reverse_lazy('accounts')
 
 class UserAccountDelete(DeleteView):
     """Удаление счета"""
+    extra_context = {
+        'title': 'Удаление счета'
+    }
     model = UserAccount
     success_url = reverse_lazy('accounts')
     template_name = 'bookkeeping/useraccount_confirm_delete.html'
@@ -149,7 +155,6 @@ def transfer(request):
         messages.error(request, 'Не верное заполнение формы!')
         return redirect('accounts')
 
-
 class UserIncomesPage(ListView):
     """Страничка доходов пользователя"""
     extra_context = {
@@ -178,19 +183,25 @@ class UserIncomesPage(ListView):
         context['total_sum'] = total_sum
         return context
 
-# class UserIncomesUpdate(UpdateView):
-#     """Редактирование дохода"""
-#     model = UserIncomes
-#     form_class = UserIncomesForm
-#     template_name = 'bookkeeping/create_account.html'
-#     success_url = '/accounts'
+class UserIncomesUpdate(UpdateView):
+    """Редактирование дохода"""
+    extra_context = {
+        'title': 'Изменение дохода'
+    }
+    model = UserIncomes
+    form_class = UserIncomesForm
+    template_name = 'bookkeeping/update_incomes.html'
+    success_url = reverse_lazy('incomes')
 
-# class UserIncomesDelete(DeleteView):
-#     """Удаление дохода"""
-#     model = UserIncomes
-#     success_url = reverse_lazy('accounts')
-#     template_name = 'bookkeeping/useraccount_confirm_delete.html'
-#     context_object_name = 'accounts'
+class UserIncomesDelete(DeleteView):
+    """Удаление дохода"""
+    extra_context = {
+        'title': 'Удаление дохода'
+    }
+    model = UserIncomes
+    success_url = reverse_lazy('incomes')
+    template_name = 'bookkeeping/userincome_confirm_delete.html'
+    context_object_name = 'incomes'
 
 def add_income_page(request):
     """Страничка добавления дохода"""
@@ -198,7 +209,7 @@ def add_income_page(request):
         'title': 'Добавление дохода',
         'form': UserIncomesForm(),
     }
-    return render(request, 'bookkeeping/add_income.html', context)
+    return render(request, 'bookkeeping/add_incomes.html', context)
 
 def add_income(request):
     """Добавление"""
@@ -242,6 +253,26 @@ class UserExpensesPage(ListView):
         context['total_sum'] = total_sum
         return context
     
+class UserExpensesUpdate(UpdateView):
+    """Редактирование расхода"""
+    extra_context = {
+        'title': 'Изменение расхода'
+    }
+    model = UserExpenses
+    form_class = UserExpensesForm
+    template_name = 'bookkeeping/update_expenses.html'
+    success_url = reverse_lazy('expenses')
+
+class UserExpensesDelete(DeleteView):
+    """Удаление дохода"""
+    extra_context = {
+        'title': 'Удаление расхода'
+    }
+    model = UserExpenses
+    success_url = reverse_lazy('expenses')
+    template_name = 'bookkeeping/userexpense_confirm_delete.html'
+    context_object_name = 'expenses'
+
 def add_expenses_page(request):
     """Страничка добавления расхода"""
     context = {
