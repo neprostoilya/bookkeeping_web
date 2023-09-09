@@ -337,7 +337,7 @@ class UserTransferToAccount(models.Model):
     sum = models.IntegerField(
         verbose_name='Сумма'
     )
-
+    
     def __str__(self):
         """Строковое представление"""
         return self.user.username
@@ -389,13 +389,17 @@ class UserOweDebt(models.Model):
         verbose_name='Сумма'
     )
 
+    def get_absolute_url(self): 
+        """Ссылка на страницу"""
+        return reverse('update_owe_debt', args=[str(self.id)])
+
     def __str__(self):
         """Строковое представление"""
         return self.user.username
     
     def __repr__(self):
         """Подобие строкового представления"""
-        return f'Переводы: pk={self.pk}, data_1={self.data_1}, data_2={self.data_2},    \
+        return f'Долги: pk={self.pk}, data_1={self.data_1}, data_2={self.data_2},    \
                 account={self.account}, currency={self}, comment={self.comment}, sum={self.sum}'
 
     class Meta:
@@ -403,6 +407,13 @@ class UserOweDebt(models.Model):
         verbose_name = 'Долги у Пользователя'
         verbose_name_plural = 'Долги у Пользователя'
 
+    @property
+    def get_total_sum_owe_debt(self):
+        """Получение полной суммы долга"""
+        sum = self.sum
+        currency = self.currency.course
+        return sum * currency
+    
 class UserDebt(models.Model):
     """Долги пользователя"""
     user = models.ForeignKey(
@@ -440,16 +451,27 @@ class UserDebt(models.Model):
         verbose_name='Сумма'
     )
 
+    def get_absolute_url(self): 
+        """Ссылка на страницу"""
+        return reverse('update_debt', args=[str(self.id)])
+
     def __str__(self):
         """Строковое представление"""
         return self.user.username
     
     def __repr__(self):
         """Подобие строкового представления"""
-        return f'Переводы: pk={self.pk}, data_1={self.data_1}, data_2={self.data_2},    \
+        return f'Долги: pk={self.pk}, data_1={self.data_1}, data_2={self.data_2},    \
                 account={self.account}, currency={self}, comment={self.comment}, sum={self.sum}'
 
     class Meta:
         """Характер Класса"""
         verbose_name = 'Долги Пользователя'
         verbose_name_plural = 'Долги Пользователя'
+
+    @property
+    def get_total_sum_debt(self):
+        """Получение полной суммы долга"""
+        sum = self.sum
+        currency = self.currency.course
+        return sum * currency

@@ -3,7 +3,7 @@ import datetime
 from django.contrib import messages
 from django.shortcuts import redirect
 
-from .models import UserAccount, UserIncomes, UserExpenses, UserDebt
+from .models import UserAccount, UserIncomes, UserExpenses, UserDebt, UserOweDebt
 
 def decimal(total_sum):
     """Функция которая возвращает сумму с пробелами"""
@@ -60,7 +60,7 @@ def get_total_sum_incomes(request):
         )
         return decimal(total_sum)  
     else:
-        messages.error(request, 'Авторизуйтесь или Зарегистрируйтесь чтобы совершать покупки!')
+        messages.error(request, 'Авторизуйтесь или Зарегистрируйтесь!')
         return redirect('login_registration')
     
 def save_expenses_or_debts_sum(object):
@@ -84,6 +84,34 @@ def get_total_sum_expenses(request):
         )
         return decimal(total_sum)  
     else:
-        messages.error(request, 'Авторизуйтесь или Зарегистрируйтесь чтобы совершать покупки!')
+        messages.error(request, 'Авторизуйтесь или Зарегистрируйтесь!')
         return redirect('login_registration')
 
+def get_total_sum_debt(request):
+    """Получение полной суммы долгов"""
+    if request.user.is_authenticated:
+        debts = UserDebt.objects.filter(
+            user=request.user
+        )
+        total_sum = sum(
+            [_.get_total_sum_debt for _ in debts]
+        )
+        return decimal(total_sum)  
+    else:
+        messages.error(request, 'Авторизуйтесь или Зарегистрируйтесь!')
+        return redirect('login_registration')
+
+def get_total_sum_owe_debt(request):
+    """Получение полной суммы долгов"""
+    if request.user.is_authenticated:
+        debts = UserOweDebt.objects.filter(
+            user=request.user
+        )
+        total_sum = sum(
+            [_.get_total_sum_owe_debt for _ in debts]
+        )
+        return decimal(total_sum)  
+    else:
+        messages.error(request, 'Авторизуйтесь или Зарегистрируйтесь!')
+        return redirect('login_registration')
+    

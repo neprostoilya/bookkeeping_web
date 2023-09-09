@@ -1,5 +1,5 @@
 {% load tags %}
-{% get_sorted_table as data %}
+{% get_sorted_table_debts as data %}
 <div class="table-div">
     <div class="table-responsive">
       <table class="table table-bordered table-striped table-dark table-hover">
@@ -10,32 +10,7 @@
                 Имя
               </div>
             </th> 
-            <th class="text-light md font-monospace">
-              <div class="d-flex p-1">
-                Дата выдачи
-              </div>
-            </th> 
-            <th class="text-light md font-monospace">
-              <div class="d-flex p-1">
-                Дата возврата
-              </div>
-            </th>            
-            <th class="text-light md font-monospace">
-              <div class="d-flex p-1">
-                Счет
-              </div>
-            </th>      
-            <th class="text-light md font-monospace">
-                <div class="d-flex p-1">
-                  Валюта
-                </div>
-            </th>        
-            <th class="text-light md font-monospace">
-                <div class="d-flex p-1">
-                  Сумма
-                </div>
-            </th>        
-              <!-- {% for key in data %}
+              {% for key in data %}
               <th class="text-light md font-monospace arrowsdiv">
                 <div class="d-flex ">
                   <div class="p-1">{{ key.title }}</div>
@@ -48,7 +23,10 @@
                   </div>
                 </div>
               </th>
-              {% endfor %} -->
+              {% endfor %}
+            <th style="width:5%" class="text-light font-monospace text-center">
+              Ω
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -79,6 +57,12 @@
             <td>
               {{ debt.sum }}
             </td>
+            <td>
+              <div class="d-flex">
+                <a href="{% url 'update_owe_debt' debt.pk %}"><i class="fa-solid fa-pen p-1" style="color: #e1a35b;"></i></a>
+                <a href="{% url 'delete_owe_debt' debt.pk %}"><i class="fa-solid fa-xmark fa-lg p-1" style="color: #ff0000;"></i></a>
+              </div>
+            </td>
             {% endfor %}
           </tr>
           <tr>
@@ -96,8 +80,10 @@
               </strong>
             </td>
             <td>
-              <!-- {{ total_sum }} <strong>Σ</strong> -->
-              333
+              {{ total_sum }} <strong>Σ</strong>
+            </td>
+            <td>
+            ->
             </td>
           </tr>
         </tbody>

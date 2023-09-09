@@ -16,6 +16,21 @@ def get_sorted_table():
             ]
         },
         {
+            'title': 'Счет',
+            'sorters': [
+                ('account', '▲'),
+                ('-account', '▼'),
+            ]
+        },
+        {
+            'title': 'Валюта',
+            'sorters': [
+                ('currency', '▲'),
+                ('-currency', '▼'),
+
+            ]
+        },
+        {
             'title': 'Сумма',
             'sorters': [
                 ('sum', '▲'),
@@ -29,6 +44,51 @@ def get_sorted_table():
 def get_sorted_table_accounts():
     """Сортировка по курсу и цене"""
     sorters = [
+        {
+            'title': 'Валюта',
+            'sorters': [
+                ('currency', '▲'),
+                ('-currency', '▼'),
+
+            ]
+        },
+        {
+            'title': 'Сумма',
+            'sorters': [
+                ('sum', '▲'),
+                ('-sum', '▼'),
+            ]
+        }
+    ]
+    return sorters
+
+@register.simple_tag()
+def get_sorted_table_debts():
+    """Сортировка таблицы долгов"""
+    sorters = [
+        {
+            'title': 'Дата выдачи',
+            'sorters': [
+                ('data_1', '▲'),
+                ('-data_1', '▼'),
+
+            ]
+        },
+        {
+            'title': 'Дата возврата',
+            'sorters': [
+                ('data_2', '▲'),
+                ('-data_2', '▼'),
+
+            ]
+        },
+        {
+            'title': 'Счет',
+            'sorters': [
+                ('account', '▲'),
+                ('-account', '▼'),
+            ]
+        },
         {
             'title': 'Валюта',
             'sorters': [

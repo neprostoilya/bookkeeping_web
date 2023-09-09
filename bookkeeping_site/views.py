@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Dict
 
 from django.contrib.auth import login, logout
 from django.contrib import messages
@@ -9,7 +9,7 @@ from django.shortcuts import render, redirect
 from .forms import LoginForm, RegistrationForm, AccountForm, TransferToAccountForm,  \
         UserIncomesForm, UserExpensesForm, UserDebtsForm, UserOweDebtsForm
 from .models import UserAccount, UserDebt, UserIncomes, UserExpenses, UserOweDebt
-from .utils import get_total_sum_account, save_transfer_sum, save_incomes_or_debts_sum,  \
+from .utils import get_total_sum_account, get_total_sum_debt, get_total_sum_owe_debt, save_transfer_sum, save_incomes_or_debts_sum,  \
         get_total_sum_incomes, get_total_sum_expenses, save_expenses_or_debts_sum
 
 class Page(ListView):
@@ -74,7 +74,7 @@ class UserAccountPage(ListView):
     }
     model = UserAccount
     context_object_name = 'accounts'
-    template_name = 'bookkeeping/accounts.html'
+    template_name = 'bookkeeping/accounts/accounts.html'
 
     def get_queryset(self):
         """Сортировка в таблице""" 
@@ -89,6 +89,7 @@ class UserAccountPage(ListView):
         return accounts[:6]
     
     def get_context_data(self):
+        """Вывод дополнительных элементов на главную страничку"""
         context = super().get_context_data()
         context['total_sum'] = get_total_sum_account(self.request)
         return context
@@ -100,7 +101,7 @@ class UserAccountUpdate(UpdateView):
     }
     model = UserAccount
     form_class = AccountForm
-    template_name = 'bookkeeping/update_accounts.html'
+    template_name = 'bookkeeping/accounts/update_accounts.html'
     success_url = reverse_lazy('accounts')
 
 class UserAccountDelete(DeleteView):
@@ -110,7 +111,7 @@ class UserAccountDelete(DeleteView):
     }
     model = UserAccount
     success_url = reverse_lazy('accounts')
-    template_name = 'bookkeeping/useraccount_confirm_delete.html'
+    template_name = 'bookkeeping/accounts/useraccount_confirm_delete.html'
     context_object_name = 'accounts'
 
 def create_account_page(request):
@@ -119,7 +120,7 @@ def create_account_page(request):
         'title': 'Создание счета',
         'form': AccountForm(),
     }
-    return render(request, 'bookkeeping/create_account.html', context)
+    return render(request, 'bookkeeping/accounts/create_account.html', context)
 
 def create_account(request):
     """Создание счета"""
@@ -140,7 +141,7 @@ def transfer_to_account_page(request):
         'title': 'Перевести на счет',
         'form': TransferToAccountForm(),
     }
-    return render(request, 'bookkeeping/transfer_to_account.html', context)
+    return render(request, 'bookkeeping/accounts/transfer_to_account.html', context)
 
 def transfer(request):
     """Перевод на счет"""
@@ -162,7 +163,7 @@ class UserIncomesPage(ListView):
     }
     model = UserIncomes
     context_object_name = 'incomes'
-    template_name = 'bookkeeping/incomes.html'
+    template_name = 'bookkeeping/incomes/incomes.html'
 
     def get_queryset(self):
         """Сортировка в таблице""" 
@@ -190,7 +191,7 @@ class UserIncomesUpdate(UpdateView):
     }
     model = UserIncomes
     form_class = UserIncomesForm
-    template_name = 'bookkeeping/update_incomes.html'
+    template_name = 'bookkeeping/incomes/update_incomes.html'
     success_url = reverse_lazy('incomes')
 
 class UserIncomesDelete(DeleteView):
@@ -200,7 +201,7 @@ class UserIncomesDelete(DeleteView):
     }
     model = UserIncomes
     success_url = reverse_lazy('incomes')
-    template_name = 'bookkeeping/userincome_confirm_delete.html'
+    template_name = 'bookkeeping/incomes/userincome_confirm_delete.html'
     context_object_name = 'incomes'
 
 def add_income_page(request):
@@ -209,7 +210,7 @@ def add_income_page(request):
         'title': 'Добавление дохода',
         'form': UserIncomesForm(),
     }
-    return render(request, 'bookkeeping/add_incomes.html', context)
+    return render(request, 'bookkeeping/incomes/add_incomes.html', context)
 
 def add_income(request):
     """Добавление"""
@@ -232,7 +233,7 @@ class UserExpensesPage(ListView):
     }
     model = UserExpenses
     context_object_name = 'expenses'
-    template_name = 'bookkeeping/expenses.html'
+    template_name = 'bookkeeping/expenses/expenses.html'
 
     def get_queryset(self):
         """Сортировка в таблице""" 
@@ -260,7 +261,7 @@ class UserExpensesUpdate(UpdateView):
     }
     model = UserExpenses
     form_class = UserExpensesForm
-    template_name = 'bookkeeping/update_expenses.html'
+    template_name = 'bookkeeping/expenses/update_expenses.html'
     success_url = reverse_lazy('expenses')
 
 class UserExpensesDelete(DeleteView):
@@ -270,7 +271,7 @@ class UserExpensesDelete(DeleteView):
     }
     model = UserExpenses
     success_url = reverse_lazy('expenses')
-    template_name = 'bookkeeping/userexpense_confirm_delete.html'
+    template_name = 'bookkeeping/expenses/userexpense_confirm_delete.html'
     context_object_name = 'expenses'
 
 def add_expenses_page(request):
@@ -279,7 +280,7 @@ def add_expenses_page(request):
         'title': 'Добавление расхода',
         'form': UserExpensesForm(),
     }
-    return render(request, 'bookkeeping/add_expenses.html', context)
+    return render(request, 'bookkeeping/expenses/add_expenses.html', context)
 
 def add_expense(request):
     """Добавление расхода"""
@@ -302,7 +303,45 @@ class UserOweDebtsPage(ListView):
     }
     model = UserOweDebt
     context_object_name = 'owe_debts'
-    template_name = 'bookkeeping/owe_debts.html'
+    template_name = 'bookkeeping/owe_debts/owe_debts.html'
+
+    def get_queryset(self):
+        """Сортировка в таблице""" 
+        owe_debts = UserOweDebt.objects.filter(
+            user=self.request.user
+        ).order_by(
+            '?'
+        )
+        sort_field = self.request.GET.get('sort')
+        if sort_field:
+            owe_debts = owe_debts.order_by(sort_field)
+        return owe_debts[:6]
+    
+    def get_context_data(self):
+        """Вывод дополнительных элементов на главную страничку"""
+        context = super().get_context_data()
+        context['total_sum'] = get_total_sum_owe_debt(self.request)
+        return context
+
+class UserOweDebtsUpdate(UpdateView):
+    """Редактирование долга"""
+    extra_context = {
+        'title': 'Изменение долга'
+    }
+    model = UserOweDebt
+    form_class = UserOweDebtsForm
+    template_name = 'bookkeeping/owe_debts/update_owe_debts.html'
+    success_url = reverse_lazy('owe_debts')
+
+class UserOweDebtsDelete(DeleteView):
+    """Удаление долга"""
+    extra_context = {
+        'title': 'Удаление долга'
+    }
+    model = UserOweDebt
+    success_url = reverse_lazy('owe_debts')
+    template_name = 'bookkeeping/owe_debts/userowedebts_confirm_delete.html'
+    context_object_name = 'owe_debts'
 
 def add_owe_debts_page(request):
     """Страничка создания долга"""
@@ -310,7 +349,7 @@ def add_owe_debts_page(request):
         'title': 'Добавление долга',
         'form': UserOweDebtsForm(),
     }
-    return render(request, 'bookkeeping/add_owe_debts.html', context)
+    return render(request, 'bookkeeping/owe_debts/add_owe_debts.html', context)
 
 def add_owe_debt(request):
     """Добавление долга"""
@@ -333,15 +372,53 @@ class UserDebtsPage(ListView):
     }
     model = UserDebt
     context_object_name = 'debts'
-    template_name = 'bookkeeping/debts.html'
+    template_name = 'bookkeeping/debts/debts.html'
+
+    def get_queryset(self):
+        """Сортировка в таблице""" 
+        debts = UserDebt.objects.filter(
+            user=self.request.user
+        ).order_by(
+            '?'
+        )
+        sort_field = self.request.GET.get('sort')
+        if sort_field:
+            debts = debts.order_by(sort_field)
+        return debts[:6]
+
+    def get_context_data(self):
+        """Вывод дополнительных элементов на главную страничку"""
+        context = super().get_context_data()
+        context['total_sum'] = get_total_sum_debt(self.request)
+        return context
+
+class UserDebtsUpdate(UpdateView):
+    """Редактирование долга"""
+    extra_context = {
+        'title': 'Изменение долга'
+    }
+    model = UserDebt
+    form_class = UserDebtsForm
+    template_name = 'bookkeeping/debts/update_debts.html'
+    success_url = reverse_lazy('debts')
+
+class UserDebtsDelete(DeleteView):
+    """Удаление долга"""
+    extra_context = {
+        'title': 'Удаление долга'
+    }
+    model = UserDebt
+    success_url = reverse_lazy('debts')
+    template_name = 'bookkeeping/debts/userdebts_confirm_delete.html'
+    context_object_name = 'debts'
 
 def add_debts_page(request):
     """Страничка создания долга"""
     context = {
         'title': 'Добавление долга',
-        'form': UserOweDebtsForm(),
+        'form': UserDebtsForm(),
     }
-    return render(request, 'bookkeeping/add_debts.html', context)
+    return render(request, 'bookkeeping/debts/add_debts.html', context)
 
 def add_debt(request):
     """Добавление долга"""
