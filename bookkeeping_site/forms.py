@@ -98,34 +98,21 @@ class UserIncomesForm(forms.ModelForm):
         fields = ('category', 'subcategory', 'account', 'comment', 'currency', 'sum', 'created_at')
         widgets = {
             'category': forms.Select(attrs={
-                'class': 'form-control',
-                'placeholder': 'Категория'
             }),
             'subcategory': forms.Select(attrs={
-                'class': 'form-control',
-                'placeholder': 'Подкатегория'
             }),
             'account': forms.Select(attrs={
-                'class': 'form-control',
-                'placeholder': 'Счет'
             }),
             'comment': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Коментарий'
             }),
             'currency': forms.Select(attrs={
-                'class': 'form-control',
-                'placeholder': 'Валюта'
             }),
             'sum': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Сумма'
             }),
             'created_at': forms.DateInput(attrs={
                 'type': 'date',
                 'id': 'date_sel',
                 'class': 'form-control',
-                'placeholder': 'Дата'
             })        
         }
 
@@ -252,3 +239,41 @@ class UserDebtsForm(forms.ModelForm):
                 'placeholder': 'Сумма'
             })        
         }
+
+# class UserReturnOweDebtsForm(forms.ModelForm):
+    # """Форма возврата долга"""
+
+    # class Meta:
+    #     """Поведенческий харакатер класса"""
+    #     model = UserOweDebt
+    #     fields = ('name', 'data_1', 'data_2', 'account', 'comment', 'currency', 'sum')
+    #     widgets = {
+    #         'name': forms.TextInput(attrs={
+    #             'class': 'form-control',
+    #             'placeholder': 'Имя'
+    #         }),
+    #         'data_1': forms.DateInput(attrs={
+    #             'type': 'date',
+    #             'id': 'date_sel',
+    #             'class': 'form-control',
+    #             'placeholder': 'Дата выдачи'
+    #         }),
+    #         'data_2': forms.DateInput(attrs={
+    #             'type': 'date',
+    #             'id': 'date_sel2',
+    #             'class': 'form-control',
+    #             'placeholder': 'Дата возврата'
+    #         }),
+    #         'comment': forms.TextInput(attrs={
+    #             'class': 'form-control',
+    #             'placeholder': 'Коментарий'
+    #         }),
+    #         'account': forms.Select(attrs={
+    #             'class': 'form-control',
+    #             'placeholder': 'Счет'
+    #         }),
+    #         'sum': forms.TextInput(attrs={
+    #             'class': 'form-control',
+    #             'placeholder': 'Сумма'
+    #         })        
+    #     }

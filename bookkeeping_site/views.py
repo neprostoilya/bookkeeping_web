@@ -364,7 +364,28 @@ def add_owe_debt(request):
     else:
         messages.error(request, 'Не верное заполнение формы!')
         return redirect('owe_debts')
-        
+
+# def return_owe_debt_page(request):
+#     """Страничка возвращения долга"""
+#     context = {
+#         'title': 'Возврат долга',
+#         'form': UserReturnDebtsForm(),
+#     }
+#     return render(request, 'bookkeeping/owe_debts/return_owe_debts.html', context)
+
+# def return_owe_debt_page(request):
+#     """Возвращение долга"""
+#     form = UserOweDebtsForm(data=request.POST)
+#     if form.is_valid():
+#         debts = form.save(commit=False)
+#         debts.user = request.user
+#         debts.save()
+#         messages.success(request, 'Долг успешно возвращен!')
+#         return redirect('owe_debts')
+#     else:
+#         messages.error(request, 'Не верное заполнение формы!')
+#         return redirect('owe_debts')
+    
 class UserDebtsPage(ListView):
     """Страничка Долгов пользователя"""
     extra_context = {

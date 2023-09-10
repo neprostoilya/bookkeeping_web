@@ -1,103 +1,57 @@
-{% load tags %}
-{% get_sorted_table as data %}
-<div class="table-div">
-    <div class="table-responsive">
-      <table class="table table-bordered table-striped table-dark table-hover">
-        <thead>
-          <tr>
-            <th class="text-light md font-monospace">
-              <div class="d-flex p-1">
-                Категория
-              </div>
-            </th> 
-            <th class="text-light md font-monospace">
-              <div class="d-flex p-1">
-                Подкатегория
-              </div>
-            </th> 
-              {% for key in data %}
-              <th class="text-light md font-monospace arrowsdiv">
-                <div class="d-flex ">
-                  <div class="p-1">{{ key.title }}</div>
-                  <div class="d-flex flex-column ">
-                    {% for sorter in key.sorters %}
-                    <a class="arrowstable" style="color: rgb(236, 234, 234);" href="?sort={{ sorter.0 }}">
-                      {{ sorter.1 }}
-                    </a>
-                    {% endfor %}
-                  </div>
-                </div>
-              </th>
-              {% endfor %}
-              <th style="width:5%" class="text-light font-monospace text-center">
-                Ω
-              </th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for income in incomes %}
-          <tr>
-            <td class="d-flex">
-              <div class="px-1">
-                {{ income.category }}
-              </div>
-              {% if income.comment %}
-              <div class="icon" onclick="showPopup(this)" data-comment="{{ income.comment }}">
-                <i class="fas fa-question-circle fa-blue" style="color:rgb(101, 101, 241)"></i>
-              </div>
-              {% endif %}
-            </td>
-            <td>
-              {% if income.subcategory %} 
-              {{ income.subcategory }} 
-              {% else %} 
-              - 
-              {% endif %}
-  
-            </td>
-            <td>
-              {{ income.account }}
-            </td>
-            <td>
-              {{ income.currency }}
-            </td>
-            <td>
-              {{ income.created_at }}
-            </td>
-            <td>
-              {{ income.sum }}
-            </td>
-            <td>
-              <div class="d-flex">
-                <a href="{% url 'update_income' income.pk %}"><i class="fa-solid fa-pen p-1" style="color: #e1a35b;"></i></a>
-                <a href="{% url 'delete_income' income.pk %}"><i class="fa-solid fa-xmark fa-lg p-1" style="color: #ff0000;"></i></a>
-              </div>
-            </td>
-            {% endfor %}
-          </tr>
-          <tr>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td>
-              <strong>
-                Итого:
-              </strong>
-            </td>
-            <td>
-              {{ total_sum }} <strong>Σ</strong>
-            </td>
-            <td>
-              ->
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+  <div class="col-12 ">
+    <div class="card">
+      <div class="card-body table-responsive p-0">
+          <table id="result_list" class="table table-striped">
+              <thead>
+                  <tr>
+                      <th class="djn-checkbox-select-all" tabindex="0" rowspan="1" colspan="1">
+                          <div class="text">
+                                  <span><input type="checkbox" id="action-toggle"></span>
+                          </div>
+                      </th>
+                      <th tabindex="0" rowspan="1" colspan="1">
+                          <div class="text">
+                            <span>ID</span>
+                          </div>
+                      </th>
+                      <th class="sorting" tabindex="0" rowspan="1" colspan="1">
+                        <div class="text">
+                            <a href="?sort=-category">Категория</a>
+                        </div>
+                      </th>
+                      <th class="sorting" tabindex="0" rowspan="1" colspan="1">
+                        <div class="text">
+                            <a href="?sort=-category">Подкатегория</a>
+                        </div>
+                      </th>
+                      <th class="sorting" tabindex="0" rowspan="1" colspan="1">
+                        <div class="text">
+                            <a href="?sort=-category">Дата</a>
+                        </div>
+                      </th>
+                      <th class="sorting" tabindex="0" rowspan="1" colspan="1">
+                        <div class="text">
+                            <a href="?sort=-category">Счет</a>
+                        </div>
+                      </th>
+                      <th class="sorting" tabindex="0" rowspan="1" colspan="1">
+                        <div class="text">
+                            <a href="?sort=-category">Валюта</a>
+                        </div>
+                      </th>
+                      <th class="sorting" tabindex="0" rowspan="1" colspan="1">
+                        <div class="text">
+                            <a href="?sort=-category">Сумма</a>
+                        </div>
+                      </th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr role="row" class="even">
+                      <td class="action-checkbox"><input type="checkbox" name="_selected_action" value="4" class="action-select"></td><th class="field-pk"><a href="/admin/bookkeeping_site/categorycurrency/4/change/">4</a></th><td class="field-user nowrap">-</td><td class="field-title"><a href="/admin/bookkeeping_site/categorycurrency/4/change/">UZS</a></td><td class="field-course">1,0</td>
+                  </tr>
+              </tbody>
+          </table>
+      </div>
+    </div>  
   </div>
-  

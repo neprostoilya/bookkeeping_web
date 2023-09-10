@@ -6,12 +6,32 @@
 {% endblock title %}
 
 {% block main %}
+
 <div class="content-wrapper" >
+    <div class="content border-bottom mb-2">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 col-md-auto d-flex flex-grow-1 align-items-center">
+                    <h1 class="h4 m-0 pr-3 mr-3 border-right">
+                        Доходы
+                    </h1>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'index' %}">Главная</a></li>
+                        <li class="breadcrumb-item active">
+                                 {{ title }}
+                        </li>
+                    </ol>
+                </div>
+                <div class="col-12 col-md-auto d-flex align-items-center justify-content-center page-actions">
+                    <a href="{% url 'add_incomes' %}" class="btn btn-success float-right">
+                        <i class="fa fa-plus-circle"></i> &nbsp; Добавить 
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
     <br>
     {% include 'bookkeeping/components/_message.html' %}     
-    <div class="div-btn-accounts">
-        <a href="{% url 'add_incomes' %}"><button class="btn btn-primary btn-lg"><i class="bi bi-plus"></i>Добавить</button></a>
-    </div>
     {% include 'bookkeeping/components/_table_incomes.html' %} 
     {% include 'bookkeeping/components/_popup.html' %}   
 </div>

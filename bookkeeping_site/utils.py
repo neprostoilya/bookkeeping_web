@@ -39,13 +39,13 @@ def save_transfer_sum(transfer):
     else:
         pass
 
-def save_incomes_or_debts_sum(object):
+def save_incomes_or_debts_sum(request):
     """Сохранение дохода или возвращение долга в базу данных"""
     account = UserAccount.objects.get(
-        user = object.user,
-        pk = object.account.pk
+        user = request.user,
+        pk = request.account.pk
     )
-    account_sum = int((object.sum * object.currency.course) / object.account.currency.course)
+    account_sum = int((request.sum * request.currency.course) / request.account.currency.course)
     account.sum = account.sum + account_sum
     account.save()
 
@@ -63,13 +63,13 @@ def get_total_sum_incomes(request):
         messages.error(request, 'Авторизуйтесь или Зарегистрируйтесь!')
         return redirect('login_registration')
     
-def save_expenses_or_debts_sum(object):
+def save_expenses_or_debts_sum(request):
     """Сохранение расхода или возвращение долга в базу данных"""
     account = UserAccount.objects.get(
-        user = object.user,
-        pk = object.account.pk
+        user = request.user,
+        pk = request.account.pk
     )
-    account_sum = int((object.sum * object.currency.course) / object.account.currency.course)
+    account_sum = int((request.sum * request.currency.course) / request.account.currency.course)
     account.sum = account.sum - account_sum
     account.save()
 
@@ -114,4 +114,6 @@ def get_total_sum_owe_debt(request):
     else:
         messages.error(request, 'Авторизуйтесь или Зарегистрируйтесь!')
         return redirect('login_registration')
-    
+
+def save_return_debts(request):
+    """Сохранение возврата долга в базу данных"""
