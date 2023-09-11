@@ -192,7 +192,7 @@ class UserIncomesUpdate(UpdateView):
     model = UserIncomes
     form_class = UserIncomesForm
     template_name = 'bookkeeping/incomes/update_incomes.html'
-    success_url = reverse_lazy('incomes')
+    success_url = '/incomes'
 
 class UserIncomesDelete(DeleteView):
     """Удаление дохода"""
@@ -200,7 +200,7 @@ class UserIncomesDelete(DeleteView):
         'title': 'Удаление дохода'
     }
     model = UserIncomes
-    success_url = reverse_lazy('incomes')
+    success_url = '/incomes'
     template_name = 'bookkeeping/incomes/userincome_confirm_delete.html'
     context_object_name = 'incomes'
 

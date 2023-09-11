@@ -1,13 +1,16 @@
 @media screen and (min-width: 900px)  {
     .arrowstable {
-        font-size: 9px; padding-top: 2px; 
+        font-size: 9px; 
+        padding-top: 2px; 
         display: none;
     }    
     .arrowsdiv:hover .arrowstable {
-        display: block;
+        display: none;
     }
 }
 .arrowstable {
+    
     font-size: 9px; padding-top: 2px; 
+    display: block;
 }
 

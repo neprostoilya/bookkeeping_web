@@ -16,40 +16,58 @@
                       </th>
                       <th class="sorting" tabindex="0" rowspan="1" colspan="1">
                         <div class="text">
-                            <a href="?sort=-category">Категория</a>
+                            <a href="#!">Категория</a>
                         </div>
                       </th>
                       <th class="sorting" tabindex="0" rowspan="1" colspan="1">
                         <div class="text">
-                            <a href="?sort=-category">Подкатегория</a>
+                            <a href="#!">Подкатегория</a>
                         </div>
                       </th>
                       <th class="sorting" tabindex="0" rowspan="1" colspan="1">
                         <div class="text">
-                            <a href="?sort=-category">Дата</a>
+                            <a href="#!">Дата</a>
                         </div>
                       </th>
                       <th class="sorting" tabindex="0" rowspan="1" colspan="1">
                         <div class="text">
-                            <a href="?sort=-category">Счет</a>
+                            <a href="#!">Коментарий</a>
                         </div>
                       </th>
                       <th class="sorting" tabindex="0" rowspan="1" colspan="1">
                         <div class="text">
-                            <a href="?sort=-category">Валюта</a>
+                            <a href="№1">Счет</a>
                         </div>
                       </th>
                       <th class="sorting" tabindex="0" rowspan="1" colspan="1">
                         <div class="text">
-                            <a href="?sort=-category">Сумма</a>
+                            <a href="№1">Валюта</a>
+                        </div>
+                      </th>
+                      <th class="sorting" tabindex="0" rowspan="1" colspan="1">
+                        <div class="text">
+                            <a href="№!">Сумма</a>
                         </div>
                       </th>
                   </tr>
               </thead>
               <tbody>
+                {% for income in incomes %}
                   <tr role="row" class="even">
-                      <td class="action-checkbox"><input type="checkbox" name="_selected_action" value="4" class="action-select"></td><th class="field-pk"><a href="/admin/bookkeeping_site/categorycurrency/4/change/">4</a></th><td class="field-user nowrap">-</td><td class="field-title"><a href="/admin/bookkeeping_site/categorycurrency/4/change/">UZS</a></td><td class="field-course">1,0</td>
+                      <td class="action-checkbox"><input type="checkbox" name="_selected_action" value="{{ income.pk }}" class="action-select">
+                      </td>
+                      <th class="field-pk">
+                        <a href="{% url 'update_income' income.pk %}">{{ income.pk }}</a>
+                      </th>
+                      <td class="field-category">{{ income.category }}</th>
+                      <td class="field-subcategory">{{ income.subcategory }}</th>
+                      <td class="field-created_at">{{ income.created_at }}</td>
+                      <td class="field-comment">{{ income.comment }}</td>
+                      <td class="field-account">{{ income.account }}</td>
+                      <td class="field-currency">{{ income.currency }}</td>
+                      <td class="field-sum">{{ income.sum }}</td>
                   </tr>
+                  {% endfor %}
               </tbody>
           </table>
       </div>

@@ -5,40 +5,65 @@ register = template.Library()
 
 @register.simple_tag()
 def get_sorted_table():
-    """Сортировка по дате и цене"""
+    """Сортировка по"""
     sorters = [
+        {
+            'title': 'Категория',
+            'sorters': [
+                ('category', '▲'),
+                ('-category', '▼'),
+
+            ]
+        },
+        {
+            'title': 'Подкатегория',
+            'sorters': [
+                ('subcategory',),
+                ('-subcategory',),
+
+            ]
+        },
         {
             'title': 'Дата',
             'sorters': [
-                ('created_at', '▲'),
-                ('-created_at', '▼'),
+                ('created_at',),
+                ('-created_at',),
+
+            ]
+        },
+        {
+            'title': 'Коментарий',
+            'sorters': [
+                ('comment',),
+                ('-comment',),
 
             ]
         },
         {
             'title': 'Счет',
             'sorters': [
-                ('account', '▲'),
-                ('-account', '▼'),
+                ('account',),
+                ('-account',),
             ]
         },
         {
             'title': 'Валюта',
             'sorters': [
-                ('currency', '▲'),
-                ('-currency', '▼'),
+                ('currency',),
+                ('-currency',),
 
             ]
         },
         {
             'title': 'Сумма',
             'sorters': [
-                ('sum', '▲'),
-                ('-sum', '▼'),
+                ('sum',),
+                ('-sum',),
             ]
         }
     ]
     return sorters
+
 
 @register.simple_tag()
 def get_sorted_table_accounts():
@@ -69,39 +94,39 @@ def get_sorted_table_debts():
         {
             'title': 'Дата выдачи',
             'sorters': [
-                ('data_1', '▲'),
-                ('-data_1', '▼'),
+                ('data_1',),
+                ('-data_1',),
 
             ]
         },
         {
             'title': 'Дата возврата',
             'sorters': [
-                ('data_2', '▲'),
-                ('-data_2', '▼'),
+                ('data_2',),
+                ('-data_2',),
 
             ]
         },
         {
             'title': 'Счет',
             'sorters': [
-                ('account', '▲'),
-                ('-account', '▼'),
+                ('account',),
+                ('-account',),
             ]
         },
         {
             'title': 'Валюта',
             'sorters': [
-                ('currency', '▲'),
-                ('-currency', '▼'),
+                ('currency',),
+                ('-currency',),
 
             ]
         },
         {
             'title': 'Сумма',
             'sorters': [
-                ('sum', '▲'),
-                ('-sum', '▼'),
+                ('sum',),
+                ('-sum',),
             ]
         }
     ]

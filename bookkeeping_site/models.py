@@ -204,7 +204,7 @@ class UserExpenses(models.Model):
         verbose_name='Счет'
     )
     comment = models.CharField(
-        max_length=150,
+        max_length=20,
         null=True,
         blank=True,
         verbose_name='Коментарий'
@@ -272,7 +272,7 @@ class UserIncomes(models.Model):
         verbose_name='Счет'
     )
     comment = models.CharField(
-        max_length=150,
+        max_length=20,
         null=True,
         blank=True,
         verbose_name='Коментарий'
