@@ -1,75 +1,91 @@
+{% load tags %}
+{% get_sorted_table as data %}
   <div class="col-12 ">
-    <div class="card">
-      <div class="card-body table-responsive p-0">
-          <table id="result_list" class="table table-striped">
-              <thead>
-                  <tr>
-                      <th class="djn-checkbox-select-all" tabindex="0" rowspan="1" colspan="1">
+    <form method="post" action="{% url 'delete_incomes' %}">
+      {% csrf_token %}
+      {% include 'bookkeeping/components/_delete_list.html' %}     
+      <div class="card">
+        <div class="card-body table-responsive p-0">
+            <table id="result_list" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th tabindex="0" rowspan="1" colspan="1">
+                            <div class="text">
+                                    <span><input type="checkbox" class="chk-all"></span>
+                            </div>
+                        </th>                        
+                        <th tabindex="0" rowspan="1" colspan="1">
+                            <div class="text">
+                              <span>ID</span>
+                            </div>
+                        </th>
+                        {% for key in data %}
+                        <th class="sorting" tabindex="0" rowspan="1" colspan="1">
                           <div class="text">
-                                  <span><input type="checkbox" id="action-toggle"></span>
+                              {% for sorter in key.sorters %}
+                              <a href="#" class="sort-link" value="{{ sorter.0 }}">{{ sorter.1 }}</a>
+                              {% endfor %}
                           </div>
-                      </th>
-                      <th tabindex="0" rowspan="1" colspan="1">
+                        </th>
+                        {% endfor %}
+                        <!-- <th class="sorting" tabindex="0" rowspan="1" colspan="1">
                           <div class="text">
-                            <span>ID</span>
+                              <a href="#" class="sort-link">Подкатегория</a>
                           </div>
-                      </th>
-                      <th class="sorting" tabindex="0" rowspan="1" colspan="1">
-                        <div class="text">
-                            <a href="#!">Категория</a>
-                        </div>
-                      </th>
-                      <th class="sorting" tabindex="0" rowspan="1" colspan="1">
-                        <div class="text">
-                            <a href="#!">Подкатегория</a>
-                        </div>
-                      </th>
-                      <th class="sorting" tabindex="0" rowspan="1" colspan="1">
-                        <div class="text">
-                            <a href="#!">Дата</a>
-                        </div>
-                      </th>
-                      <th class="sorting" tabindex="0" rowspan="1" colspan="1">
-                        <div class="text">
-                            <a href="#!">Коментарий</a>
-                        </div>
-                      </th>
-                      <th class="sorting" tabindex="0" rowspan="1" colspan="1">
-                        <div class="text">
-                            <a href="№1">Счет</a>
-                        </div>
-                      </th>
-                      <th class="sorting" tabindex="0" rowspan="1" colspan="1">
-                        <div class="text">
-                            <a href="№1">Валюта</a>
-                        </div>
-                      </th>
-                      <th class="sorting" tabindex="0" rowspan="1" colspan="1">
-                        <div class="text">
-                            <a href="№!">Сумма</a>
-                        </div>
-                      </th>
-                  </tr>
-              </thead>
-              <tbody>
-                {% for income in incomes %}
-                  <tr role="row" class="even">
-                      <td class="action-checkbox"><input type="checkbox" name="_selected_action" value="{{ income.pk }}" class="action-select">
-                      </td>
-                      <th class="field-pk">
-                        <a href="{% url 'update_income' income.pk %}">{{ income.pk }}</a>
-                      </th>
-                      <td class="field-category">{{ income.category }}</th>
-                      <td class="field-subcategory">{{ income.subcategory }}</th>
-                      <td class="field-created_at">{{ income.created_at }}</td>
-                      <td class="field-comment">{{ income.comment }}</td>
-                      <td class="field-account">{{ income.account }}</td>
-                      <td class="field-currency">{{ income.currency }}</td>
-                      <td class="field-sum">{{ income.sum }}</td>
-                  </tr>
-                  {% endfor %}
-              </tbody>
-          </table>
-      </div>
-    </div>  
+                        </th>
+                        <th class="sorting" tabindex="0" rowspan="1" colspan="1">
+                          <div class="text">
+                              <a href="#" class="sort-link"">Дата</a>
+                          </div>
+                        </th>
+                        <th class="sorting" tabindex="0" rowspan="1" colspan="1"> 
+                          <div class="text">
+                              <a href="#" class="sort-link">Коментарий</a>
+                          </div>
+                        </th>
+                        <th class="sorting" tabindex="0" rowspan="1" colspan="1">
+                          <div class="text">
+                              <a href="#" class="sort-link">Счет</a>
+                          </div>
+                        </th>
+                        <th class="sorting" tabindex="0" rowspan="1" colspan="1">
+                          <div class="text">
+                              <a href="#" class="sort-link">Валюта</a>
+                          </div>
+                        </th>
+                        <th class="sorting" tabindex="0" rowspan="1" colspan="1">
+                          <div class="text">
+                              <a href="#" class="sort-link">Сумма</a>
+                          </div>
+                        </th> -->
+                    </tr>
+                </thead>
+                <tbody>
+                  {% for income in incomes %}
+                    <tr role="row" class="even">
+                        <td class="action-checkbox"><input type="checkbox" name="selected_action" value="{{ income.pk }}" class="checkbox">
+                        </td>
+                        <th class="field-pk">
+                          <a href="{% url 'update_income' income.pk %}">{{ income.pk }}</a>
+                        </th>
+                        <td class="field-category">{{ income.category }}</th>
+                        <td class="field-subcategory">
+                          {% if income.subcategory %} 
+                          {{income.subcategory }}
+                          {% else %}
+                          -
+                          {% endif %}
+                        </th>
+                        <td class="field-created_at">{{ income.created_at }}</td>
+                        <td class="field-comment">{{ income.comment }}</td>
+                        <td class="field-account">{{ income.account }}</td>
+                        <td class="field-currency">{{ income.currency }}</td>
+                        <td class="field-sum">{{ income.sum }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+      </div>  
+    </form>
   </div>

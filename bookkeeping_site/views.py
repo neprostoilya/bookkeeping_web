@@ -194,15 +194,6 @@ class UserIncomesUpdate(UpdateView):
     template_name = 'bookkeeping/incomes/update_incomes.html'
     success_url = '/incomes'
 
-class UserIncomesDelete(DeleteView):
-    """Удаление дохода"""
-    extra_context = {
-        'title': 'Удаление дохода'
-    }
-    model = UserIncomes
-    success_url = '/incomes'
-    template_name = 'bookkeeping/incomes/userincome_confirm_delete.html'
-    context_object_name = 'incomes'
 
 def add_income_page(request):
     """Страничка добавления дохода"""
@@ -226,6 +217,16 @@ def add_income(request):
         messages.error(request, 'Не верное заполнение формы!')
         return redirect('incomes')
     
+def delete_incomes(request):
+    """Удаление доходов"""
+    if request.method == 'POST':
+        selected_pks = request.POST.getlist('selected_action')
+        UserIncomes.objects.filter(pk__in=selected_pks).delete()
+        messages.success(request, 'Выбранные объекты успешно удалены.')
+        return redirect('incomes')
+    else:
+        return redirect('incomes')
+
 class UserExpensesPage(ListView):
     """Страничка Расходов пользователя"""
     extra_context = {

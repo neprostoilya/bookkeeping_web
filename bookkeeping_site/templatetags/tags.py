@@ -8,57 +8,38 @@ def get_sorted_table():
     """Сортировка по"""
     sorters = [
         {
-            'title': 'Категория',
             'sorters': [
-                ('category', '▲'),
-                ('-category', '▼'),
-
+                ('category', 'Категория')
             ]
         },
         {
-            'title': 'Подкатегория',
             'sorters': [
-                ('subcategory',),
-                ('-subcategory',),
-
+                ('subcategory', 'Подкатегория')
             ]
         },
         {
-            'title': 'Дата',
             'sorters': [
-                ('created_at',),
-                ('-created_at',),
-
+                ('created_at', 'Дата')
             ]
         },
         {
-            'title': 'Коментарий',
             'sorters': [
-                ('comment',),
-                ('-comment',),
-
+                ('comment', 'Коментарий')
             ]
         },
         {
-            'title': 'Счет',
             'sorters': [
-                ('account',),
-                ('-account',),
+                ('account', 'Счет')
             ]
         },
         {
-            'title': 'Валюта',
             'sorters': [
-                ('currency',),
-                ('-currency',),
-
+                ('currency', 'Валюта')
             ]
         },
         {
-            'title': 'Сумма',
             'sorters': [
-                ('sum',),
-                ('-sum',),
+                ('sum', 'Сумма')
             ]
         }
     ]
