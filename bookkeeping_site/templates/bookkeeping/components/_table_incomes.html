@@ -23,41 +23,12 @@
                         <th class="sorting" tabindex="0" rowspan="1" colspan="1">
                           <div class="text">
                               {% for sorter in key.sorters %}
-                              <a href="#" class="sort-link" value="{{ sorter.0 }}">{{ sorter.1 }}</a>
+                              <a href="#!" class="sort-link" value="{{ sorter.0 }}">{{ sorter.1 }}</a>
                               {% endfor %}
+                              <div style="margin-top: .2em;" class="remove-sort-link"> </div>
                           </div>
                         </th>
                         {% endfor %}
-                        <!-- <th class="sorting" tabindex="0" rowspan="1" colspan="1">
-                          <div class="text">
-                              <a href="#" class="sort-link">Подкатегория</a>
-                          </div>
-                        </th>
-                        <th class="sorting" tabindex="0" rowspan="1" colspan="1">
-                          <div class="text">
-                              <a href="#" class="sort-link"">Дата</a>
-                          </div>
-                        </th>
-                        <th class="sorting" tabindex="0" rowspan="1" colspan="1"> 
-                          <div class="text">
-                              <a href="#" class="sort-link">Коментарий</a>
-                          </div>
-                        </th>
-                        <th class="sorting" tabindex="0" rowspan="1" colspan="1">
-                          <div class="text">
-                              <a href="#" class="sort-link">Счет</a>
-                          </div>
-                        </th>
-                        <th class="sorting" tabindex="0" rowspan="1" colspan="1">
-                          <div class="text">
-                              <a href="#" class="sort-link">Валюта</a>
-                          </div>
-                        </th>
-                        <th class="sorting" tabindex="0" rowspan="1" colspan="1">
-                          <div class="text">
-                              <a href="#" class="sort-link">Сумма</a>
-                          </div>
-                        </th> -->
                     </tr>
                 </thead>
                 <tbody>
