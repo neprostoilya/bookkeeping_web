@@ -25,7 +25,7 @@
                               {% for sorter in key.sorters %}
                               <a href="#!" class="sort-link" value="{{ sorter.0 }}">{{ sorter.1 }}</a>
                               {% endfor %}
-                              <div style="margin-top: .2em;" class="remove-sort-link"> </div>
+                              <a style="margin-top: .2em;" class="fa fa-times float-right remove-sort-link d-none"></a>
                           </div>
                         </th>
                         {% endfor %}
