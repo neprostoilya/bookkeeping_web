@@ -23,7 +23,9 @@
                         <th class="sorting" tabindex="0" rowspan="1" colspan="1">
                           <div class="text">
                               {% for sorter in key.sorters %}
-                              <a href="#!" class="sort-link" value="{{ sorter.0 }}">{{ sorter.1 }}</a>
+                              <a href="#!" class="sort-link" value="{{ sorter.0 }}">{{ sorter.1 }}
+                                <i></i>
+                              </a>
                               {% endfor %}
                               <a style="margin-top: .2em;" class="fa fa-times float-right remove-sort-link d-none"></a>
                           </div>

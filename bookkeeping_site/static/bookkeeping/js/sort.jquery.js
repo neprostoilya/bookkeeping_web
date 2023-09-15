@@ -8,20 +8,20 @@ $(document).ready(function() {
     var sortHref = $(this).attr('href')
     if (sortHref == '?sort=-' + sortValue) {
       sortHref = '?sort=' + sortValue;
-      $(this).append('<i style="margin-top: .2em;" class="fa fa-sort-alpha-up"></i>');
       history.pushState(null, null, sortHref);
     } else {
       sortHref = '?sort=-' + sortValue;
-      $(this).append('<i style="margin-top: .2em;" class="fa fa-sort-alpha-down"></i>');
       history.pushState(null, null, sortHref);
     }
     window.history.pushState(null, null, sortHref);
-
+    $(this).attr('href', sortHref);
     
     if (window.location.href != currentUrl) { 
       location.reload(); 
     }
+    
     $('a.remove-sort-link').addClass('d-none');
+    
     $(this).siblings('.remove-sort-link').removeClass('d-none');
   });
   
@@ -31,12 +31,17 @@ $(document).ready(function() {
     history.pushState(null, null, sortHref);
     location.reload(); 
   }); 
-
   $('a.remove-sort-link').addClass('d-none');
+
   var urlParams = new URLSearchParams(window.location.search);
   var sortParam = urlParams.get('sort');
   if (sortParam) {
     var sortValue = sortParam.replace('-', '');
     var $sortLink = $('a.sort-link[value="' + sortValue + '"]');
+    if (sortParam.startsWith('-')) {
+      $sortLink.find('i').addClass('fas fa-sort-alpha-down');
+    } else {
+      $sortLink.find('i').addClass('fas fa-sort-alpha-up');
+    }
     $sortLink.siblings('.remove-sort-link').removeClass('d-none');
 }});
