@@ -48,21 +48,21 @@ def get_sorted_table():
 
 @register.simple_tag()
 def get_sorted_table_accounts():
-    """Сортировка по курсу и цене"""
+    """Сортировка по счетов"""
     sorters = [
         {
-            'title': 'Валюта',
             'sorters': [
-                ('currency', '▲'),
-                ('-currency', '▼'),
-
+                ('account', 'Счет')
             ]
         },
         {
-            'title': 'Сумма',
             'sorters': [
-                ('sum', '▲'),
-                ('-sum', '▼'),
+                ('currency', 'Валюта')
+            ]
+        },
+        {
+            'sorters': [
+                ('sum', 'Сумма')
             ]
         }
     ]

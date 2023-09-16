@@ -1,103 +1,67 @@
 {% load tags %}
 {% get_sorted_table as data %}
-<div class="table-div">
-    <div class="table-responsive">
-      <table class="table table-bordered table-striped table-dark table-hover">
-        <thead>
-          <tr>
-            <th class="text-light md font-monospace">
-              <div class="d-flex p-1">
-                Категория
-              </div>
-            </th> 
-            <th class="text-light md font-monospace">
-              <div class="d-flex p-1">
-                Подкатегория
-              </div>
-            </th> 
-              {% for key in data %}
-              <th class="text-light md font-monospace arrowsdiv">
-                <div class="d-flex ">
-                  <div class="p-1">{{ key.title }}</div>
-                  <div class="d-flex flex-column ">
-                    {% for sorter in key.sorters %}
-                    <a class="arrowstable" style="color: rgb(236, 234, 234);" href="?sort={{ sorter.0 }}">
-                      {{ sorter.1 }}
-                    </a>
+  <div class="col-12 ">
+    <form method="post" action="{% url 'delete_expenses' %}">
+      {% csrf_token %}
+      {% include 'bookkeeping/components/_delete_list.html' %}     
+      <div class="card">
+        <div class="card-body table-responsive p-0">
+            <table id="result_list" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th tabindex="0" rowspan="1" colspan="1">
+                            <div class="text">
+                                    <span><input type="checkbox" class="chk-all"></span>
+                            </div>
+                        </th>                        
+                        <th tabindex="0" rowspan="1" colspan="1">
+                            <div class="text">
+                              <span>ID</span>
+                            </div>
+                        </th>
+                        {% for key in data %}
+                        <th class="sorting" tabindex="0" rowspan="1" colspan="1">
+                          <div class="text">
+                              {% for sorter in key.sorters %}
+                              <a href="#!" class="sort-link" value="{{ sorter.0 }}">{{ sorter.1 }}
+                                <i></i>
+                              </a>
+                              {% endfor %}
+                              <a style="margin-top: .2em;" class="fa fa-times float-right remove-sort-link d-none"></a>
+                          </div>
+                        </th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                  {% for expense in expenses %}
+                    <tr role="row">
+                        <td class="action-checkbox"><input type="checkbox" name="selected_action" value="{{ expense.pk }}" class="checkbox">
+                        </td>
+                        <th class="field-pk">
+                          <a href="{% url 'update_expense' expense.pk %}">{{ expense.pk }}</a>
+                        </th>
+                        <td class="field-category">{{ expense.category }}</th>
+                        <td class="field-subcategory">
+                          {% if expense.subcategory %} 
+                          {{ expense.subcategory }}
+                          {% else %}
+                          -
+                          {% endif %}
+                        </th>
+                        <td class="field-created_at">{{ expense.created_at }}</td>
+                        <td class="field-comment">{{ expense.comment }}</td>
+                        <td class="field-account">{{ expense.account }}</td>
+                        <td class="field-currency">{{ expense.currency }}</td>
+                        <td class="field-sum">{{ expense.sum }}</td>
                     {% endfor %}
-                  </div>
-                </div>
-              </th>
-              {% endfor %}
-              <th style="width:5%" class="text-light font-monospace text-center">
-                Ω
-              </th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for expense in expenses %}
-          <tr>
-            <td class="d-flex">
-              <div class="px-1">
-                {{ expense.category }}
-              </div>
-              {% if expense.comment %}
-              <div class="icon" onclick="showPopup(this)" data-comment="{{ expense.comment }}">
-                <i class="fas fa-question-circle fa-blue" style="color:rgb(101, 101, 241)"></i>
-              </div>
-              {% endif %}
-            </td>
-            <td>
-              {% if expense.subcategory %} 
-              {{ expense.subcategory }} 
-              {% else %} 
-              - 
-              {% endif %}
-  
-            </td>
-            <td>
-              {{ expense.account }}
-            </td>
-            <td>
-              {{ expense.currency }}
-            </td>
-            <td>
-              {{ expense.created_at }}
-            </td>
-            <td>
-              {{ expense.sum }}
-            </td>
-            <td>
-              <div class="d-flex">
-                <a href="{% url 'update_expense' expense.pk %}"><i class="fa-solid fa-pen p-1" style="color: #e1a35b;"></i></a>
-                <a href="{% url 'delete_expense' expense.pk %}"><i class="fa-solid fa-xmark fa-lg p-1" style="color: #ff0000;"></i></a>
-              </div>
-            </td>
-            {% endfor %}
-          </tr>
-          <tr>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td>
-              <strong>
-                Итого:
-              </strong>
-            </td>
-            <td>
-              {{ total_sum }} <strong>Σ</strong>
-            </td>
-            <td>
-              ->
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+                      </tr>
+                      <tr role="row">
+                        <td class="field-total-sum" colspan="9" style="text-align: center; "><strong>{{ total_sum }} ∑</strong></td>
+                      </tr>
+                </tbody>
+            </table>
+        </div>
+      </div>  
+    </form>
   </div>
-  

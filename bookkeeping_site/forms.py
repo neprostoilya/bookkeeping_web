@@ -54,16 +54,10 @@ class AccountForm(forms.ModelForm):
         fields = ('account', 'currency', 'sum')
         widgets = {
             'account': forms.Select(attrs={
-                'class': 'form-control',
-                'placeholder': 'Счет'
             }),
             'currency': forms.Select(attrs={
-                'class': 'form-control',
-                'placeholder': 'Валюта'
             }),
             'sum': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Сумма'
             })
         }
 
@@ -76,16 +70,10 @@ class TransferToAccountForm(forms.ModelForm):
         fields = ('account1', 'account2', 'sum')
         widgets = {
             'account1': forms.Select(attrs={
-                'class': 'form-control',
-                'placeholder': 'Списать с счета'
             }),
             'account2': forms.Select(attrs={
-                'class': 'form-control',
-                'placeholder': 'Зачислить на счет'
             }),
             'sum': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Сумма'
             })
         }
 
@@ -125,34 +113,21 @@ class UserExpensesForm(forms.ModelForm):
         fields = ('category', 'subcategory', 'account', 'comment', 'currency', 'sum', 'created_at')
         widgets = {
             'category': forms.Select(attrs={
-                'class': 'form-control',
-                'placeholder': 'Категория'
             }),
             'subcategory': forms.Select(attrs={
-                'class': 'form-control',
-                'placeholder': 'Подкатегория'
             }),
             'account': forms.Select(attrs={
-                'class': 'form-control',
-                'placeholder': 'Счет'
             }),
             'comment': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Коментарий'
             }),
             'currency': forms.Select(attrs={
-                'class': 'form-control',
-                'placeholder': 'Валюта'
             }),
             'sum': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Сумма'
             }),
             'created_at': forms.DateInput(attrs={
                 'type': 'date',
                 'id': 'date_sel',
                 'class': 'form-control',
-                'placeholder': 'Дата'
             })        
         }
 

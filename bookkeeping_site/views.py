@@ -104,16 +104,6 @@ class UserAccountUpdate(UpdateView):
     template_name = 'bookkeeping/accounts/update_accounts.html'
     success_url = reverse_lazy('accounts')
 
-class UserAccountDelete(DeleteView):
-    """Удаление счета"""
-    extra_context = {
-        'title': 'Удаление счета'
-    }
-    model = UserAccount
-    success_url = reverse_lazy('accounts')
-    template_name = 'bookkeeping/accounts/useraccount_confirm_delete.html'
-    context_object_name = 'accounts'
-
 def create_account_page(request):
     """Страница создания счета"""
     context = {
@@ -156,6 +146,16 @@ def transfer(request):
         messages.error(request, 'Не верное заполнение формы!')
         return redirect('accounts')
 
+def delete_accounts(request):
+    """Удаление счетов"""
+    if request.method == 'POST':
+        selected_pks = request.POST.getlist('selected_action')
+        UserAccount.objects.filter(pk__in=selected_pks).delete()
+        messages.success(request, 'Выбранные объекты успешно удалены.')
+        return redirect('accounts')
+    else:
+        return redirect('accounts')
+
 class UserIncomesPage(ListView):
     """Страничка доходов пользователя"""
     extra_context = {
@@ -193,7 +193,6 @@ class UserIncomesUpdate(UpdateView):
     form_class = UserIncomesForm
     template_name = 'bookkeeping/incomes/update_incomes.html'
     success_url = '/incomes'
-
 
 def add_income_page(request):
     """Страничка добавления дохода"""
@@ -263,17 +262,7 @@ class UserExpensesUpdate(UpdateView):
     model = UserExpenses
     form_class = UserExpensesForm
     template_name = 'bookkeeping/expenses/update_expenses.html'
-    success_url = reverse_lazy('expenses')
-
-class UserExpensesDelete(DeleteView):
-    """Удаление дохода"""
-    extra_context = {
-        'title': 'Удаление расхода'
-    }
-    model = UserExpenses
-    success_url = reverse_lazy('expenses')
-    template_name = 'bookkeeping/expenses/userexpense_confirm_delete.html'
-    context_object_name = 'expenses'
+    success_url = '/expenses'
 
 def add_expenses_page(request):
     """Страничка добавления расхода"""
@@ -296,7 +285,17 @@ def add_expense(request):
     else:
         messages.error(request, 'Не верное заполнение формы!')
         return redirect('expenses')
-    
+
+def delete_expenses(request):
+    """Удаление расходов"""
+    if request.method == 'POST':
+        selected_pks = request.POST.getlist('selected_action')
+        UserExpenses.objects.filter(pk__in=selected_pks).delete()
+        messages.success(request, 'Выбранные объекты успешно удалены.')
+        return redirect('expenses')
+    else:
+        return redirect('expenses')
+
 class UserOweDebtsPage(ListView):
     """Страничка Долгов пользователя"""
     extra_context = {

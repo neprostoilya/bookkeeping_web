@@ -115,5 +115,3 @@ def get_total_sum_owe_debt(request):
         messages.error(request, 'Авторизуйтесь или Зарегистрируйтесь!')
         return redirect('login_registration')
 
-def save_return_debts(request):
-    """Сохранение возврата долга в базу данных"""

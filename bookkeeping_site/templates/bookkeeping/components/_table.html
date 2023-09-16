@@ -1,58 +1,57 @@
 {% load tags %}
 {% get_sorted_table_accounts as data %}
-<div class="table-div">
-    <div class="table-responsive">
-        <table class="table table-bordered table-striped  table-dark table-hover">
-            <thead>
-                <tr>
-                    <th class="text-light md font-monospace">
-                        <div class="d-flex p-1">
-                          Название
-                        </div>
-                    </th>
-                    {% for key in data %}
-                    <th class="text-light md font-monospace arrowsdiv">
-                      <div class="d-flex ">
-                        <div class="p-1">{{ key.title }}</div>
-                        <div class="d-flex flex-column ">
-                          {% for sorter in key.sorters %}
-                          <a class="arrowstable" style="color: rgb(236, 234, 234);" href="?sort={{ sorter.0 }}">
-                            {{ sorter.1 }}
+  <div class="col-12 ">
+    <form method="post" action="{% url 'delete_accounts' %}">
+      {% csrf_token %}
+      {% include 'bookkeeping/components/_delete_list.html' %}     
+      <div class="card">
+        <div class="card-body table-responsive p-0">
+            <table id="result_list" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th tabindex="0" rowspan="1" colspan="1">
+                            <div class="text">
+                                    <span><input type="checkbox" class="chk-all"></span>
+                            </div>
+                        </th>                        
+                        <th tabindex="0" rowspan="1" colspan="1">
+                            <div class="text">
+                              <span>ID</span>
+                            </div>
+                        </th>
+                        {% for key in data %}
+                        <th class="sorting" tabindex="0" rowspan="1" colspan="1">
+                          <div class="text">
+                              {% for sorter in key.sorters %}
+                              <a href="#!" class="sort-link" value="{{ sorter.0 }}">{{ sorter.1 }}
+                                <i></i>
+                              </a>
+                              {% endfor %}
+                              <a style="margin-top: .2em;" class="fa fa-times float-right remove-sort-link d-none"></a>
+                          </div>
+                        </th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                  {% for account in accounts %}
+                    <tr role="row">
+                        <td class="action-checkbox"><input type="checkbox" name="selected_action" value="{{ account.pk }}" class="checkbox">
+                        </td>
+                        <th class="field-pk">
+                          <a href="{% url 'update_account' account.pk %}">{{ account.pk }}
                           </a>
-                          {% endfor %}
-                        </div>
-                      </div>
-                    </th>
+                        <td class="field-account">{{ account.account }}</td>
+                        <td class="field-currency">{{ account.currency }}</td>
+                        <td class="field-sum">{{ account.sum }}</td>
                     {% endfor %}
-                    <th style="width:5%" class="text-light font-monospace text-center">
-                        Ω
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for account in accounts %}
-                <tr> 
-                    <td>{{ account.account }}</td>
-                    <td>{{ account.currency }}</td>
-                    <td>{{ account.sum }}</td>
-                    <td>
-                      <div class="d-flex">
-                        <a href="{% url 'update_account' account.pk %}"><i class="fa-solid fa-pen p-1" style="color: #e1a35b;"></i></a>
-                        <a href="{% url 'delete_account' account.pk %}"><i class="fa-solid fa-xmark fa-lg p-1" style="color: #ff0000;"></i></a>
-                      </div>
-                    </td>
-                </tr>
-                {% endfor %}
-                <tr>
-                    <td></td>
-                    <td><strong>Остаток:</strong></td>
-                    <td>{{ total_sum }} <strong>Σ</strong></td>
-                    <td>
-                      ->
-                    </td>
-                </tr>
-                
-            </tbody>
-        </table>
-    </div>
-</div>
+                      </tr>
+                      <tr role="row">
+                        <td class="field-total-sum" colspan="9" style="text-align: center; "><strong>{{ total_sum }} ∑</strong></td>
+                      </tr>
+                </tbody>
+            </table>
+        </div>
+      </div>  
+    </form>
+  </div>

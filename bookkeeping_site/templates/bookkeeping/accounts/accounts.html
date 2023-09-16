@@ -1,17 +1,56 @@
 {% extends 'base.html' %}
 
+
 {% block title %}
     {{ title }}
 {% endblock title %}
 
 {% block main %}
-<div class="content-wrapper">
-<br>
-    {% include 'bookkeeping/components/_message.html' %}     
-    <div class="div-btn-accounts">
-        <a href="{% url 'account' %}"><button class="btn btn-primary btn-lg mr-2"><i class="bi bi-plus"></i>Добавить</button></a>
-        <a href="{% url 'transfer_to_account' %}"><button class="btn btn-success btn-lg"><i class="bi bi-arrow-left-right"></i> Перевести</button></a>
+<div class="content-wrapper" style="min-height: 669px;" >
+    <div class="content border-bottom mb-2">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 col-md-auto d-flex flex-grow-1 align-items-center">
+                    <h1 class="h4 m-0 pr-3 mr-3 border-right">
+                        {{ title }}
+                    </h1>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'index' %}">Главная</a></li> 
+                        <li class="breadcrumb-item active">
+                                 {{ title }}
+                        </li>
+                    </ol>
+                </div>
+                <div class="col-12 col-md-auto d-flex align-items-center justify-content-center page-actions">
+                    <a href="{% url 'transfer_to_account' %}" class="btn btn-primary float-right">
+                        <i class="fa-solid fa-money-bill-transfer"></i> &nbsp; Перевести
+                    </a>
+                </div>
+                <br><br><br>
+                <div class="col-12 col-md-auto d-flex align-items-center justify-content-center page-actions">
+                    <a href="#!" class="btn btn-primary float-right">
+                        <i class="fa-solid fa-file-export"></i> &nbsp; Экспорт таблицы
+                    </a>
+                </div>
+                <br><br><br>
+                <div class="col-12 col-md-auto d-flex align-items-center justify-content-center page-actions">
+                    <a href="{% url 'create_accounts' %}" class="btn btn-success float-right">
+                        <i class="fa-solid fa-circle-plus"></i> &nbsp; Добавить 
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
-    {% include 'bookkeeping/components/_table.html' %}     
+    <div class="content">
+        {% include 'bookkeeping/components/_message.html' %}     
+        <div class="container-fluid">
+            <section id="content" class="content">
+                <div class="row">
+                    {% include 'bookkeeping/components/_sort_data.html' %}     
+                    {% include 'bookkeeping/components/_table.html' %} 
+                </div>
+            </section>
+        </div>
+    </div>
 </div>
-{% endblock main %}
+{% endblock main %} 

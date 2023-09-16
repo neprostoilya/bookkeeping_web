@@ -35,7 +35,7 @@
                 </thead>
                 <tbody>
                   {% for income in incomes %}
-                    <tr role="row" class="even">
+                    <tr role="row">
                         <td class="action-checkbox"><input type="checkbox" name="selected_action" value="{{ income.pk }}" class="checkbox">
                         </td>
                         <th class="field-pk">
@@ -54,8 +54,11 @@
                         <td class="field-account">{{ income.account }}</td>
                         <td class="field-currency">{{ income.currency }}</td>
                         <td class="field-sum">{{ income.sum }}</td>
-                    </tr>
                     {% endfor %}
+                      </tr>
+                      <tr role="row">
+                        <td class="field-total-sum" colspan="9" style="text-align: center; "><strong>{{ total_sum }} ∑</strong></td>
+                      </tr>
                 </tbody>
             </table>
         </div>
