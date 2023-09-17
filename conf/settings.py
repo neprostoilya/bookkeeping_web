@@ -13,6 +13,7 @@ DEBUG = bool(int(os.getenv('DEBUG')))
 
 ALLOWED_HOSTS = ['*']
 
+CSRF_TRUSTED_ORIGINS = ['https://5fb5-95-46-64-124.ngrok-free.app']
 
 INSTALLED_APPS = [
     'jazzmin',

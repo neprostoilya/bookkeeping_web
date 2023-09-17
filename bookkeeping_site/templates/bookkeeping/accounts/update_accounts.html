@@ -25,10 +25,13 @@
         </div>
     </div>
     <div class="content">
-    <div class="container-fluid"><div class="row"><div id="content-main" class="col-12">
-              <form action="#!" method="post" novalidate="">
+        {% include 'bookkeeping/components/_message.html' %}     
+        <div class="container-fluid">
+            <section id="content" class="content">
+                <form method="post" novalidate="">
                 {% csrf_token %}
-                <div class="row"><div class="col-12 col-lg-9"><div class="card"><div class="card-body">
+                <div class="row">
+                    <div class="col-12 col-lg-9"><div class="card"><div class="card-body">
                     <div class="form-group">
                             <div class="row">
                               <label class="col-sm-3 text-left" for="id_user">
@@ -73,18 +76,17 @@
                             </div>
                         </div>
                     </div>
+                    </div>
                 </div>
-            </div>
-                <div class="col-12 col-lg-3">
-                  <div class="form-group">
-                    <input type="submit" value="Сохранить" class="btn btn-success form-control">
-                  </div>
+                    <div class="col-12 col-lg-3">
+                    <div class="form-group">
+                        <input type="submit" value="Сохранить" class="btn btn-success form-control">
+                    </div>
+                    </div>
                 </div>
-              </div>
-            </form>
-          </div>
+                </form>
+            </section>
         </div>
-      </div>
     </div>
 </div>
 

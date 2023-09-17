@@ -26,9 +26,9 @@
         <div class="login">
             <div class="card-body">
                 <form action="{% url 'login' %}" class="login-form" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
                     <p class="font-monospace text-center h1">Войти</p>
                     <div><div style="margin-top: 4%;"></div></div>
-                    {% csrf_token %}
                     <div class="form-group">
                         {{ login_form.username }}
                     </div>

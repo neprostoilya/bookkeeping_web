@@ -123,7 +123,7 @@ def create_account(request):
         return redirect('accounts')
     else:
         messages.error(request, 'Не верное заполнение формы!')
-        return redirect('accounts')
+        return redirect('create_accounts')
     
 def transfer_to_account_page(request):
     """Страничка перевода с счета на счет"""
@@ -144,7 +144,7 @@ def transfer(request):
         return redirect('accounts')
     else:
         messages.error(request, 'Не верное заполнение формы!')
-        return redirect('accounts')
+        return redirect('transfer_to_account')
 
 def delete_accounts(request):
     """Удаление счетов"""
@@ -152,9 +152,7 @@ def delete_accounts(request):
         selected_pks = request.POST.getlist('selected_action')
         UserAccount.objects.filter(pk__in=selected_pks).delete()
         messages.success(request, 'Выбранные объекты успешно удалены.')
-        return redirect('accounts')
-    else:
-        return redirect('accounts')
+    return redirect('accounts')
 
 class UserIncomesPage(ListView):
     """Страничка доходов пользователя"""
@@ -214,7 +212,7 @@ def add_income(request):
         return redirect('incomes')
     else:
         messages.error(request, 'Не верное заполнение формы!')
-        return redirect('incomes')
+        return redirect('add_incomes')
     
 def delete_incomes(request):
     """Удаление доходов"""
@@ -284,7 +282,7 @@ def add_expense(request):
         return redirect('expenses')
     else:
         messages.error(request, 'Не верное заполнение формы!')
-        return redirect('expenses')
+        return redirect('add_expenses')
 
 def delete_expenses(request):
     """Удаление расходов"""
@@ -363,7 +361,7 @@ def add_owe_debt(request):
         return redirect('owe_debts')
     else:
         messages.error(request, 'Не верное заполнение формы!')
-        return redirect('owe_debts')
+        return redirect('add_owe_debts')
 
 # def return_owe_debt_page(request):
 #     """Страничка возвращения долга"""
@@ -453,4 +451,4 @@ def add_debt(request):
         return redirect('debts')
     else:
         messages.error(request, 'Не верное заполнение формы!')
-        return redirect('debts')
+        return redirect('add_debts')

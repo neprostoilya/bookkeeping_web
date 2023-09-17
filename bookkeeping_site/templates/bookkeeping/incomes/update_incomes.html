@@ -25,8 +25,10 @@
         </div>
     </div>
     <div class="content">
-    <div class="container-fluid"><div class="row"><div id="content-main" class="col-12">
-              <form action="#!" method="post" novalidate="">
+      {% include 'bookkeeping/components/_message.html' %}     
+      <div class="container-fluid">
+          <section id="content" class="content">
+              <form method="post" novalidate="">
                 {% csrf_token %}
                 <div class="row"><div class="col-12 col-lg-9"><div class="card"><div class="card-body">
                         <div class="form-group">
@@ -138,10 +140,8 @@
               </div>
             </div>
           </form>
-        </div>
+          </section>
       </div>
     </div>
-  </div>
 </div>
-
 {% endblock main %}

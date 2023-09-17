@@ -26,7 +26,7 @@
                         <i class="fa-solid fa-money-bill-transfer"></i> &nbsp; Перевести
                     </a>
                 </div>
-                <br><br><br>
+                <br>
                 <div class="col-12 col-md-auto d-flex align-items-center justify-content-center page-actions">
                     <a href="#!" class="btn btn-primary float-right">
                         <i class="fa-solid fa-file-export"></i> &nbsp; Экспорт таблицы
@@ -47,6 +47,8 @@
             <section id="content" class="content">
                 <div class="row">
                     {% include 'bookkeeping/components/_sort_data.html' %}     
+                </div>
+                <div class="row">
                     {% include 'bookkeeping/components/_table.html' %} 
                 </div>
             </section>

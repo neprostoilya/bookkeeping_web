@@ -5,7 +5,7 @@ register = template.Library()
 
 @register.simple_tag()
 def get_sorted_table():
-    """Сортировка по"""
+    """Сортировка таблицы дохода и расхода"""
     sorters = [
         {
             'sorters': [
@@ -48,7 +48,7 @@ def get_sorted_table():
 
 @register.simple_tag()
 def get_sorted_table_accounts():
-    """Сортировка по счетов"""
+    """Сортировка таблицы счетов"""
     sorters = [
         {
             'sorters': [
@@ -73,41 +73,35 @@ def get_sorted_table_debts():
     """Сортировка таблицы долгов"""
     sorters = [
         {
-            'title': 'Дата выдачи',
             'sorters': [
-                ('data_1',),
-                ('-data_1',),
+                ('data_1', 'Дата выдачи')
+            ]
+        },
+        {
+            'sorters': [
+                ('data_2', 'Дата возврата')
+            ]
+        },
+        {
+            'sorters': [
+                ('account', 'Счет')
+            ]
+        },
+        {
+            'sorters': [
+                ('comment', 'Коментарий')
 
             ]
         },
         {
-            'title': 'Дата возврата',
             'sorters': [
-                ('data_2',),
-                ('-data_2',),
+                ('currency', 'Валюта')
 
             ]
         },
         {
-            'title': 'Счет',
             'sorters': [
-                ('account',),
-                ('-account',),
-            ]
-        },
-        {
-            'title': 'Валюта',
-            'sorters': [
-                ('currency',),
-                ('-currency',),
-
-            ]
-        },
-        {
-            'title': 'Сумма',
-            'sorters': [
-                ('sum',),
-                ('-sum',),
+                ('sum', 'Сумма')
             ]
         }
     ]

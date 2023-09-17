@@ -25,9 +25,11 @@
         </div>
     </div>
     <div class="content">
-    <div class="container-fluid"><div class="row"><div id="content-main" class="col-12">
-              <form action="{% url 'add_income' %}" method="post" novalidate="">
-                {% csrf_token %}
+      {% include 'bookkeeping/components/_message.html' %}     
+      <div class="container-fluid">
+          <section id="content" class="content">
+          <form action="{% url 'add_expense' %}" method="post" novalidate="">
+            {% csrf_token %}
                 <div class="row"><div class="col-12 col-lg-9"><div class="card"><div class="card-body">
                         <div class="form-group">
                           <div class="row">
@@ -134,6 +136,10 @@
                           <input type="submit" value="Сохранить" class="btn btn-success form-control">
                         </div>
                 </div>
-</div></div></div></div></form></div></div>
-
+                </div>
+          </form>
+          </section>
+      </div>
+    </div>
+</div>
 {% endblock main %}
