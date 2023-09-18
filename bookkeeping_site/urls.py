@@ -29,10 +29,11 @@ urlpatterns = [
     path('owe_debts/add_owe_debts/', add_owe_debts_page, name='add_owe_debts'),    
     path('owe_debts/add_owe_debt', add_owe_debt, name='add_owe_debt'), 
     path('owe_debts/update/<int:pk>/', UserOweDebtsUpdate.as_view(), name='update_owe_debt'),
-    path('owe_debts/delete/<int:pk>/', UserOweDebtsDelete.as_view(), name='delete_owe_debt'),
+    path('owe_debts/delete/', UserOweDebtsDelete.as_view(), name='delete_owe_debt'),
     path('debts/', UserDebtsPage.as_view(), name='debts'), 
     path('debts/update/<int:pk>/', UserDebtsUpdate.as_view(), name='update_debt'),
-    path('debts/delete/<int:pk>/', UserDebtsDelete.as_view(), name='delete_debt'),   
+    path('debts/delete/', delete_debts, name='delete_debts'),   
     path('debts/add_debts/', add_debts_page, name='add_debts'),    
     path('debts/add_debt', add_debt, name='add_debt'), 
+    path('debts/return_debts/<int:pk>/', UserReturnDebts.as_view(), name='return_debts'), 
 ]

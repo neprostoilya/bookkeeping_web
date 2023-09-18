@@ -3,11 +3,11 @@ from typing import Any, Dict
 from django.contrib.auth import login, logout
 from django.contrib import messages
 from django.urls import reverse_lazy
-from django.views.generic import ListView, UpdateView, DeleteView
-from django.shortcuts import render, redirect
+from django.views.generic import ListView, UpdateView, DeleteView, View
+from django.shortcuts import render, redirect, get_object_or_404
 
 from .forms import LoginForm, RegistrationForm, AccountForm, TransferToAccountForm,  \
-        UserIncomesForm, UserExpensesForm, UserDebtsForm, UserOweDebtsForm
+        UserIncomesForm, UserExpensesForm, UserDebtsForm, UserOweDebtsForm, UserReturnDebtsForm
 from .models import UserAccount, UserDebt, UserIncomes, UserExpenses, UserOweDebt
 from .utils import get_total_sum_account, get_total_sum_debt, get_total_sum_owe_debt, save_transfer_sum, save_incomes_or_debts_sum,  \
         get_total_sum_incomes, get_total_sum_expenses, save_expenses_or_debts_sum
@@ -421,15 +421,15 @@ class UserDebtsUpdate(UpdateView):
     template_name = 'bookkeeping/debts/update_debts.html'
     success_url = reverse_lazy('debts')
 
-class UserDebtsDelete(DeleteView):
-    """Удаление долга"""
-    extra_context = {
-        'title': 'Удаление долга'
-    }
-    model = UserDebt
-    success_url = reverse_lazy('debts')
-    template_name = 'bookkeeping/debts/userdebts_confirm_delete.html'
-    context_object_name = 'debts'
+def delete_debts(request):
+    """Удаление расходов"""
+    if request.method == 'POST':
+        selected_pks = request.POST.getlist('selected_action')
+        UserDebt.objects.filter(pk__in=selected_pks).delete()
+        messages.success(request, 'Выбранные объекты успешно удалены.')
+        return redirect('debts')
+    else:
+        return redirect('debts')
 
 def add_debts_page(request):
     """Страничка создания долга"""
@@ -452,3 +452,33 @@ def add_debt(request):
     else:
         messages.error(request, 'Не верное заполнение формы!')
         return redirect('add_debts')
+
+class UserReturnDebts(View):
+    """Возврат долга"""
+    template_name = 'bookkeeping/debts/return_debts.html'
+    
+    def get(self, request, pk):
+        debts = get_object_or_404(UserDebt, pk=pk)
+        form = UserReturnDebtsForm()
+        return render(request, self.template_name, {
+            'title': 'Возврат долга',
+            'debts': debts,
+            'form': form,
+        })
+    
+    def post(self, request, pk):
+        debts = get_object_or_404(UserDebt, pk=pk)
+        form = UserReturnDebtsForm(request.POST)
+        if form.is_valid():
+            form = form.save(commit=False)
+            return_sum = form.sum
+            debts.sum -=  return_sum
+            if debts.sum > 0:
+                debts.save()
+            else:
+                debts.delete()
+            return redirect('debts')
+        return render(request, self.template_name, {
+            'debts': debts,
+            'form': form,
+        })

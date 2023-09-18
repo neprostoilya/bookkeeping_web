@@ -1,7 +1,7 @@
 {% load tags %}
 {% get_sorted_table_debts as data %}
   <div class="col-12 ">
-    <form method="post" action="#!">
+    <form method="post" action="{% url 'delete_debts' %}">
       {% csrf_token %}
       {% include 'bookkeeping/components/_delete_list.html' %}     
       <div class="card">
@@ -46,7 +46,7 @@
                         <td class="field-account">{{ debt.account }}</td>
                         <td class="field-comment">{{ debt.comment }}</td>
                         <td class="field-currency">{{ debt.currency }}</td>
-                        <td class="field-sum">{{ debt.sum }}</td>
+                        <td class="field-sum">{{ debt.sum }} <a href="{% url 'return_debts' debt.pk %}"><i class="fa-solid fa-arrow-right-arrow-left"></i></a></td>
                     {% endfor %}
                       </tr>
                       <tr role="row">

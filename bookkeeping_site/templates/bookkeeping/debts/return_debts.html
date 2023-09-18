@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ title }}
+{% endblock title %}
+
+{% block main %}
+<div class="content-wrapper" style="min-height: 700.895px;">
+    <div class="content border-bottom mb-2">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 col-md-auto d-flex flex-grow-1 align-items-center">
+                    <h1 class="h4 m-0 pr-3 mr-3 border-right">
+                      {{ title }}
+                    </h1>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'index' %}">Главная</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'debts' %}">Долги</a></li>
+                        <li class="breadcrumb-item active">
+                            {{ title }}
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content">
+      {% include 'bookkeeping/components/_message.html' %}     
+      <div class="container-fluid">
+          <section id="content" class="content">
+              <form method="post" novalidate="">
+                {% csrf_token %}
+                <div class="row"><div class="col-12 col-lg-9"><div class="card"><div class="card-body">
+                        <div class="form-group">
+                            <div class="row">
+                            <label class="col-sm-3 text-left">
+                                {{ form.sum.label }}
+                                <span class="text-red">* </span>
+                            </label>
+                            <div class=" col-sm-7">
+                                <div class="related-widget-wrapper">
+                                    {{ form.sum }}
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+                      </div>
+                    </div>
+                <div class="col-12 col-lg-3">
+                  <div class="form-group">
+                    <input type="submit" value="Сохранить" class="btn btn-success form-control">
+                  </div>
+                </div>
+              </div>
+              </form>
+          </section>
+      </div>
+    </div>
+</div>
+{% endblock main %}

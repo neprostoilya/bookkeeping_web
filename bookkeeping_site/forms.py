@@ -196,7 +196,6 @@ class UserDebtsForm(forms.ModelForm):
             'comment': forms.TextInput(attrs={
             }),
             'account': forms.Select(attrs={
-                'placeholder': 'Счет'
             }),
             'currency': forms.Select(attrs={
             }),
@@ -241,3 +240,14 @@ class UserDebtsForm(forms.ModelForm):
     #             'placeholder': 'Сумма'
     #         })        
     #     }
+
+class UserReturnDebtsForm(forms.ModelForm):
+    """Форма возврата долга"""
+
+    class Meta:
+        """Поведенческий харакатер класса"""
+        model = UserDebt
+        fields = ('sum',)
+        widgets = {
+            'sum': forms.TextInput(),         
+        }
