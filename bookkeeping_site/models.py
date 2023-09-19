@@ -440,7 +440,8 @@ class UserDebt(models.Model):
     comment = models.CharField(
         max_length=150,
         null=True,
-        blank=True
+        blank=True,
+        verbose_name='Коментарий'
     )
     currency = models.ForeignKey(
         CategoryCurrency,
@@ -475,3 +476,5 @@ class UserDebt(models.Model):
         sum = self.sum
         currency = self.currency.course
         return sum * currency
+    
+

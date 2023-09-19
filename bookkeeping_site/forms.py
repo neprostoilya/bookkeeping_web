@@ -17,7 +17,6 @@ class LoginForm(AuthenticationForm):
         'placeholder': "Пароль"
     }))
 
-
 class RegistrationForm(UserCreationForm):
     """Форма регистрации"""
     password1 = forms.CharField(widget=forms.PasswordInput(attrs={
@@ -203,44 +202,6 @@ class UserDebtsForm(forms.ModelForm):
             })        
         }
 
-# class UserReturnOweDebtsForm(forms.ModelForm):
-    # """Форма возврата долга"""
-
-    # class Meta:
-    #     """Поведенческий харакатер класса"""
-    #     model = UserOweDebt
-    #     fields = ('name', 'data_1', 'data_2', 'account', 'comment', 'currency', 'sum')
-    #     widgets = {
-    #         'name': forms.TextInput(attrs={
-    #             'class': 'form-control',
-    #             'placeholder': 'Имя'
-    #         }),
-    #         'data_1': forms.DateInput(attrs={
-    #             'type': 'date',
-    #             'id': 'date_sel',
-    #             'class': 'form-control',
-    #             'placeholder': 'Дата выдачи'
-    #         }),
-    #         'data_2': forms.DateInput(attrs={
-    #             'type': 'date',
-    #             'id': 'date_sel2',
-    #             'class': 'form-control',
-    #             'placeholder': 'Дата возврата'
-    #         }),
-    #         'comment': forms.TextInput(attrs={
-    #             'class': 'form-control',
-    #             'placeholder': 'Коментарий'
-    #         }),
-    #         'account': forms.Select(attrs={
-    #             'class': 'form-control',
-    #             'placeholder': 'Счет'
-    #         }),
-    #         'sum': forms.TextInput(attrs={
-    #             'class': 'form-control',
-    #             'placeholder': 'Сумма'
-    #         })        
-    #     }
-
 class UserReturnDebtsForm(forms.ModelForm):
     """Форма возврата долга"""
 
@@ -251,3 +212,15 @@ class UserReturnDebtsForm(forms.ModelForm):
         widgets = {
             'sum': forms.TextInput(),         
         }
+
+class UserReturnOweDebtsForm(forms.ModelForm):
+    """Форма возврата долга"""
+
+    class Meta:
+        """Поведенческий харакатер класса"""
+        model = UserOweDebt
+        fields = ('sum',)
+        widgets = {
+            'sum': forms.TextInput(),         
+        }
+
