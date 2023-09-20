@@ -1,5 +1,8 @@
 from typing import Any, Dict
 
+import base64
+import matplotlib.pyplot as plt
+from io import BytesIO
 from django.contrib.auth import login, logout
 from django.contrib import messages
 from django.urls import reverse_lazy
@@ -359,7 +362,7 @@ class UserReturnOweDebts(View):
         if form.is_valid():
             form = form.save(commit=False)
             return_sum = form.sum
-            if return_sum <= owe_debts.sum:
+            if 0 <= return_sum <= owe_debts.sum:
                 return_owe_debts_to_account(return_sum, owe_debts)
                 owe_debts.sum -=  return_sum
                 owe_debts.save()
@@ -395,10 +398,11 @@ def add_owe_debt(request):
     """Добавление долга"""
     form = UserOweDebtsForm(data=request.POST)
     if form.is_valid():
-        debts = form.save(commit=False)
-        debts.user = request.user
-        save_incomes_or_debts_sum(debts)
-        debts.save()
+        owe_debts = form.save(commit=False)
+        owe_debts.user = request.user
+        owe_debts.initial_sum = owe_debts.sum
+        save_incomes_or_debts_sum(owe_debts)
+        owe_debts.save()
         messages.success(request, 'Долг успешно добавлен!')
         return redirect('owe_debts')
     else:
@@ -464,9 +468,9 @@ class UserReturnDebts(View):
         if form.is_valid():
             form = form.save(commit=False)
             return_sum = form.sum
-            if return_sum <= debts.sum:
+            if 0 <= return_sum <= debts.sum:
                 return_debts_to_account(return_sum, debts)
-                debts.sum -=  return_sum
+                debts.sum -= return_sum
                 debts.save()
             else:
                 return_debts_to_account(debts.sum, debts)
@@ -502,6 +506,7 @@ def add_debt(request):
     if form.is_valid():
         debts = form.save(commit=False)
         debts.user = request.user
+        debts.initial_sum = debts.sum
         save_expenses_or_debts_sum(debts)
         debts.save()
         messages.success(request, 'Долг успешно добавлен!')
@@ -510,3 +515,23 @@ def add_debt(request):
         messages.error(request, 'Не верное заполнение формы!')
         return redirect('add_debts')
 
+
+
+def statistics(request):
+    incomes = UserIncomes.objects.all()
+    incomes_dict = {}
+    for income in incomes:
+        incomes_dict[income.category] = income.sum
+
+    fig, ax = plt.subplots()
+    ax.pie(incomes_dict.values(), labels=incomes_dict.keys(), autopct='%1.1f%%')
+    ax.set_title('Доходы')
+
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    image_png = buffer.getvalue()
+    buffer.close()
+    graphic = base64.b64encode(image_png).decode('utf-8')
+    context = {'graphic': graphic}
+    return render(request, 'bookkeeping/statistics.html', context)

@@ -388,7 +388,10 @@ class UserOweDebt(models.Model):
     sum = models.IntegerField(
         verbose_name='Сумма'
     )
-
+    initial_sum = models.IntegerField(
+        verbose_name='Первоначальная сумма'
+    )
+    
     def get_absolute_url(self): 
         """Ссылка на страницу"""
         return reverse('update_owe_debt', args=[str(self.id)])
@@ -399,7 +402,7 @@ class UserOweDebt(models.Model):
     
     def __repr__(self):
         """Подобие строкового представления"""
-        return f'Долги: pk={self.pk}, data_1={self.data_1}, data_2={self.data_2},    \
+        return f'Долги: pk={self.pk}, data_1={self.data_1}, data_2={self.data_2}, initial_sum={self.initial_sum}  \
                 account={self.account}, currency={self}, comment={self.comment}, sum={self.sum}'
 
     class Meta:
@@ -451,6 +454,9 @@ class UserDebt(models.Model):
     sum = models.IntegerField(
         verbose_name='Сумма'
     )
+    initial_sum = models.IntegerField(
+        verbose_name='Первоначальная сумма'
+    )
 
     def get_absolute_url(self): 
         """Ссылка на страницу"""
@@ -462,7 +468,7 @@ class UserDebt(models.Model):
     
     def __repr__(self):
         """Подобие строкового представления"""
-        return f'Долги: pk={self.pk}, data_1={self.data_1}, data_2={self.data_2},    \
+        return f'Долги: pk={self.pk}, data_1={self.data_1}, data_2={self.data_2}, initial_sum={self.initial_sum}  \
                 account={self.account}, currency={self}, comment={self.comment}, sum={self.sum}'
 
     class Meta:

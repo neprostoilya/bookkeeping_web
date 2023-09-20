@@ -60,13 +60,13 @@ class UserTransferToAccountAdmin(admin.ModelAdmin):
 @admin.register(UserOweDebt)
 class UserOweDebtAdmin(admin.ModelAdmin):
     """Долги y пользователей"""
-    list_display = ('pk', 'user', 'name', 'data_1', 'data_2', 'account', 'comment', 'currency', 'sum')
+    list_display = ('pk', 'user', 'name', 'data_1', 'data_2', 'account', 'comment', 'currency', 'sum', 'initial_sum')
     list_filter = ('sum', 'data_1', 'data_2')
     list_display_links = ('user', 'pk', 'name')
 
 @admin.register(UserDebt)
 class UserDebtAdmin(admin.ModelAdmin):
     """Долги пользователей"""
-    list_display = ('pk', 'user', 'name', 'data_1', 'data_2', 'account', 'comment', 'currency', 'sum')
+    list_display = ('pk', 'user', 'name', 'data_1', 'data_2', 'account', 'comment', 'currency', 'sum', 'initial_sum')
     list_filter = ('sum', 'data_1', 'data_2')
     list_display_links = ('user', 'pk', 'name')

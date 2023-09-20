@@ -43,4 +43,6 @@ urlpatterns = [
     path('debts/add_debts/', add_debts_page, name='add_debts'),    
     path('debts/add_debt', add_debt, name='add_debt'), 
     path('debts/return_debts/<int:pk>/', UserReturnDebts.as_view(), name='return_debts'), 
+    # Статистика
+    path('statistics/', statistics, name='graphic'), 
 ]
