@@ -44,5 +44,5 @@ urlpatterns = [
     path('debts/add_debt', add_debt, name='add_debt'), 
     path('debts/return_debts/<int:pk>/', UserReturnDebts.as_view(), name='return_debts'), 
     # Статистика
-    path('statistics/', statistics, name='graphic'), 
+    path('statistics/incomes/', graph_incomes, name='graphic'), 
 ]

@@ -1,12 +1,11 @@
 from typing import Any, Dict
 
-import base64
-import matplotlib.pyplot as plt
-from io import BytesIO
+import plotly.graph_objs as go
+
 from django.contrib.auth import login, logout
 from django.contrib import messages
 from django.urls import reverse_lazy
-from django.views.generic import ListView, UpdateView, DeleteView, View
+from django.views.generic import ListView, UpdateView, View
 from django.shortcuts import render, redirect, get_object_or_404
 
 from .forms import LoginForm, RegistrationForm, AccountForm, TransferToAccountForm,  \
@@ -15,7 +14,62 @@ from .models import UserAccount, UserDebt, UserIncomes, UserExpenses, UserOweDeb
 from .utils import get_total_sum_account, get_total_sum_debt, get_total_sum_owe_debt, return_debts_to_account, return_owe_debts_to_account, \
 save_transfer_sum, save_incomes_or_debts_sum, get_total_sum_incomes, get_total_sum_expenses, save_expenses_or_debts_sum
 
-        
+def graph(list_values, list_keys):
+    """Функция для вывода графика"""
+    fig = go.Figure()
+    pull = [0]*len(list_values)
+    pull[list_values.index(max(list_values))] = 0.2
+    fig.add_trace(go.Pie(values=list_values, labels=list_keys, pull=pull, hole=0.9))
+
+    fig.update_layout(
+        margin=dict(l=50, r=50, b=100, t=100, pad=2),
+        legend_orientation="h",
+        template='plotly_white'
+    )    
+    return fig
+
+def graph_incomes_or_expenses(request, title, name_object):
+    """Отображения графика на странице"""
+    objects = name_object.objects.all()
+    objects_dict = {}
+    for object in objects:
+        if object.category.title in objects_dict:
+            objects_dict[object.category.title + ' - ' + str(object.sum) + ' ' + object.currency.title] += object.get_total_sum_income
+        else:
+            objects_dict[object.category.title + ' - ' + str(object.sum) + ' ' + object.currency.title] = object.get_total_sum_income
+
+    list_values = list(objects_dict.values())
+    list_keys = list(objects_dict.keys())
+
+    graphic = graph(list_values, list_keys)
+
+    context = {
+        'title': title,
+        'graphic': graphic.to_html(full_html=False)
+    }
+    return render(request, 'bookkeeping/statistics.html', context)
+
+def graph_incomes_or_expenses(request, title, name_object):
+    """Отображения графика на странице"""
+    objects = name_object.objects.all()
+    objects_dict = {}
+    for object in objects:
+        if object.category.title in objects_dict:
+            objects_dict[object.category.title + ' - ' + str(object.sum) + ' ' + object.currency.title] += object.get_total_sum_income
+        else:
+            objects_dict[object.category.title + ' - ' + str(object.sum) + ' ' + object.currency.title] = object.get_total_sum_income
+
+    list_values = list(objects_dict.values())
+    list_keys = list(objects_dict.keys())
+
+    graphic = graph(list_values, list_keys)
+
+    context = {
+        'title': title,
+        'graphic': graphic.to_html(full_html=False)
+    }
+    return render(request, 'bookkeeping/statistics.html', context)
+
 class Page(ListView):
     """Главная страница"""
     extra_context = {
@@ -201,6 +255,10 @@ class UserIncomesUpdate(UpdateView):
     form_class = UserIncomesForm
     template_name = 'bookkeeping/incomes/update_incomes.html'
     success_url = reverse_lazy('incomes')
+
+def graph_incomes(request):
+    """График доходов"""
+    return graph_incomes_or_expenses(request, 'График Доходов', UserIncomes)
 
 def add_income_page(request):
     """Страничка добавления дохода"""
@@ -515,23 +573,3 @@ def add_debt(request):
         messages.error(request, 'Не верное заполнение формы!')
         return redirect('add_debts')
 
-
-
-def statistics(request):
-    incomes = UserIncomes.objects.all()
-    incomes_dict = {}
-    for income in incomes:
-        incomes_dict[income.category] = income.sum
-
-    fig, ax = plt.subplots()
-    ax.pie(incomes_dict.values(), labels=incomes_dict.keys(), autopct='%1.1f%%')
-    ax.set_title('Доходы')
-
-    buffer = BytesIO()
-    plt.savefig(buffer, format='png')
-    buffer.seek(0)
-    image_png = buffer.getvalue()
-    buffer.close()
-    graphic = base64.b64encode(image_png).decode('utf-8')
-    context = {'graphic': graphic}
-    return render(request, 'bookkeeping/statistics.html', context)
