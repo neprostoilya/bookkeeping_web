@@ -91,13 +91,24 @@
                 <p>Счета</p>
               </a>
             </li>
+
             <li class="nav-item">
-              <a href="#!" class="nav-link">
+              <a href="#submenu3" data-bs-toggle="collapse" class="nav-link px-10 align-middle">
                 <i class="nav-icon fa-solid fa-chart-column"></i>
                 <p>Статистика</p>
               </a>
+              <ul class="nav-link collapse nav flex-column ms-1" id="submenu3" data-bs-parent="#menu">
+                <li class="w-100">
+                  <a href="{% url 'graphic_incomes' %}" class="nav-link px-0"> <span class="d-sm-inline">График доходов</span></a>
+                </li>
+                <li class="w-100">
+                  <a href="{% url 'graphic_expenses' %}" class="nav-link px-0"> <span class="d-sm-inline">График расходов</span></a>
+                </li>
+                <li>
+                  <a href="{% url 'graphic_accounts' %}" class="nav-link px-0"> <span class="d-sm-inline">График счетов</span></a>
+                </li>
+              </ul>
             </li>
-
             <br>
           </ul>
         </nav>

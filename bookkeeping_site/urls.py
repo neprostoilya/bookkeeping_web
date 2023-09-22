@@ -44,5 +44,11 @@ urlpatterns = [
     path('debts/add_debt', add_debt, name='add_debt'), 
     path('debts/return_debts/<int:pk>/', UserReturnDebts.as_view(), name='return_debts'), 
     # Статистика
-    path('statistics/incomes/', graph_incomes, name='graphic'), 
+    path('statistics/accounts/', graph_accounts, name='graphic_accounts'), 
+    path('statistics/incomes/', graph_incomes, name='graphic_incomes'), 
+    path('statistics/expenses/', graph_expenses, name='graphic_expenses'), 
+    # Категории
+    path('category/accounts/', UserCategoryAccounts.as_view(), name='category_accounts'), 
+    path('category/incomes/', UserCategoryIncomes.as_view(), name='category_incomes'), 
+    path('category/expenses/', UserCategoryExpenses.as_view(), name='category_expenses'), 
 ]

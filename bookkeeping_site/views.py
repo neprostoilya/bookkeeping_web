@@ -1,7 +1,5 @@
 from typing import Any, Dict
 
-import plotly.graph_objs as go
-
 from django.contrib.auth import login, logout
 from django.contrib import messages
 from django.urls import reverse_lazy
@@ -10,65 +8,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 from .forms import LoginForm, RegistrationForm, AccountForm, TransferToAccountForm,  \
         UserIncomesForm, UserExpensesForm, UserDebtsForm, UserOweDebtsForm, UserReturnDebtsForm, UserReturnOweDebtsForm
-from .models import UserAccount, UserDebt, UserIncomes, UserExpenses, UserOweDebt
+from .models import CategoryAccounts, CategoryExpenses, CategoryIncome, UserAccount, UserDebt, UserIncomes, UserExpenses, UserOweDebt
 from .utils import get_total_sum_account, get_total_sum_debt, get_total_sum_owe_debt, return_debts_to_account, return_owe_debts_to_account, \
-save_transfer_sum, save_incomes_or_debts_sum, get_total_sum_incomes, get_total_sum_expenses, save_expenses_or_debts_sum
+save_transfer_sum, save_incomes_or_debts_sum, get_total_sum_incomes, get_total_sum_expenses, save_expenses_or_debts_sum, graph_income_or_expense, \
+graph_account
 
-def graph(list_values, list_keys):
-    """Функция для вывода графика"""
-    fig = go.Figure()
-    pull = [0]*len(list_values)
-    pull[list_values.index(max(list_values))] = 0.2
-    fig.add_trace(go.Pie(values=list_values, labels=list_keys, pull=pull, hole=0.9))
-
-    fig.update_layout(
-        margin=dict(l=50, r=50, b=100, t=100, pad=2),
-        legend_orientation="h",
-        template='plotly_white'
-    )    
-    return fig
-
-def graph_incomes_or_expenses(request, title, name_object):
-    """Отображения графика на странице"""
-    objects = name_object.objects.all()
-    objects_dict = {}
-    for object in objects:
-        if object.category.title in objects_dict:
-            objects_dict[object.category.title + ' - ' + str(object.sum) + ' ' + object.currency.title] += object.get_total_sum_income
-        else:
-            objects_dict[object.category.title + ' - ' + str(object.sum) + ' ' + object.currency.title] = object.get_total_sum_income
-
-    list_values = list(objects_dict.values())
-    list_keys = list(objects_dict.keys())
-
-    graphic = graph(list_values, list_keys)
-
-    context = {
-        'title': title,
-        'graphic': graphic.to_html(full_html=False)
-    }
-    return render(request, 'bookkeeping/statistics.html', context)
-
-def graph_incomes_or_expenses(request, title, name_object):
-    """Отображения графика на странице"""
-    objects = name_object.objects.all()
-    objects_dict = {}
-    for object in objects:
-        if object.category.title in objects_dict:
-            objects_dict[object.category.title + ' - ' + str(object.sum) + ' ' + object.currency.title] += object.get_total_sum_income
-        else:
-            objects_dict[object.category.title + ' - ' + str(object.sum) + ' ' + object.currency.title] = object.get_total_sum_income
-
-    list_values = list(objects_dict.values())
-    list_keys = list(objects_dict.keys())
-
-    graphic = graph(list_values, list_keys)
-
-    context = {
-        'title': title,
-        'graphic': graphic.to_html(full_html=False)
-    }
-    return render(request, 'bookkeeping/statistics.html', context)
 
 class Page(ListView):
     """Главная страница"""
@@ -166,6 +110,10 @@ class UserAccountUpdate(UpdateView):
     template_name = 'bookkeeping/accounts/update_accounts.html'
     success_url = reverse_lazy('accounts')
 
+def graph_accounts(request):
+    """График счетов"""
+    return graph_account(request)
+
 def create_account_page(request):
     """Страница создания счета"""
     context = {
@@ -258,7 +206,7 @@ class UserIncomesUpdate(UpdateView):
 
 def graph_incomes(request):
     """График доходов"""
-    return graph_incomes_or_expenses(request, 'График Доходов', UserIncomes)
+    return graph_income_or_expense(request, 'График Доходов', UserIncomes)
 
 def add_income_page(request):
     """Страничка добавления дохода"""
@@ -329,6 +277,10 @@ class UserExpensesUpdate(UpdateView):
     form_class = UserExpensesForm
     template_name = 'bookkeeping/expenses/update_expenses.html'
     success_url = reverse_lazy('expenses')
+
+def graph_expenses(request):
+    """График расходов"""
+    return graph_income_or_expense(request, 'График Расходов', UserExpenses)
 
 def add_expenses_page(request):
     """Страничка добавления расхода"""
@@ -573,3 +525,56 @@ def add_debt(request):
         messages.error(request, 'Не верное заполнение формы!')
         return redirect('add_debts')
 
+# Категории 
+
+class UserCategoryAccounts(ListView):
+    """Категории Счетов"""
+    extra_context = {
+        'title': 'Категории Счетов',
+    }
+    model = CategoryAccounts
+    context_object_name = 'category_accounts'
+    template_name = 'bookkeeping/accounts/category_accounts.html'
+
+    def get_queryset(self):
+        accounts = self.model.objects.filter(
+            user=self.request.user
+        ).order_by(
+            '?'
+        )
+        return accounts
+
+class UserCategoryIncomes(ListView):
+    """Категории доходов"""
+    extra_context = {
+        'title': 'Категории доходов',
+    }
+    model = CategoryIncome
+    context_object_name = 'category_incomes'
+    template_name = 'bookkeeping/incomes/category_incomes.html'
+
+    def get_queryset(self):
+        incomes = self.model.objects.filter(
+            user=self.request.user
+        ).order_by(
+            '?'
+        )
+        return incomes
+
+class UserCategoryExpenses(ListView):
+    """Категории расходов"""
+    extra_context = {
+        'title': 'Категории расходов',
+    }
+    model = CategoryExpenses
+    context_object_name = 'category_expenses'
+    template_name = 'bookkeeping/expenses/category_expenses.html'
+
+    def get_queryset(self):
+        expenses = self.model.objects.filter(
+            user=self.request.user
+        ).order_by(
+            '?'
+        )
+        return expenses 
+    

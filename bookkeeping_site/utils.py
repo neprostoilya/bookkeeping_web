@@ -1,7 +1,8 @@
 import datetime
 
+import plotly.graph_objs as go
 from django.contrib import messages
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 
 from .models import UserAccount, UserIncomes, UserExpenses, UserDebt, UserOweDebt
 
@@ -45,7 +46,7 @@ def get_total_sum_incomes(request):
             user=request.user
         )
         total_sum = sum(
-            [_.get_total_sum_income for _ in incomes]
+            [_.get_total_sum for _ in incomes]
         )
         return decimal(total_sum)  
     else:
@@ -66,7 +67,7 @@ def get_total_sum_expenses(request):
             user=request.user
         )
         total_sum = sum(
-            [_.get_total_sum_expenses for _ in expenses]
+            [_.get_total_sum for _ in expenses]
         )
         return decimal(total_sum)  
     else:
@@ -114,3 +115,59 @@ def return_owe_debts_to_account(sum, owe_debts):
     account_sum = int((sum * owe_debts.currency.course) / owe_debts.account.currency.course)
     account.sum = account.sum - account_sum
     account.save()
+
+def graph(list_values, list_keys):
+    """Функция для вывода графика"""
+    fig = go.Figure()
+    pull = [0]*len(list_values)
+    pull[list_values.index(max(list_values))] = 0.2
+    fig.add_trace(go.Pie(values=list_values, labels=list_keys, pull=pull, hole=0.9))
+
+    fig.update_layout(
+        margin=dict(l=50, r=50, b=100, t=100, pad=2),
+        legend_orientation="h",
+        template='plotly_white'
+    )    
+    return fig
+
+def graph_income_or_expense(request, title, name_object):
+    """Отображение графика дохода и расхода на странице"""
+    objects = name_object.objects.all()
+    objects_dict = {}
+    for object in objects:
+        if object.category.title in objects_dict:
+            objects_dict[object.category.title + ' - ' + str(object.sum) + ' ' + object.currency.title] += object.get_total_sum
+        else:
+            objects_dict[object.category.title + ' - ' + str(object.sum) + ' ' + object.currency.title] = object.get_total_sum
+
+    list_values = list(objects_dict.values())
+    list_keys = list(objects_dict.keys())
+
+    graphic = graph(list_values, list_keys)
+
+    context = {
+        'title': title,
+        'graphic': graphic.to_html(full_html=False)
+    }
+    return render(request, 'bookkeeping/statistics.html', context)
+
+def graph_account(request):
+    """Отображение графика счетов на странице"""
+    objects = UserAccount.objects.all()
+    objects_dict = {}
+    for object in objects:
+        if object.account.title in objects_dict:
+            objects_dict[object.account.title + ' - ' + str(object.sum) + ' ' + object.currency.title ] += object.get_course_sum
+        else:
+            objects_dict[object.account.title + ' - ' + str(object.sum) + ' ' + object.currency.title] = object.get_course_sum
+
+    list_values = list(objects_dict.values())
+    list_keys = list(objects_dict.keys())
+
+    graphic = graph(list_values, list_keys)
+
+    context = {
+        'title': 'График счетов',
+        'graphic': graphic.to_html(full_html=False)
+    }
+    return render(request, 'bookkeeping/statistics.html', context)

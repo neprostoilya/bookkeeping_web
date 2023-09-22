@@ -239,7 +239,7 @@ class UserExpenses(models.Model):
         verbose_name_plural = 'Расходы пользователя'
 
     @property
-    def get_total_sum_expenses(self):
+    def get_total_sum(self):
         """Получение полной суммы расхода"""
         sum = self.sum
         currency = self.currency.course
@@ -307,7 +307,7 @@ class UserIncomes(models.Model):
         verbose_name_plural = 'Доходы Пользователя'
     
     @property
-    def get_total_sum_income(self):
+    def get_total_sum(self):
         """Получение полной суммы дохода"""
         sum = self.sum
         currency = self.currency.course
