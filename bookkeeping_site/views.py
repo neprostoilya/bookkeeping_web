@@ -2,16 +2,17 @@ from typing import Any, Dict
 
 from django.contrib.auth import login, logout
 from django.contrib import messages
+from django.forms.models import BaseModelForm
+from django.http import HttpResponse
 from django.urls import reverse_lazy
-from django.views.generic import ListView, UpdateView, View
+from django.views.generic import ListView, UpdateView, View, CreateView
 from django.shortcuts import render, redirect, get_object_or_404
 
-from .forms import LoginForm, RegistrationForm, AccountForm, TransferToAccountForm,  \
-        UserIncomesForm, UserExpensesForm, UserDebtsForm, UserOweDebtsForm, UserReturnDebtsForm, UserReturnOweDebtsForm
-from .models import CategoryAccounts, CategoryExpenses, CategoryIncome, UserAccount, UserDebt, UserIncomes, UserExpenses, UserOweDebt
-from .utils import get_total_sum_account, get_total_sum_debt, get_total_sum_owe_debt, return_debts_to_account, return_owe_debts_to_account, \
-save_transfer_sum, save_incomes_or_debts_sum, get_total_sum_incomes, get_total_sum_expenses, save_expenses_or_debts_sum, graph_income_or_expense, \
-graph_account
+from .forms import LoginForm, RegistrationForm, TransferToAccountForm, UserAccountForm, UserDebtForm, UserExpenseForm, UserIncomeForm, \
+UserOweDebtForm, UserReturnDebtForm, UserReturnOweDebtForm
+from .models import CategoryAccounts, CategoryExpenses, CategoryIncomes, UserAccount, UserDebts, UserIncomes, UserExpenses, UserOweDebts
+from .utils import get_total_sum_account, get_total_sum_debt, get_total_sum_owe_debt, return_debts_to_account, return_owe_debts_to_account, save_expenses_or_debts_sum, save_incomes_or_debts_sum, \
+save_transfer_sum, get_total_sum_incomes, get_total_sum_expenses, graph_income_or_expense, graph_account 
 
 
 class Page(ListView):
@@ -103,38 +104,41 @@ class UserAccountPage(ListView):
 class UserAccountUpdate(UpdateView):
     """Редактирование счета"""
     extra_context = {
-        'title': 'Изменения счета'
+        'title': 'Редактирование счета'
     }
     model = UserAccount
-    form_class = AccountForm
-    template_name = 'bookkeeping/accounts/update_accounts.html'
+    form_class = UserAccountForm
+    template_name = 'bookkeeping/accounts/update_account.html'
     success_url = reverse_lazy('accounts')
+    
+    def form_invalid(self, form):
+        messages.error(self.request, 'Ошибка в заполнении таблиц!')
+        return super().form_invalid(form)
+
+class UserAccountCreate(CreateView):
+    """Создание счета"""
+    extra_context = {
+        'title': 'Создание счета'
+    }
+    model = UserAccount
+    form_class = UserAccountForm
+    template_name = 'bookkeeping/accounts/create_account.html'
+
+    def form_valid(self, form):
+        """Проверка на валидность"""
+        account_form = form.save(commit=False)
+        account_form.user = self.request.user
+        account_form.save() 
+        return redirect('accounts')
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Ошибка в заполнении таблиц!')
+        return super().form_invalid(form)
 
 def graph_accounts(request):
     """График счетов"""
     return graph_account(request)
 
-def create_account_page(request):
-    """Страница создания счета"""
-    context = {
-        'title': 'Создание счета',
-        'form': AccountForm(),
-    }
-    return render(request, 'bookkeeping/accounts/create_account.html', context)
-
-def create_account(request):
-    """Создание счета"""
-    form = AccountForm(data=request.POST)
-    if form.is_valid():
-        account = form.save(commit=False)
-        account.user = request.user
-        account.save()
-        messages.success(request, 'Счет успешно создан!')
-        return redirect('accounts')
-    else:
-        messages.error(request, 'Не верное заполнение формы!')
-        return redirect('create_accounts')
-    
 def transfer_to_account_page(request):
     """Страничка перевода с счета на счет"""
     context = {
@@ -166,7 +170,7 @@ def delete_accounts(request):
 
 # Доходы
 
-class UserIncomesPage(ListView):
+class UserIncomePage(ListView):
     """Страничка доходов пользователя"""
     extra_context = {
         'title': 'Доходы',
@@ -194,41 +198,44 @@ class UserIncomesPage(ListView):
         context['total_sum'] = total_sum
         return context
 
-class UserIncomesUpdate(UpdateView):
+class UserIncomeUpdate(UpdateView):
     """Редактирование дохода"""
     extra_context = {
-        'title': 'Изменение дохода'
+        'title': 'Редактирование дохода'
     }
     model = UserIncomes
-    form_class = UserIncomesForm
-    template_name = 'bookkeeping/incomes/update_incomes.html'
+    form_class = UserIncomeForm
+    template_name = 'bookkeeping/incomes/update_income.html'
     success_url = reverse_lazy('incomes')
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Ошибка в заполнении формы!')
+        return super().form_invalid(form)
+
+class UserIncomeCreate(CreateView):
+    """Создание дохода"""
+    extra_context = {
+        'title': 'Создание дохода'
+    }
+    model = UserIncomes
+    form_class = UserIncomeForm
+    template_name = 'bookkeeping/incomes/create_income.html'
+
+    def form_valid(self, form):
+        """Проверка на валидность"""
+        incomes_form = form.save(commit=False)
+        incomes_form.user = self.request.user
+        save_incomes_or_debts_sum(incomes_form)
+        incomes_form.save() 
+        return redirect('incomes')
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Ошибка в заполнении формы!')
+        return super().form_invalid(form)
 
 def graph_incomes(request):
     """График доходов"""
     return graph_income_or_expense(request, 'График Доходов', UserIncomes)
-
-def add_income_page(request):
-    """Страничка добавления дохода"""
-    context = {
-        'title': 'Добавление дохода',
-        'form': UserIncomesForm(),
-    }
-    return render(request, 'bookkeeping/incomes/add_incomes.html', context)
-
-def add_income(request):
-    """Добавление"""
-    form = UserIncomesForm(data=request.POST)
-    if form.is_valid():
-        incomes = form.save(commit=False)
-        incomes.user = request.user
-        save_incomes_or_debts_sum(incomes)
-        incomes.save()
-        messages.success(request, 'Доход успешно добавлен!')
-        return redirect('incomes')
-    else:
-        messages.error(request, 'Не верное заполнение формы!')
-        return redirect('add_incomes')
     
 def delete_incomes(request):
     """Удаление доходов"""
@@ -240,7 +247,7 @@ def delete_incomes(request):
 
 # Расходы
 
-class UserExpensesPage(ListView):
+class UserExpensePage(ListView):
     """Страничка Расходов пользователя"""
     extra_context = {
         'title': 'Расходы',
@@ -268,41 +275,44 @@ class UserExpensesPage(ListView):
         context['total_sum'] = total_sum
         return context
     
-class UserExpensesUpdate(UpdateView):
+class UserExpenseUpdate(UpdateView):
     """Редактирование расхода"""
     extra_context = {
-        'title': 'Изменение расхода'
+        'title': 'Редактирование расхода'
     }
     model = UserExpenses
-    form_class = UserExpensesForm
-    template_name = 'bookkeeping/expenses/update_expenses.html'
+    form_class = UserExpenseForm
+    template_name = 'bookkeeping/expenses/update_expense.html'
     success_url = reverse_lazy('expenses')
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Ошибка в заполнении таблиц!')
+        return super().form_invalid(form)
+
+class UserExpenseCreate(CreateView):
+    """Создание расхода"""
+    extra_context = {
+        'title': 'Создание расхода'
+    }
+    model = UserExpenses
+    form_class = UserExpenseForm
+    template_name = 'bookkeeping/expenses/create_expense.html'
+
+    def form_valid(self, form):
+        """Проверка на валидность"""
+        expense_form = form.save(commit=False)
+        expense_form.user = self.request.user
+        save_expenses_or_debts_sum(expense_form)
+        expense_form.save() 
+        return redirect('expenses')
+    
+    def form_invalid(self, form):
+        messages.error(self.request, 'Ошибка в заполнении таблиц!')
+        return super().form_invalid(form)
 
 def graph_expenses(request):
     """График расходов"""
     return graph_income_or_expense(request, 'График Расходов', UserExpenses)
-
-def add_expenses_page(request):
-    """Страничка добавления расхода"""
-    context = {
-        'title': 'Добавление расхода',
-        'form': UserExpensesForm(),
-    }
-    return render(request, 'bookkeeping/expenses/add_expenses.html', context)
-
-def add_expense(request):
-    """Добавление расхода"""
-    form = UserExpensesForm(data=request.POST)
-    if form.is_valid():
-        expenses = form.save(commit=False)
-        expenses.user = request.user
-        save_expenses_or_debts_sum(expenses)
-        expenses.save()
-        messages.success(request, 'Расход успешно добавлен!')
-        return redirect('expenses')
-    else:
-        messages.error(request, 'Не верное заполнение формы!')
-        return redirect('add_expenses')
 
 def delete_expenses(request):
     """Удаление расходов"""
@@ -315,18 +325,18 @@ def delete_expenses(request):
 
 # Долги пользователя
 
-class UserOweDebtsPage(ListView):
+class UserOweDebtPage(ListView):
     """Страничка Долгов пользователя"""
     extra_context = {
         'title': 'Мои Долги',
     }
-    model = UserOweDebt
+    model = UserOweDebts
     context_object_name = 'owe_debts'
     template_name = 'bookkeeping/owe_debts/owe_debts.html'
 
     def get_queryset(self):
         """Сортировка в таблице""" 
-        owe_debts = UserOweDebt.objects.filter(
+        owe_debts = UserOweDebts.objects.filter(
             user=self.request.user
         ).order_by(
             '?'
@@ -342,23 +352,27 @@ class UserOweDebtsPage(ListView):
         context['total_sum'] = get_total_sum_owe_debt(self.request)
         return context
 
-class UserOweDebtsUpdate(UpdateView):
+class UserOweDebtUpdate(UpdateView):
     """Редактирование долга"""
     extra_context = {
         'title': 'Изменение долга'
     }
-    model = UserOweDebt
-    form_class = UserOweDebtsForm
-    template_name = 'bookkeeping/owe_debts/update_owe_debts.html'
+    model = UserOweDebts
+    form_class = UserOweDebtForm
+    template_name = 'bookkeeping/owe_debts/update_owe_debt.html'
     success_url = reverse_lazy('owe_debts')
 
-class UserReturnOweDebts(View):
+    def form_invalid(self, form):
+        messages.error(self.request, 'Ошибка в заполнении таблиц!')
+        return super().form_invalid(form)
+
+class UserOweDebtReturn(View):
     """Возврат долга c счета"""
-    template_name = 'bookkeeping/owe_debts/return_owe_debts.html'
+    template_name = 'bookkeeping/owe_debts/return_owe_debt.html'
 
     def get(self, request, pk):
-        owe_debts = get_object_or_404(UserOweDebt, pk=pk)
-        form = UserReturnOweDebtsForm()
+        owe_debts = get_object_or_404(UserOweDebts, pk=pk)
+        form = UserReturnOweDebtForm()
         return render(request, self.template_name, {
             'title': 'Возврат долга',
             'owe_debts': owe_debts,
@@ -366,8 +380,8 @@ class UserReturnOweDebts(View):
         })
     
     def post(self, request, pk):
-        owe_debts = get_object_or_404(UserOweDebt, pk=pk, user=request.user)
-        form = UserReturnDebtsForm(request.POST)
+        owe_debts = get_object_or_404(UserOweDebts, pk=pk, user=request.user)
+        form = UserReturnOweDebtForm(request.POST)
 
         if form.is_valid():
             form = form.save(commit=False)
@@ -386,38 +400,35 @@ class UserReturnOweDebts(View):
             'form': form,
         })
 
+class UserOweDebtCreate(CreateView):
+    """Создание долга пользователя"""
+    extra_context = {
+        'title': 'Создание долга'
+    }
+    model = UserOweDebts
+    form_class = UserOweDebtForm
+    template_name = 'bookkeeping/owe_debts/create_owe_debt.html'
+
+    def form_valid(self, form):
+        """Проверка на валидность"""
+        owe_debt_form = form.save(commit=False)
+        owe_debt_form.user = self.request.user
+        owe_debt_form.save() 
+        return redirect('owe_debts')
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Ошибка в заполнении таблиц!')
+        return super().form_invalid(form)
+
 def delete_owe_debts(request):
-    """Удаление расходов"""
+    """Удаление долгов пользователя"""
     if request.method == 'POST':
         selected_pks = request.POST.getlist('selected_action')
-        UserOweDebt.objects.filter(pk__in=selected_pks).delete()
+        UserOweDebts.objects.filter(pk__in=selected_pks).delete()
         messages.success(request, 'Выбранные объекты успешно удалены.')
         redirect('owe_debts')
     else:
         redirect('owe_debts')
-
-def add_owe_debts_page(request):
-    """Страничка создания долга"""
-    context = {
-        'title': 'Добавление долга',
-        'form': UserOweDebtsForm(),
-    }
-    return render(request, 'bookkeeping/owe_debts/add_owe_debts.html', context)
-
-def add_owe_debt(request):
-    """Добавление долга"""
-    form = UserOweDebtsForm(data=request.POST)
-    if form.is_valid():
-        owe_debts = form.save(commit=False)
-        owe_debts.user = request.user
-        owe_debts.initial_sum = owe_debts.sum
-        save_incomes_or_debts_sum(owe_debts)
-        owe_debts.save()
-        messages.success(request, 'Долг успешно добавлен!')
-        return redirect('owe_debts')
-    else:
-        messages.error(request, 'Не верное заполнение формы!')
-        return redirect('add_owe_debts')
 
 # Долги у пользователя
 
@@ -426,13 +437,13 @@ class UserDebtsPage(ListView):
     extra_context = {
         'title': 'Долги',
     }
-    model = UserDebt
+    model = UserDebts
     context_object_name = 'debts'
     template_name = 'bookkeeping/debts/debts.html'
 
     def get_queryset(self):
         """Сортировка в таблице""" 
-        debts = UserDebt.objects.filter(
+        debts = UserDebts.objects.filter(
             user=self.request.user
         ).order_by(
             '?'
@@ -448,23 +459,27 @@ class UserDebtsPage(ListView):
         context['total_sum'] = get_total_sum_debt(self.request)
         return context
 
-class UserDebtsUpdate(UpdateView):
+class UserDebtUpdate(UpdateView):
     """Редактирование долга"""
     extra_context = {
-        'title': 'Изменение долга'
+        'title': 'Редактирование долга'
     }
-    model = UserDebt
-    form_class = UserDebtsForm
-    template_name = 'bookkeeping/debts/update_debts.html'
+    model = UserDebts
+    form_class = UserDebtForm
+    template_name = 'bookkeeping/debts/update_debt.html'
     success_url = reverse_lazy('debts')
 
-class UserReturnDebts(View):
+    def form_invalid(self, form):
+        messages.error(self.request, 'Ошибка в заполнении таблиц!')
+        return super().form_invalid(form)
+
+class UserDebtReturn(View):
     """Возврат долга на счет"""
-    template_name = 'bookkeeping/debts/return_debts.html'
+    template_name = 'bookkeeping/debts/return_debt.html'
 
     def get(self, request, pk):
-        debts = get_object_or_404(UserDebt, pk=pk)
-        form = UserReturnDebtsForm()
+        debts = get_object_or_404(UserDebts, pk=pk)
+        form = UserReturnDebtForm()
         return render(request, self.template_name, {
             'title': 'Возврат долга',
             'debts': debts,
@@ -472,8 +487,8 @@ class UserReturnDebts(View):
         })
     
     def post(self, request, pk):
-        debts = get_object_or_404(UserDebt, pk=pk, user=request.user)
-        form = UserReturnDebtsForm(request.POST)
+        debts = get_object_or_404(UserDebts, pk=pk, user=request.user)
+        form = UserReturnDebtForm(request.POST)
 
         if form.is_valid():
             form = form.save(commit=False)
@@ -492,38 +507,35 @@ class UserReturnDebts(View):
             'form': form,
         })
 
+class UserDebtCreate(CreateView):
+    """Создание долга у пользователя"""
+    extra_context = {
+        'title': 'Создание долга'
+    }
+    model = UserDebts
+    form_class = UserDebtForm
+    template_name = 'bookkeeping/debts/create_debt.html'
+
+    def form_valid(self, form):
+        """Проверка на валидность"""
+        debt_form = form.save(commit=False)
+        debt_form.user = self.request.user
+        debt_form.save() 
+        return redirect('debts')
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Ошибка в заполнении таблиц!')
+        return super().form_invalid(form)
+
 def delete_debts(request):
     """Удаление расходов"""
     if request.method == 'POST':
         selected_pks = request.POST.getlist('selected_action')
-        UserDebt.objects.filter(pk__in=selected_pks).delete()
+        UserDebts.objects.filter(pk__in=selected_pks).delete()
         messages.success(request, 'Выбранные объекты успешно удалены.')
         return redirect('debts')
     else:
         return redirect('debts')
-
-def add_debts_page(request):
-    """Страничка создания долга"""
-    context = {
-        'title': 'Добавление долга',
-        'form': UserDebtsForm(),
-    }
-    return render(request, 'bookkeeping/debts/add_debts.html', context)
-
-def add_debt(request):
-    """Добавление долга"""
-    form = UserDebtsForm(data=request.POST)
-    if form.is_valid():
-        debts = form.save(commit=False)
-        debts.user = request.user
-        debts.initial_sum = debts.sum
-        save_expenses_or_debts_sum(debts)
-        debts.save()
-        messages.success(request, 'Долг успешно добавлен!')
-        return redirect('debts')
-    else:
-        messages.error(request, 'Не верное заполнение формы!')
-        return redirect('add_debts')
 
 # Категории 
 
@@ -534,7 +546,7 @@ class UserCategoryAccounts(ListView):
     }
     model = CategoryAccounts
     context_object_name = 'category_accounts'
-    template_name = 'bookkeeping/accounts/category_accounts.html'
+    template_name = 'bookkeeping/accounts/categories_accounts.html'
 
     def get_queryset(self):
         accounts = self.model.objects.filter(
@@ -549,17 +561,17 @@ class UserCategoryIncomes(ListView):
     extra_context = {
         'title': 'Категории доходов',
     }
-    model = CategoryIncome
-    context_object_name = 'category_incomes'
-    template_name = 'bookkeeping/incomes/category_incomes.html'
+    model = CategoryIncomes
+    context_object_name = 'categories'
+    template_name = 'bookkeeping/incomes/categories_incomes.html'
 
     def get_queryset(self):
-        incomes = self.model.objects.filter(
+        categories = self.model.objects.filter(
             user=self.request.user
         ).order_by(
             '?'
         )
-        return incomes
+        return categories
 
 class UserCategoryExpenses(ListView):
     """Категории расходов"""

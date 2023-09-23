@@ -4,7 +4,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
 
-class CategoryIncome(models.Model):
+class CategoryIncomes(models.Model):
     """Категории доходов по дефолту"""
     user = models.ForeignKey(
         User,
@@ -253,13 +253,13 @@ class UserIncomes(models.Model):
         verbose_name='Пользователь'
     )
     category = models.ForeignKey(
-        CategoryIncome,
+        CategoryIncomes,
         related_name='category_incomes',
         on_delete=models.CASCADE, 
         verbose_name='Категория'
     )
     subcategory = models.ForeignKey(
-        CategoryIncome,
+        CategoryIncomes,
         related_name='subcategory_incomes',
         on_delete=models.CASCADE, 
         verbose_name='Подкатегория',
@@ -351,7 +351,7 @@ class UserTransferToAccount(models.Model):
         verbose_name = 'Перевод Пользователя'
         verbose_name_plural = 'Перевод Пользователя'
     
-class UserOweDebt(models.Model):
+class UserOweDebts(models.Model):
     """Долги y пользователя"""
     user = models.ForeignKey(
         User,
@@ -417,7 +417,7 @@ class UserOweDebt(models.Model):
         currency = self.currency.course
         return sum * currency
     
-class UserDebt(models.Model):
+class UserDebts(models.Model):
     """Долги пользователя"""
     user = models.ForeignKey(
         User,

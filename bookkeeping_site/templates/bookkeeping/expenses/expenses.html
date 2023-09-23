@@ -28,17 +28,17 @@
                 </div>
                 <br><br><br>
                 <div class="col-12 col-md-auto d-flex align-items-center justify-content-center page-actions">
-                    <a href="{% url 'add_expenses' %}" class="btn btn-success float-right">
+                    <a href="{% url 'create_expense' %}" class="btn btn-success float-right">
                         <i class="fa fa-plus-circle"></i> &nbsp; Добавить 
                     </a>
                 </div>
             </div>
         </div>
     </div>
-    {% include 'bookkeeping/components/_message.html' %}     
     <div class="content">
         <div class="container-fluid">
             <section id="content" class="content">
+                {% include 'bookkeeping/components/_message.html' %}     
                 <div class="row">
                     {% include 'bookkeeping/components/_sort_data.html' %}     
                     {% include 'bookkeeping/components/_table_expenses.html' %} 

@@ -50,7 +50,13 @@
                           {% endif %}
                         </th>
                         <td class="field-created_at">{{ income.created_at }}</td>
-                        <td class="field-comment">{{ income.comment }}</td>
+                        <td class="field-comment">
+                          {% if income.comment %} 
+                          {{income.comment }}
+                          {% else %}
+                          -
+                          {% endif %}
+                        </td>
                         <td class="field-account">{{ income.account }}</td>
                         <td class="field-currency">{{ income.currency }}</td>
                         <td class="field-sum">{{ income.sum }}</td>

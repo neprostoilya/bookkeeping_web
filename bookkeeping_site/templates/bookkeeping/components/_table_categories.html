@@ -1,7 +1,7 @@
 {% load tags %}
-{% get_sorted_table as data %}
+{% get_sorted_table_categories as data %}
   <div class="col-12 ">
-    <form method="post" action="{% url 'delete_expenses' %}">
+    <form method="post" action="#!">
       {% csrf_token %}
       {% include 'bookkeeping/components/_delete_list.html' %}     
       <div class="card">

@@ -1,10 +1,8 @@
-import datetime
-
 import plotly.graph_objs as go
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .models import UserAccount, UserIncomes, UserExpenses, UserDebt, UserOweDebt
+from .models import UserAccount, UserIncomes, UserExpenses, UserDebts, UserOweDebts
 
 def decimal(total_sum):
     """Функция которая возвращает сумму с пробелами"""
@@ -32,10 +30,10 @@ def save_transfer_sum(transfer):
         account_1.save()
         account_2.save()
 
-def save_incomes_or_debts_sum(request):
+def save_incomes_or_debts_sum(form):
     """Сохранение дохода или возвращение долга в базу данных"""
-    account = get_object_or_404(UserAccount, pk=request.account.pk)
-    account_sum = int((request.sum * request.currency.course) / request.account.currency.course)
+    account = get_object_or_404(UserAccount, pk=form.account.pk)
+    account_sum = int((form.sum * form.currency.course) / form.account.currency.course)
     account.sum = account.sum + account_sum
     account.save()
 
@@ -53,10 +51,10 @@ def get_total_sum_incomes(request):
         messages.error(request, 'Авторизуйтесь или Зарегистрируйтесь!')
         return redirect('login_registration')
     
-def save_expenses_or_debts_sum(request):
+def save_expenses_or_debts_sum(form):
     """Сохранение расхода или возвращение долга в базу данных"""
-    account = get_object_or_404(UserAccount, pk=request.account.pk)
-    account_sum = int((request.sum * request.currency.course) / request.account.currency.course)
+    account = get_object_or_404(UserAccount, pk=form.account.pk)
+    account_sum = int((form.sum * form.currency.course) / form.account.currency.course)
     account.sum = account.sum - account_sum
     account.save()
 
@@ -77,7 +75,7 @@ def get_total_sum_expenses(request):
 def get_total_sum_debt(request):
     """Получение полной суммы долгов"""
     if request.user.is_authenticated:
-        debts = UserDebt.objects.filter(
+        debts = UserDebts.objects.filter(
             user=request.user
         )
         total_sum = sum(
@@ -91,7 +89,7 @@ def get_total_sum_debt(request):
 def get_total_sum_owe_debt(request):
     """Получение полной суммы долгов"""
     if request.user.is_authenticated:
-        debts = UserOweDebt.objects.filter(
+        debts = UserOweDebts.objects.filter(
             user=request.user
         )
         total_sum = sum(

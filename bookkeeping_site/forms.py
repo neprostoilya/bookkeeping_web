@@ -1,8 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
         
-from .models import UserAccount, UserTransferToAccount, User, UserIncomes, \
-    UserExpenses, UserDebt, UserOweDebt
+from .models import UserAccount, UserOweDebts, UserTransferToAccount, User, UserIncomes, \
+    UserExpenses, User, UserDebts
 
 
 class LoginForm(AuthenticationForm):
@@ -44,7 +44,7 @@ class RegistrationForm(UserCreationForm):
             })
         }
 
-class AccountForm(forms.ModelForm):
+class UserAccountForm(forms.ModelForm):
     """Форма создания счета"""
     
     class Meta:
@@ -76,7 +76,7 @@ class TransferToAccountForm(forms.ModelForm):
             })
         }
 
-class UserIncomesForm(forms.ModelForm):
+class UserIncomeForm(forms.ModelForm):
     """Форма создания дохода"""
 
     class Meta:
@@ -103,7 +103,7 @@ class UserIncomesForm(forms.ModelForm):
             })        
         }
 
-class UserExpensesForm(forms.ModelForm):
+class UserExpenseForm(forms.ModelForm):
     """Форма создания расхода"""
 
     class Meta:
@@ -130,12 +130,12 @@ class UserExpensesForm(forms.ModelForm):
             })        
         }
 
-class UserOweDebtsForm(forms.ModelForm):
+class UserOweDebtForm(forms.ModelForm):
     """Форма создания долга"""
 
     class Meta:
         """Поведенческий харакатер класса"""
-        model = UserOweDebt
+        model = UserOweDebts
         fields = ('name', 'data_1', 'data_2', 'account', 'comment', 'currency', 'sum')
         widgets = {
             'name': forms.TextInput(attrs={
@@ -172,12 +172,12 @@ class UserOweDebtsForm(forms.ModelForm):
             })        
         }
 
-class UserDebtsForm(forms.ModelForm):
+class UserDebtForm(forms.ModelForm):
     """Форма создания долга"""
 
     class Meta:
         """Поведенческий харакатер класса"""
-        model = UserDebt
+        model = UserDebts
         fields = ('name', 'data_1', 'data_2', 'account', 'comment', 'currency', 'sum')
         widgets = {
             'name': forms.TextInput(attrs={
@@ -202,23 +202,23 @@ class UserDebtsForm(forms.ModelForm):
             })        
         }
 
-class UserReturnDebtsForm(forms.ModelForm):
+class UserReturnDebtForm(forms.ModelForm):
     """Форма возврата долга"""
 
     class Meta:
         """Поведенческий харакатер класса"""
-        model = UserDebt
+        model = UserDebts
         fields = ('sum',)
         widgets = {
             'sum': forms.TextInput(),         
         }
 
-class UserReturnOweDebtsForm(forms.ModelForm):
+class UserReturnOweDebtForm(forms.ModelForm):
     """Форма возврата долга"""
 
     class Meta:
         """Поведенческий харакатер класса"""
-        model = UserOweDebt
+        model = UserOweDebts
         fields = ('sum',)
         widgets = {
             'sum': forms.TextInput(),         

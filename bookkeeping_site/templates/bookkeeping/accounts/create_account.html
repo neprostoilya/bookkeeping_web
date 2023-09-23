@@ -28,7 +28,7 @@
       {% include 'bookkeeping/components/_message.html' %}     
       <div class="container-fluid">
           <section id="content" class="content">
-              <form action="{% url 'create_account' %}" method="post" novalidate="">
+              <form method="post" novalidate="">
                 {% csrf_token %}
                 <div class="row"><div class="col-12 col-lg-9"><div class="card"><div class="card-body">
                   <div class="form-group">

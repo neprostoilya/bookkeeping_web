@@ -106,3 +106,21 @@ def get_sorted_table_debts():
         }
     ]
     return sorters
+
+@register.simple_tag()
+def get_sorted_table_categories():
+    """Сортировка таблицы категорий"""
+    sorters = [
+        {
+            'sorters': [
+                ('category', 'Категория')
+            ]
+        },
+        {
+            'sorters': [
+                ('parent', 'Подкатегория')
+
+            ]
+        }
+    ]
+    return sorters

@@ -50,7 +50,13 @@
                           {% endif %}
                         </th>
                         <td class="field-created_at">{{ expense.created_at }}</td>
-                        <td class="field-comment">{{ expense.comment }}</td>
+                        <td class="field-comment">
+                          {% if expense.comment %} 
+                          {{ expense.comment }}
+                          {% else %}
+                          -
+                          {% endif %}
+                        </td>
                         <td class="field-account">{{ expense.account }}</td>
                         <td class="field-currency">{{ expense.currency }}</td>
                         <td class="field-sum">{{ expense.sum }}</td>

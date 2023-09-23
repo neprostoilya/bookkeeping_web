@@ -1,9 +1,9 @@
 from django.contrib import admin
 
-from .models import CategoryExpenses, CategoryIncome, CategoryCurrency, UserDebt,  UserOweDebt, \
+from .models import CategoryExpenses, CategoryIncomes, CategoryCurrency, UserDebts,  UserOweDebts, \
                     UserExpenses, UserIncomes, UserAccount, CategoryAccounts, UserTransferToAccount
 
-@admin.register(CategoryIncome)
+@admin.register(CategoryIncomes)
 class CategoryIncomesAdmin(admin.ModelAdmin):
     """Категории Доходов"""
     list_display = ('pk', 'user', 'title', 'parent')
@@ -57,14 +57,14 @@ class UserTransferToAccountAdmin(admin.ModelAdmin):
     list_filter = ('sum',)
     list_display_links = ('user', 'pk')
 
-@admin.register(UserOweDebt)
+@admin.register(UserOweDebts)
 class UserOweDebtAdmin(admin.ModelAdmin):
     """Долги y пользователей"""
     list_display = ('pk', 'user', 'name', 'data_1', 'data_2', 'account', 'comment', 'currency', 'sum', 'initial_sum')
     list_filter = ('sum', 'data_1', 'data_2')
     list_display_links = ('user', 'pk', 'name')
 
-@admin.register(UserDebt)
+@admin.register(UserDebts)
 class UserDebtAdmin(admin.ModelAdmin):
     """Долги пользователей"""
     list_display = ('pk', 'user', 'name', 'data_1', 'data_2', 'account', 'comment', 'currency', 'sum', 'initial_sum')
