@@ -1,21 +1,21 @@
 from django.contrib import admin
 
-from .models import CategoryExpenses, CategoryIncomes, CategoryCurrency, UserDebts,  UserOweDebts, \
-                    UserExpenses, UserIncomes, UserAccount, CategoryAccounts, UserTransferToAccount
+from .models import CategoriesExpenses, CategoriesIncomes, CategoriesCurrencys, UserDebts,  UserOweDebts, \
+                    UserExpenses, UserIncomes, UserAccount, CategoriesAccounts, UserTransferToAccount
 
-@admin.register(CategoryIncomes)
+@admin.register(CategoriesIncomes)
 class CategoryIncomesAdmin(admin.ModelAdmin):
     """Категории Доходов"""
     list_display = ('pk', 'user', 'title', 'parent')
     list_display_links = ('title', 'pk')
 
-@admin.register(CategoryExpenses)
+@admin.register(CategoriesExpenses)
 class CategoryExpensesAdmin(admin.ModelAdmin):
     """Категории Расходов"""
     list_display = ('pk', 'user', 'title', 'parent')
     list_display_links = ('title', 'pk')
 
-@admin.register(CategoryCurrency)
+@admin.register(CategoriesCurrencys)
 class CategoryCurrencyAdmin(admin.ModelAdmin):
     """Категории валют"""
     list_display = ('pk', 'user', 'title', 'course')
@@ -44,7 +44,7 @@ class UserAccountAdmin(admin.ModelAdmin):
     list_filter = ('sum',)
     list_display_links = ('user', 'pk')
 
-@admin.register(CategoryAccounts)
+@admin.register(CategoriesAccounts)
 class CategoryAccountsAdmin(admin.ModelAdmin):
     """Категории Счетов"""
     list_display = ('pk', 'user', 'title')

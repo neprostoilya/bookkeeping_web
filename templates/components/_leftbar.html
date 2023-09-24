@@ -72,16 +72,16 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="#submenu4" data-bs-toggle="collapse" class="nav-link px-10 align-middle">
+              <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-10 align-middle">
                 <i class="nav-icon fa-solid fa-money-bill"></i>
                 <p>Долги</p>
               </a>
-              <ul class="nav-link collapse nav flex-column ms-1" id="submenu4" data-bs-parent="#menu">
+              <ul class="nav-link collapse nav flex-column ms-1" id="submenu1" data-bs-parent="#menu">
                   <li class="w-100">
-                      <a href="{% url 'owe_debts' %}" class="nav-link px-0"> <span class="d-sm-inline">Мои Долги</span></a>
+                      <a href="{% url 'owe_debts' %}" class="nav-link px-0"> <span class="d-sm-inline">Мои долги</span></a>
                   </li>
                   <li>
-                      <a href="{% url 'debts' %}" class="nav-link px-0"> <span class="d-sm-inline">Мне Должны</span></a>
+                      <a href="{% url 'debts' %}" class="nav-link px-0"> <span class="d-sm-inline">Мне должны</span></a>
                   </li>
               </ul>
             </li>
@@ -93,11 +93,11 @@
             </li>
 
             <li class="nav-item">
-              <a href="#submenu3" data-bs-toggle="collapse" class="nav-link px-10 align-middle">
+              <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-10 align-middle">
                 <i class="nav-icon fa-solid fa-chart-column"></i>
                 <p>Статистика</p>
               </a>
-              <ul class="nav-link collapse nav flex-column ms-1" id="submenu3" data-bs-parent="#menu">
+              <ul class="nav-link collapse nav flex-column ms-1" id="submenu2" data-bs-parent="#menu">
                 <li class="w-100">
                   <a href="{% url 'graphic_incomes' %}" class="nav-link px-0"> <span class="d-sm-inline">График доходов</span></a>
                 </li>
@@ -106,6 +106,26 @@
                 </li>
                 <li>
                   <a href="{% url 'graphic_accounts' %}" class="nav-link px-0"> <span class="d-sm-inline">График счетов</span></a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a href="#submenu3" data-bs-toggle="collapse" class="nav-link px-10 align-middle">
+                <i class="nav-icon fa-solid fa-tags fa-lg"></i>
+                <p>Категории</p>
+              </a>
+              <ul class="nav-link collapse nav flex-column ms-1" id="submenu3" data-bs-parent="#menu">
+                <li class="w-100">
+                  <a href="{% url 'categories_accounts' %}" class="nav-link px-0"> <span class="d-sm-inline">Категории счетов</span></a>
+                </li>
+                <li class="w-100">
+                  <a href="{% url 'categories_incomes' %}" class="nav-link px-0"> <span class="d-sm-inline">Категории доходов</span></a>
+                </li>
+                <li>
+                  <a href="{% url 'categories_expenses' %}" class="nav-link px-0"> <span class="d-sm-inline">Категории расходов</span></a>
+                </li>
+                <li>
+                  <a href="{% url 'categories_currencys' %}" class="nav-link px-0"> <span class="d-sm-inline">Категории валют</span></a>
                 </li>
               </ul>
             </li>

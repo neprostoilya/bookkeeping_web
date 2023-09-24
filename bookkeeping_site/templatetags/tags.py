@@ -113,7 +113,7 @@ def get_sorted_table_categories():
     sorters = [
         {
             'sorters': [
-                ('category', 'Категория')
+                ('title', 'Категория')
             ]
         },
         {

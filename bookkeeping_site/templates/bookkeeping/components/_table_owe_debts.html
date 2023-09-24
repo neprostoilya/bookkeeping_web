@@ -39,14 +39,14 @@
                         <td class="action-checkbox"><input type="checkbox" name="selected_action" value="{{ owe_debt.pk }}" class="checkbox">
                         </td>
                         <th class="field-pk">
-                          <a href="{% url 'update_owe_debts' owe_debt.pk %}">{{ owe_debt.pk }}</a>
+                          <a href="{% url 'update_owe_debt' owe_debt.pk %}">{{ owe_debt.pk }}</a>
                         </th>
                         <td class="field-data_1">{{ owe_debt.data_1 }}</td>
                         <td class="field-data_2">{{ owe_debt.data_2 }}</td>
                         <td class="field-account">{{ owe_debt.account }}</td>
                         <td class="field-comment">{{ owe_debt.comment }}</td>
                         <td class="field-currency">{{ owe_debt.currency }}</td>
-                        <td class="field-sum">{{ owe_debt.sum }} <a href="{% url 'return_owe_debts' owe_debt.pk %}"><i class="fa-solid fa-arrow-right-arrow-left"></i></a></td>
+                        <td class="field-sum">{{ owe_debt.sum }} <a href="{% url 'return_owe_debt' owe_debt.pk %}"><i class="fa-solid fa-arrow-right-arrow-left"></i></a></td>
                     {% endfor %}
                       </tr>
                       <tr role="row">

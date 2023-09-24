@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
         
-from .models import UserAccount, UserOweDebts, UserTransferToAccount, User, UserIncomes, \
+from .models import CategoriesAccounts, CategoriesCurrencys, CategoriesCurrencys, CategoriesExpenses, CategoriesIncomes, UserAccount, UserOweDebts, UserTransferToAccount, User, UserIncomes, \
     UserExpenses, User, UserDebts
 
 
@@ -60,7 +60,7 @@ class UserAccountForm(forms.ModelForm):
             })
         }
 
-class TransferToAccountForm(forms.ModelForm):
+class UserTransferToAccountForm(forms.ModelForm):
     """Форма создания счета"""
 
     class Meta:
@@ -224,3 +224,47 @@ class UserReturnOweDebtForm(forms.ModelForm):
             'sum': forms.TextInput(),         
         }
 
+class CategoryAccountForm(forms.ModelForm):
+    """Форма создания категории счета"""
+
+    class Meta:
+        """Поведенческий харакатер класса"""
+        model = CategoriesAccounts
+        fields = ('title',)
+        widgets = {
+            'title': forms.TextInput(),         
+        }
+
+class CategoryIncomeForm(forms.ModelForm):
+    """Форма создания категории дохода"""
+
+    class Meta:
+        """Поведенческий харакатер класса"""
+        model = CategoriesIncomes
+        fields = ('title',)
+        widgets = {
+            'title': forms.TextInput(),         
+        }
+
+class CategoryExpenseForm(forms.ModelForm):
+    """Форма создания категории расхода"""
+
+    class Meta:
+        """Поведенческий харакатер класса"""
+        model = CategoriesExpenses
+        fields = ('title',)
+        widgets = {
+            'title': forms.TextInput(),         
+        }
+
+class CategoryCurrencyForm(forms.ModelForm):
+    """Форма создания категории валюты"""
+
+    class Meta:
+        """Поведенческий харакатер класса"""
+        model = CategoriesCurrencys
+        fields = ('title', 'course')
+        widgets = {
+            'title': forms.TextInput(),   
+            'course': forms.TextInput(),      
+        }

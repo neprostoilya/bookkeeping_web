@@ -3,16 +3,15 @@ from typing import Any, Dict
 from django.contrib.auth import login, logout
 from django.contrib import messages
 from django.forms.models import BaseModelForm
-from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import ListView, UpdateView, View, CreateView
 from django.shortcuts import render, redirect, get_object_or_404
 
-from .forms import LoginForm, RegistrationForm, TransferToAccountForm, UserAccountForm, UserDebtForm, UserExpenseForm, UserIncomeForm, \
-UserOweDebtForm, UserReturnDebtForm, UserReturnOweDebtForm
-from .models import CategoryAccounts, CategoryExpenses, CategoryIncomes, UserAccount, UserDebts, UserIncomes, UserExpenses, UserOweDebts
-from .utils import get_total_sum_account, get_total_sum_debt, get_total_sum_owe_debt, return_debts_to_account, return_owe_debts_to_account, save_expenses_or_debts_sum, save_incomes_or_debts_sum, \
-save_transfer_sum, get_total_sum_incomes, get_total_sum_expenses, graph_income_or_expense, graph_account 
+from .forms import LoginForm, RegistrationForm, UserAccountForm, UserDebtForm, UserExpenseForm, UserIncomeForm, \
+UserOweDebtForm, UserReturnDebtForm, UserReturnOweDebtForm, UserTransferToAccountForm
+from .models import CategoriesAccounts, CategoriesCurrencys, CategoriesExpenses, CategoriesIncomes, UserAccount, UserDebts, UserIncomes, UserExpenses, UserOweDebts, UserTransferToAccount
+from .utils import get_total_quantity, return_debts_to_account, return_owe_debts_to_account, save_expenses_or_debts_sum, save_incomes_or_debts_sum, \
+    save_transfer_sum, get_total_sum, graph_income_or_expense, graph_account 
 
 
 class Page(ListView):
@@ -74,7 +73,7 @@ def register(request):
 
 # Счета
 
-class UserAccountPage(ListView):
+class AccountPage(ListView):
     """Страничка счетов пользователя"""
     extra_context = {
         'title': 'Счета',
@@ -98,10 +97,11 @@ class UserAccountPage(ListView):
     def get_context_data(self):
         """Вывод дополнительных элементов на главную страничку"""
         context = super().get_context_data()
-        context['total_sum'] = get_total_sum_account(self.request)
+        context['total_sum'] = get_total_sum(self.request, self.model)
+        context['total_quantity'] = get_total_quantity(self.model) 
         return context
 
-class UserAccountUpdate(UpdateView):
+class AccountUpdate(UpdateView):
     """Редактирование счета"""
     extra_context = {
         'title': 'Редактирование счета'
@@ -111,11 +111,15 @@ class UserAccountUpdate(UpdateView):
     template_name = 'bookkeeping/accounts/update_account.html'
     success_url = reverse_lazy('accounts')
     
+    def form_valid(self, form: BaseModelForm):
+        messages.success(self.request, 'Счет успешно отредактирован!')
+        return super().form_valid(form)
+
     def form_invalid(self, form):
         messages.error(self.request, 'Ошибка в заполнении таблиц!')
         return super().form_invalid(form)
 
-class UserAccountCreate(CreateView):
+class AccountCreate(CreateView):
     """Создание счета"""
     extra_context = {
         'title': 'Создание счета'
@@ -129,6 +133,7 @@ class UserAccountCreate(CreateView):
         account_form = form.save(commit=False)
         account_form.user = self.request.user
         account_form.save() 
+        messages.success(self.request, 'Счет успешно создан!')
         return redirect('accounts')
 
     def form_invalid(self, form):
@@ -139,26 +144,28 @@ def graph_accounts(request):
     """График счетов"""
     return graph_account(request)
 
-def transfer_to_account_page(request):
-    """Страничка перевода с счета на счет"""
-    context = {
+class TransferToAccount(CreateView):
+    """Перевод счета на счет"""
+    extra_context = {
         'title': 'Перевести на счет',
-        'form': TransferToAccountForm(),
     }
-    return render(request, 'bookkeeping/accounts/transfer_to_account.html', context)
+    model = UserTransferToAccount
+    form_class = UserTransferToAccountForm
+    template_name = 'bookkeeping/accounts/transfer_to_account.html'
 
-def transfer(request):
-    """Перевод на счет"""
-    form = TransferToAccountForm(data=request.POST)
-    if form.is_valid():
-        transfer = form.save(commit=False)
-        transfer.user = request.user
-        save_transfer_sum(transfer)
-        transfer.save()
+    def form_valid(self, form):
+        """Если форма валидна"""
+        transfer_form = form.save(commit=False)
+        transfer_form.user = self.request.user
+        save_transfer_sum(transfer_form)
+        transfer_form.save()
+        messages.success(self.request, 'Перевод успешно переведен!')
         return redirect('accounts')
-    else:
-        messages.error(request, 'Не верное заполнение формы!')
-        return redirect('transfer_to_account')
+
+    def form_invalid(self, form):
+        """Если форма не валидна"""
+        messages.error(self.request, 'Ошибка в заполнении формы!')
+        return super().form_invalid(form)
 
 def delete_accounts(request):
     """Удаление счетов"""
@@ -170,7 +177,7 @@ def delete_accounts(request):
 
 # Доходы
 
-class UserIncomePage(ListView):
+class IncomePage(ListView):
     """Страничка доходов пользователя"""
     extra_context = {
         'title': 'Доходы',
@@ -194,11 +201,11 @@ class UserIncomePage(ListView):
     def get_context_data(self):
         """Вывод дополнительных элементов на главную страничку"""
         context = super().get_context_data()
-        total_sum = get_total_sum_incomes(self.request)
+        total_sum = get_total_sum(self.request, self.model)
         context['total_sum'] = total_sum
         return context
 
-class UserIncomeUpdate(UpdateView):
+class IncomeUpdate(UpdateView):
     """Редактирование дохода"""
     extra_context = {
         'title': 'Редактирование дохода'
@@ -208,11 +215,15 @@ class UserIncomeUpdate(UpdateView):
     template_name = 'bookkeeping/incomes/update_income.html'
     success_url = reverse_lazy('incomes')
 
+    def form_valid(self, form: BaseModelForm):
+        messages.success(self.request, 'Доход успешно отредактирован!')
+        return super().form_valid(form)
+
     def form_invalid(self, form):
         messages.error(self.request, 'Ошибка в заполнении формы!')
         return super().form_invalid(form)
 
-class UserIncomeCreate(CreateView):
+class IncomeCreate(CreateView):
     """Создание дохода"""
     extra_context = {
         'title': 'Создание дохода'
@@ -227,6 +238,7 @@ class UserIncomeCreate(CreateView):
         incomes_form.user = self.request.user
         save_incomes_or_debts_sum(incomes_form)
         incomes_form.save() 
+        messages.success(self.request, 'Доход успешно создан!')
         return redirect('incomes')
 
     def form_invalid(self, form):
@@ -247,7 +259,7 @@ def delete_incomes(request):
 
 # Расходы
 
-class UserExpensePage(ListView):
+class ExpensePage(ListView):
     """Страничка Расходов пользователя"""
     extra_context = {
         'title': 'Расходы',
@@ -271,11 +283,11 @@ class UserExpensePage(ListView):
     def get_context_data(self):
         """Вывод дополнительных элементов на главную страничку"""
         context = super().get_context_data()
-        total_sum = get_total_sum_expenses(self.request)
+        total_sum = get_total_sum(self.request, self.model)
         context['total_sum'] = total_sum
         return context
     
-class UserExpenseUpdate(UpdateView):
+class ExpenseUpdate(UpdateView):
     """Редактирование расхода"""
     extra_context = {
         'title': 'Редактирование расхода'
@@ -285,11 +297,15 @@ class UserExpenseUpdate(UpdateView):
     template_name = 'bookkeeping/expenses/update_expense.html'
     success_url = reverse_lazy('expenses')
 
+    def form_valid(self, form: BaseModelForm):
+        messages.success(self.request, 'Расход успешно отредактирован!')
+        return super().form_valid(form)
+
     def form_invalid(self, form):
         messages.error(self.request, 'Ошибка в заполнении таблиц!')
         return super().form_invalid(form)
 
-class UserExpenseCreate(CreateView):
+class ExpenseCreate(CreateView):
     """Создание расхода"""
     extra_context = {
         'title': 'Создание расхода'
@@ -304,6 +320,7 @@ class UserExpenseCreate(CreateView):
         expense_form.user = self.request.user
         save_expenses_or_debts_sum(expense_form)
         expense_form.save() 
+        messages.success(self.request, 'Расход успешно создан!')
         return redirect('expenses')
     
     def form_invalid(self, form):
@@ -325,7 +342,7 @@ def delete_expenses(request):
 
 # Долги пользователя
 
-class UserOweDebtPage(ListView):
+class OweDebtPage(ListView):
     """Страничка Долгов пользователя"""
     extra_context = {
         'title': 'Мои Долги',
@@ -349,10 +366,10 @@ class UserOweDebtPage(ListView):
     def get_context_data(self):
         """Вывод дополнительных элементов на главную страничку"""
         context = super().get_context_data()
-        context['total_sum'] = get_total_sum_owe_debt(self.request)
+        context['total_sum'] = get_total_sum(self.request, self.model)
         return context
 
-class UserOweDebtUpdate(UpdateView):
+class OweDebtUpdate(UpdateView):
     """Редактирование долга"""
     extra_context = {
         'title': 'Изменение долга'
@@ -362,11 +379,15 @@ class UserOweDebtUpdate(UpdateView):
     template_name = 'bookkeeping/owe_debts/update_owe_debt.html'
     success_url = reverse_lazy('owe_debts')
 
+    def form_valid(self, form: BaseModelForm):
+        messages.success(self.request, 'Долг успешно отредактирован!')
+        return super().form_valid(form)
+
     def form_invalid(self, form):
         messages.error(self.request, 'Ошибка в заполнении таблиц!')
         return super().form_invalid(form)
 
-class UserOweDebtReturn(View):
+class OweDebtReturn(View):
     """Возврат долга c счета"""
     template_name = 'bookkeeping/owe_debts/return_owe_debt.html'
 
@@ -393,6 +414,7 @@ class UserOweDebtReturn(View):
             else:
                 return_owe_debts_to_account(owe_debts.sum, owe_debts)
                 owe_debts.delete()
+            messages.success(self.request, 'Долг успешно возвращен!')
             return redirect('owe_debts')
         
         return render(request, self.template_name, {
@@ -400,7 +422,7 @@ class UserOweDebtReturn(View):
             'form': form,
         })
 
-class UserOweDebtCreate(CreateView):
+class OweDebtCreate(CreateView):
     """Создание долга пользователя"""
     extra_context = {
         'title': 'Создание долга'
@@ -413,11 +435,14 @@ class UserOweDebtCreate(CreateView):
         """Проверка на валидность"""
         owe_debt_form = form.save(commit=False)
         owe_debt_form.user = self.request.user
+        owe_debt_form.initial_sum = owe_debt_form.sum
+        save_incomes_or_debts_sum(owe_debt_form)
         owe_debt_form.save() 
+        messages.success(self.request, 'Долг успешно создан!')
         return redirect('owe_debts')
 
     def form_invalid(self, form):
-        messages.error(self.request, 'Ошибка в заполнении таблиц!')
+        messages.error(self.request, 'Ошибка в заполнении формы!')
         return super().form_invalid(form)
 
 def delete_owe_debts(request):
@@ -426,13 +451,11 @@ def delete_owe_debts(request):
         selected_pks = request.POST.getlist('selected_action')
         UserOweDebts.objects.filter(pk__in=selected_pks).delete()
         messages.success(request, 'Выбранные объекты успешно удалены.')
-        redirect('owe_debts')
-    else:
-        redirect('owe_debts')
+    redirect('owe_debts')
 
 # Долги у пользователя
 
-class UserDebtsPage(ListView):
+class DebtPage(ListView):
     """Страничка Долгов у пользователя"""
     extra_context = {
         'title': 'Долги',
@@ -456,10 +479,10 @@ class UserDebtsPage(ListView):
     def get_context_data(self):
         """Вывод дополнительных элементов на главную страничку"""
         context = super().get_context_data()
-        context['total_sum'] = get_total_sum_debt(self.request)
+        context['total_sum'] = get_total_sum(self.request, self.model)
         return context
 
-class UserDebtUpdate(UpdateView):
+class DebtUpdate(UpdateView):
     """Редактирование долга"""
     extra_context = {
         'title': 'Редактирование долга'
@@ -469,11 +492,15 @@ class UserDebtUpdate(UpdateView):
     template_name = 'bookkeeping/debts/update_debt.html'
     success_url = reverse_lazy('debts')
 
+    def form_valid(self, form: BaseModelForm):
+        messages.success(self.request, 'Долг успешно отредактирован!')
+        return super().form_valid(form)
+
     def form_invalid(self, form):
-        messages.error(self.request, 'Ошибка в заполнении таблиц!')
+        messages.error(self.request, 'Ошибка в заполнении формы!')
         return super().form_invalid(form)
 
-class UserDebtReturn(View):
+class DebtReturn(View):
     """Возврат долга на счет"""
     template_name = 'bookkeeping/debts/return_debt.html'
 
@@ -500,6 +527,7 @@ class UserDebtReturn(View):
             else:
                 return_debts_to_account(debts.sum, debts)
                 debts.delete()
+            messages.success(self.request, 'Долг успешно возвращен!')
             return redirect('debts')
         
         return render(request, self.template_name, {
@@ -507,7 +535,7 @@ class UserDebtReturn(View):
             'form': form,
         })
 
-class UserDebtCreate(CreateView):
+class DebtCreate(CreateView):
     """Создание долга у пользователя"""
     extra_context = {
         'title': 'Создание долга'
@@ -520,11 +548,14 @@ class UserDebtCreate(CreateView):
         """Проверка на валидность"""
         debt_form = form.save(commit=False)
         debt_form.user = self.request.user
+        debt_form.initial_sum = debt_form.sum
+        save_expenses_or_debts_sum(debt_form)
         debt_form.save() 
+        messages.success(self.request, 'Долг успешно создан!')
         return redirect('debts')
 
     def form_invalid(self, form):
-        messages.error(self.request, 'Ошибка в заполнении таблиц!')
+        messages.error(self.request, 'Ошибка в заполнении формы!')
         return super().form_invalid(form)
 
 def delete_debts(request):
@@ -539,31 +570,14 @@ def delete_debts(request):
 
 # Категории 
 
-class UserCategoryAccounts(ListView):
+class CategoriesAccounts(ListView):
     """Категории Счетов"""
     extra_context = {
         'title': 'Категории Счетов',
     }
-    model = CategoryAccounts
-    context_object_name = 'category_accounts'
-    template_name = 'bookkeeping/accounts/categories_accounts.html'
-
-    def get_queryset(self):
-        accounts = self.model.objects.filter(
-            user=self.request.user
-        ).order_by(
-            '?'
-        )
-        return accounts
-
-class UserCategoryIncomes(ListView):
-    """Категории доходов"""
-    extra_context = {
-        'title': 'Категории доходов',
-    }
-    model = CategoryIncomes
+    model = CategoriesAccounts
     context_object_name = 'categories'
-    template_name = 'bookkeeping/incomes/categories_incomes.html'
+    template_name = 'bookkeeping/categories/categories_accounts.html'
 
     def get_queryset(self):
         categories = self.model.objects.filter(
@@ -571,22 +585,70 @@ class UserCategoryIncomes(ListView):
         ).order_by(
             '?'
         )
-        return categories
+        sort_field = self.request.GET.get('sort')
+        if sort_field:
+            categories = categories.order_by(sort_field)
+        return categories 
 
-class UserCategoryExpenses(ListView):
-    """Категории расходов"""
+# class CategoriesAccountsCreate(CreateView):
+
+
+class CategoriesIncomes(ListView):
+    """Категории доходов"""
     extra_context = {
-        'title': 'Категории расходов',
+        'title': 'Категории доходов',
     }
-    model = CategoryExpenses
-    context_object_name = 'category_expenses'
-    template_name = 'bookkeeping/expenses/category_expenses.html'
+    model = CategoriesIncomes
+    context_object_name = 'categories'
+    template_name = 'bookkeeping/categories/categories_incomes.html'
 
     def get_queryset(self):
-        expenses = self.model.objects.filter(
+        categories = self.model.objects.filter(
             user=self.request.user
         ).order_by(
             '?'
         )
-        return expenses 
-    
+        sort_field = self.request.GET.get('sort')
+        if sort_field:
+            categories = categories.order_by(sort_field)
+        return categories 
+
+class CategoriesExpenses(ListView):
+    """Категории расходов"""
+    extra_context = {
+        'title': 'Категории расходов',
+    }
+    model = CategoriesExpenses
+    context_object_name = 'categories'
+    template_name = 'bookkeeping/categories/categories_expenses.html'
+
+    def get_queryset(self):
+        categories = self.model.objects.filter(
+            user=self.request.user
+        ).order_by(
+            '?'
+        )
+        sort_field = self.request.GET.get('sort')
+        if sort_field:
+            categories = categories.order_by(sort_field)
+        return categories 
+
+class CategoriesCurrencys(ListView):
+    """Категории валют"""
+    extra_context = {
+        'title': 'Категории валют',
+    }
+    model = CategoriesCurrencys
+    context_object_name = 'categories'
+    template_name = 'bookkeeping/categories/categories_currencys.html'
+
+    def get_queryset(self):
+        categories = self.model.objects.filter(
+            user=self.request.user
+        ).order_by(
+            '?'
+        )
+        sort_field = self.request.GET.get('sort')
+        if sort_field:
+            categories = categories.order_by(sort_field)
+        return categories 

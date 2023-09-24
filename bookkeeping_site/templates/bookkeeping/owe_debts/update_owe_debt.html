@@ -80,7 +80,7 @@
                                   <div class="related-widget-wrapper" data-model-ref="пользователь">
                                       {{ form.account }}
                                       </span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
-                                      <a class="related-widget-wrapper-link add-related" data-popup="yes" href="{% url 'create_accounts' %}" title="Добавить счет"><img src="/static/admin/img/icon-addlink.svg" alt="Добавить"></a>
+                                      <a class="related-widget-wrapper-link add-related" data-popup="yes" href="{% url 'create_account' %}" title="Добавить счет"><img src="/static/admin/img/icon-addlink.svg" alt="Добавить"></a>
                                   </div>
                               </div>
                             </div>
@@ -132,6 +132,9 @@
                 <div class="col-12 col-lg-3">
                   <div class="form-group">
                     <input type="submit" value="Сохранить" class="btn btn-success form-control">
+                  </div>
+                  <div class="form-group">
+                    <a href="{% url 'owe_debts' %}" class="btn btn-info form-control">Отмена</a>
                   </div>
                 </div>
               </div>

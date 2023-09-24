@@ -28,7 +28,7 @@
         {% include 'bookkeeping/components/_message.html' %}     
         <div class="container-fluid">
             <section id="content" class="content">
-            <form action="{% url 'transfer_account' %}" method="post" enctype="multipart/form-data">
+            <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="row"><div class="col-12 col-lg-9"><div class="card"><div class="card-body">
                             <div class="form-group">
@@ -80,6 +80,9 @@
                     <div class="col-12 col-lg-3">
                     <div class="form-group">
                         <input type="submit" value="Сохранить" class="btn btn-success form-control">
+                    </div>
+                    <div class="form-group">
+                        <a href="{% url 'accounts' %}" class="btn btn-info form-control">Отмена</a>
                     </div>
                     </div>
                 </div>

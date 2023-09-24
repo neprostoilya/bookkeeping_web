@@ -4,7 +4,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
 
-class CategoryIncomes(models.Model):
+class CategoriesIncomes(models.Model):
     """Категории доходов по дефолту"""
     user = models.ForeignKey(
         User,
@@ -38,7 +38,7 @@ class CategoryIncomes(models.Model):
         verbose_name = 'Категория Дохода'
         verbose_name_plural = 'Категории Доходов'
 
-class CategoryExpenses(models.Model):
+class CategoriesExpenses(models.Model):
     """Категории расходов по дефолту"""
     user = models.ForeignKey(
         User,
@@ -72,7 +72,7 @@ class CategoryExpenses(models.Model):
         verbose_name = 'Категория Расхода'
         verbose_name_plural = 'Категории Расходов'
 
-class CategoryCurrency(models.Model):
+class CategoriesCurrencys(models.Model):
     """Категории единиц валют"""
     user = models.ForeignKey(
         User,
@@ -96,14 +96,14 @@ class CategoryCurrency(models.Model):
     
     def __repr__(self):
         """Подобие строкового представления"""
-        return f'Категория: pk={self.pk}, title={self.title}'
+        return f'Категория: pk={self.pk}, title={self.title}, course={self.course}'
     
     class Meta:
         """Характер Класса"""
         verbose_name = 'Категория Валюты'
         verbose_name_plural = 'Категории Валют'
 
-class CategoryAccounts(models.Model):
+class CategoriesAccounts(models.Model):
     """Категории счетов по дефолту"""
     user = models.ForeignKey(
         User,
@@ -137,14 +137,13 @@ class UserAccount(models.Model):
         verbose_name='Пользователь'
     )
     account = models.ForeignKey(
-        CategoryAccounts,
+        CategoriesAccounts,
         on_delete=models.OneToOneField,
         null=False,
-        unique=True,
         verbose_name='Cчета'
     )
     currency = models.ForeignKey(
-        CategoryCurrency,
+        CategoriesCurrencys,
         null=False,
         on_delete=models.CASCADE,
         verbose_name='Валюта'
@@ -171,7 +170,7 @@ class UserAccount(models.Model):
         verbose_name_plural = 'Счета Пользователя'
 
     @property # используется для создания <<специальной>> функциональности определеным методам
-    def get_course_sum(self):
+    def get_total_sum(self):
         """Получение полной суммы счета с учетом курса валют"""
         sum = self.sum
         course = self.currency.course
@@ -185,13 +184,13 @@ class UserExpenses(models.Model):
         verbose_name='Пользователь'
     )
     category = models.ForeignKey(
-        CategoryExpenses,
+        CategoriesExpenses,
         related_name='category_expenses',
         on_delete=models.CASCADE, 
         verbose_name='Категория'
     )
     subcategory = models.ForeignKey(
-        CategoryExpenses,
+        CategoriesExpenses,
         related_name='subcategory_expenses',
         on_delete=models.CASCADE, 
         verbose_name='Подкатегория',
@@ -210,7 +209,7 @@ class UserExpenses(models.Model):
         verbose_name='Коментарий'
     )
     currency = models.ForeignKey(
-        CategoryCurrency,
+        CategoriesCurrencys,
         on_delete=models.CASCADE,
         verbose_name='Валюта'
     )
@@ -253,13 +252,13 @@ class UserIncomes(models.Model):
         verbose_name='Пользователь'
     )
     category = models.ForeignKey(
-        CategoryIncomes,
+        CategoriesIncomes,
         related_name='category_incomes',
         on_delete=models.CASCADE, 
         verbose_name='Категория'
     )
     subcategory = models.ForeignKey(
-        CategoryIncomes,
+        CategoriesIncomes,
         related_name='subcategory_incomes',
         on_delete=models.CASCADE, 
         verbose_name='Подкатегория',
@@ -278,7 +277,7 @@ class UserIncomes(models.Model):
         verbose_name='Коментарий'
     )
     currency = models.ForeignKey(
-        CategoryCurrency,
+        CategoriesCurrencys,
         on_delete=models.CASCADE,
         verbose_name='Валюта'
     )
@@ -381,7 +380,7 @@ class UserOweDebts(models.Model):
         verbose_name='Коментарий'
     )
     currency = models.ForeignKey(
-        CategoryCurrency,
+        CategoriesCurrencys,
         on_delete=models.CASCADE,
         verbose_name='Валюта'
     )
@@ -411,7 +410,7 @@ class UserOweDebts(models.Model):
         verbose_name_plural = 'Долги у Пользователя'
 
     @property
-    def get_total_sum_owe_debt(self):
+    def get_total_sum(self):
         """Получение полной суммы долга"""
         sum = self.sum
         currency = self.currency.course
@@ -447,7 +446,7 @@ class UserDebts(models.Model):
         verbose_name='Коментарий'
     )
     currency = models.ForeignKey(
-        CategoryCurrency,
+        CategoriesCurrencys,
         on_delete=models.CASCADE,
         verbose_name='Валюта'
     )
@@ -477,7 +476,7 @@ class UserDebts(models.Model):
         verbose_name_plural = 'Долги Пользователя'
 
     @property
-    def get_total_sum_debt(self):
+    def get_total_sum(self):
         """Получение полной суммы долга"""
         sum = self.sum
         currency = self.currency.course
