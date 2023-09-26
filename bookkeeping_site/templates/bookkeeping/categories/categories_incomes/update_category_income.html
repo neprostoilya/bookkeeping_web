@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ title }}
+{% endblock title %}
+
+{% block main %}
+<div class="content-wrapper" style="min-height: 700.895px;">
+    <div class="content border-bottom mb-2">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 col-md-auto d-flex flex-grow-1 align-items-center">
+                    <h1 class="h4 m-0 pr-3 mr-3 border-right">
+                      {{ title }}
+                    </h1>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'index' %}">Главная</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'categories_incomes' %}">Категории доходов</a></li>
+                        <li class="breadcrumb-item active">
+                            {{ title }}
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content">
+      <div class="container-fluid">
+          <section id="content" class="content">
+              {% include 'bookkeeping/components/_message.html' %}     
+              <form method="post" novalidate="">
+                {% csrf_token %}
+                <div class="row"><div class="col-12 col-lg-9"><div class="card"><div class="card-body">
+                        <div class="form-group">
+                          <div class="row">
+                            <label class="col-sm-3 text-left">
+                                {{ form.title.label }}
+                              <span class="text-red">* </span>
+                            </label>
+                            <div class=" col-sm-7">
+                                <div class="related-widget-wrapper">
+                                    {{ form.title }}
+                                    </span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                              <label class="col-sm-3 text-left">
+                                  {{ form.subcategory.label }}
+                                <span class="text-red">* </span>
+                              </label>
+                              <div class=" col-sm-7 field-user">
+                                  <div class="related-widget-wrapper">
+                                      {{ form.subcategory }}
+                                      </span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+                                      <a class="related-widget-wrapper-link add-related" data-popup="yes" href="{% url 'create_category_income' %}" title="Добавить подкатегорию "><img src="/static/admin/img/icon-addlink.svg" alt="Добавить"></a>
+                                  </div>
+                              </div>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                <div class="col-12 col-lg-3">
+                  <div class="form-group">
+                    <input type="submit" value="Сохранить" class="btn btn-success form-control">
+                  </div>
+                  <div class="form-group">
+                    <a href="{% url 'categories_incomes' %}" class="btn btn-info form-control">Отмена</a>
+                  </div>
+                </div>
+              </div>
+              </form>
+          </section>
+      </div>
+    </div>
+</div>
+{% endblock main %}

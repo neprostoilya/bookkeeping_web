@@ -1,0 +1,59 @@
+{% load tags %}
+{% get_sorted_table_categories as data %}
+  <div class="col-12 ">
+    <form method="post" action="{% url 'delete_categories_incomes' %}">
+      {% csrf_token %}
+      {% include 'bookkeeping/components/_delete_list.html' %}     
+      <div class="card">
+        <div class="card-body table-responsive p-0">
+            <table id="result_list" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th tabindex="0" rowspan="1" colspan="1">
+                            <div class="text">
+                                    <span><input type="checkbox" class="chk-all"></span>
+                            </div>
+                        </th>                        
+                        <th tabindex="0" rowspan="1" colspan="1">
+                            <div class="text">
+                              <span>ID</span>
+                            </div>
+                        </th>
+                        {% for key in data %}
+                        <th class="sorting" tabindex="0" rowspan="1" colspan="1">
+                          <div class="text">
+                              {% for sorter in key.sorters %}
+                              <a href="click" class="sort-link" value="{{ sorter.0 }}">{{ sorter.1 }}
+                                <i></i>
+                              </a>
+                              {% endfor %}
+                              <a style="margin-top: .2em;" class="fa fa-times float-right remove-sort-link d-none"></a>
+                          </div>
+                        </th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                  {% for category in categories %}
+                    <tr role="row">
+                        <td class="action-checkbox"><input type="checkbox" name="selected_action" value="{{ category.pk }}" class="checkbox">
+                        </td>
+                        <th class="field-pk">
+                          <a href="{% url 'update_category_income' category.pk %}">{{ category.pk }}</a>
+                        </th>
+                        <td class="field-category">{{ category.title }}</th>
+                        <td class="field-subcategory">
+                          {% if category.subcategory %} 
+                          {{ category.subcategory }}
+                          {% else %}
+                          -
+                          {% endif %}
+                        </th>
+                      </tr>
+                  {% endfor %}
+                </tbody>
+            </table>
+        </div>
+      </div>  
+    </form>
+  </div>

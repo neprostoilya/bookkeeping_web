@@ -1,8 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
         
-from .models import CategoriesAccounts, CategoriesCurrencys, CategoriesCurrencys, CategoriesExpenses, CategoriesIncomes, UserAccount, UserOweDebts, UserTransferToAccount, User, UserIncomes, \
-    UserExpenses, User, UserDebts
+from .models import CategoriesAccounts, CategoriesCurrencys, CategoriesCurrencys, CategoriesExpenses, CategoriesIncomes, \
+    UserAccounts, UserOweDebts, UserTransferToAccount, User, UserIncomes, UserExpenses, User, UserDebts
+
 
 
 class LoginForm(AuthenticationForm):
@@ -49,7 +50,7 @@ class UserAccountForm(forms.ModelForm):
     
     class Meta:
         """Поведенческий харакатер класса"""
-        model = UserAccount
+        model = UserAccounts
         fields = ('account', 'currency', 'sum')
         widgets = {
             'account': forms.Select(attrs={
@@ -241,9 +242,10 @@ class CategoryIncomeForm(forms.ModelForm):
     class Meta:
         """Поведенческий харакатер класса"""
         model = CategoriesIncomes
-        fields = ('title',)
+        fields = ('title', 'subcategory')
         widgets = {
-            'title': forms.TextInput(),         
+            'title': forms.TextInput(), 
+            'subcategory': forms.Select()  
         }
 
 class CategoryExpenseForm(forms.ModelForm):
@@ -252,9 +254,10 @@ class CategoryExpenseForm(forms.ModelForm):
     class Meta:
         """Поведенческий харакатер класса"""
         model = CategoriesExpenses
-        fields = ('title',)
+        fields = ('title', 'subcategory')
         widgets = {
-            'title': forms.TextInput(),         
+            'title': forms.TextInput(),      
+            'subcategory': forms.Select()  
         }
 
 class CategoryCurrencyForm(forms.ModelForm):

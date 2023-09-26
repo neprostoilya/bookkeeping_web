@@ -17,13 +17,12 @@ class CategoriesIncomes(models.Model):
         max_length=150, 
         verbose_name='Название категории дохода'
     )
-    parent = models.ForeignKey(
+    subcategory = models.ForeignKey(
         'self',
         on_delete=models.CASCADE,
         null=True,
         blank=True,
         verbose_name='Категория',
-        related_name='subcategories'
     )
     def __str__(self):
         """Строковое представление"""
@@ -31,7 +30,7 @@ class CategoriesIncomes(models.Model):
     
     def __repr__(self):
         """Подобие строкового представления"""
-        return f'Категория: pk={self.pk}, title={self.title}, parent={self.parent}'
+        return f'Категория: pk={self.pk}, title={self.title}, subcategory={self.subcategory}'
     
     class Meta:
         """Характер Класса"""
@@ -51,13 +50,12 @@ class CategoriesExpenses(models.Model):
         max_length=150, 
         verbose_name='Название категории расхода'
     )
-    parent = models.ForeignKey(
+    subcategory = models.ForeignKey(
         'self',
         on_delete=models.CASCADE,
         null=True,
         blank=True,
         verbose_name='Категория',
-        related_name='subcategories'
     )
     def __str__(self):
         """Строковое представление"""
@@ -65,7 +63,7 @@ class CategoriesExpenses(models.Model):
     
     def __repr__(self):
         """Подобие строкового представления"""
-        return f'Категория: pk={self.pk}, title={self.title}, parent={self.parent}'
+        return f'Категория: pk={self.pk}, title={self.title}, subcategory={self.subcategory}'
     
     class Meta:
         """Характер Класса"""
@@ -129,7 +127,7 @@ class CategoriesAccounts(models.Model):
         verbose_name = 'Категория Счета'
         verbose_name_plural = 'Категории Счетов'
 
-class UserAccount(models.Model):
+class UserAccounts(models.Model):
     """Счета пользователя"""
     user = models.ForeignKey(
         User,
@@ -198,7 +196,7 @@ class UserExpenses(models.Model):
         blank=True
     )
     account = models.ForeignKey(
-        UserAccount,
+        UserAccounts,
         on_delete=models.CASCADE,
         verbose_name='Счет'
     )
@@ -266,7 +264,7 @@ class UserIncomes(models.Model):
         blank=True
     )
     account = models.ForeignKey(
-        UserAccount,
+        UserAccounts,
         on_delete=models.CASCADE,
         verbose_name='Счет'
     )
@@ -320,14 +318,14 @@ class UserTransferToAccount(models.Model):
         verbose_name='Пользователь'
     )
     account1 = models.ForeignKey(
-        UserAccount,
+        UserAccounts,
         on_delete=models.CASCADE,
         related_name='account1',
         null=False,
         verbose_name='C счета'
     )
     account2 = models.ForeignKey(
-        UserAccount,
+        UserAccounts,
         on_delete=models.CASCADE,
         related_name='account2',
         null=False,
@@ -369,7 +367,7 @@ class UserOweDebts(models.Model):
         verbose_name='До даты'
     )
     account = models.ForeignKey(
-        UserAccount,
+        UserAccounts,
         on_delete=models.CASCADE,
         verbose_name='Счет'
     )
@@ -435,7 +433,7 @@ class UserDebts(models.Model):
         verbose_name='До даты'
     )
     account = models.ForeignKey(
-        UserAccount,
+        UserAccounts,
         on_delete=models.CASCADE,
         verbose_name='Счет'
     )

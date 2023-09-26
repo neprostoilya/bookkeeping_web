@@ -1,7 +1,7 @@
 {% load tags %}
 {% get_sorted_table_categories as data %}
   <div class="col-12 ">
-    <form method="post" action="#!">
+    <form method="post" action="{% url 'delete_categories_expenses' %}">
       {% csrf_token %}
       {% include 'bookkeeping/components/_delete_list.html' %}     
       <div class="card">
@@ -23,7 +23,7 @@
                         <th class="sorting" tabindex="0" rowspan="1" colspan="1">
                           <div class="text">
                               {% for sorter in key.sorters %}
-                              <a href="#!" class="sort-link" value="{{ sorter.0 }}">{{ sorter.1 }}
+                              <a href="click" class="sort-link" value="{{ sorter.0 }}">{{ sorter.1 }}
                                 <i></i>
                               </a>
                               {% endfor %}
@@ -39,12 +39,12 @@
                         <td class="action-checkbox"><input type="checkbox" name="selected_action" value="{{ category.pk }}" class="checkbox">
                         </td>
                         <th class="field-pk">
-                          <a href="#!">{{ category.pk }}</a>
+                          <a href="{% url 'update_category_income' category.pk %}">{{ category.pk }}</a>
                         </th>
                         <td class="field-category">{{ category.title }}</th>
                         <td class="field-subcategory">
-                          {% if category.parent %} 
-                          {{ category.parent }}
+                          {% if category.subcategory %} 
+                          {{ category.subcategory }}
                           {% else %}
                           -
                           {% endif %}

@@ -109,7 +109,7 @@ def get_sorted_table_debts():
 
 @register.simple_tag()
 def get_sorted_table_categories():
-    """Сортировка таблицы категорий"""
+    """Сортировка таблицы категорий доходов и расходов"""
     sorters = [
         {
             'sorters': [
@@ -120,6 +120,35 @@ def get_sorted_table_categories():
             'sorters': [
                 ('parent', 'Подкатегория')
 
+            ]
+        }
+    ]
+    return sorters
+
+@register.simple_tag()
+def get_sorted_table_categories_accounts():
+    """Сортировка таблицы категорий счетов"""
+    sorters = [
+        {
+            'sorters': [
+                ('title', 'Категория')
+            ]
+        },
+    ]
+    return sorters
+
+@register.simple_tag()
+def get_sorted_table_categories_currencys():
+    """Сортировка таблицы категорий счетов"""
+    sorters = [
+        {
+            'sorters': [
+                ('title', 'Категория')
+            ]
+        },
+        {
+            'sorters': [
+                ('course', 'Курс')
             ]
         }
     ]

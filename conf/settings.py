@@ -13,6 +13,8 @@ DEBUG = bool(int(os.getenv('DEBUG')))
 
 ALLOWED_HOSTS = ['*']
 
+LOGIN_URL = '/login_authentication/'
+
 CSRF_TRUSTED_ORIGINS = ['https://7883-95-46-66-182.ngrok-free.app']
 
 INSTALLED_APPS = [

@@ -1,18 +1,18 @@
 from django.contrib import admin
 
 from .models import CategoriesExpenses, CategoriesIncomes, CategoriesCurrencys, UserDebts,  UserOweDebts, \
-                    UserExpenses, UserIncomes, UserAccount, CategoriesAccounts, UserTransferToAccount
+                    UserExpenses, UserIncomes, UserAccounts, CategoriesAccounts, UserTransferToAccount
 
 @admin.register(CategoriesIncomes)
 class CategoryIncomesAdmin(admin.ModelAdmin):
     """Категории Доходов"""
-    list_display = ('pk', 'user', 'title', 'parent')
+    list_display = ('pk', 'user', 'title', 'subcategory')
     list_display_links = ('title', 'pk')
 
 @admin.register(CategoriesExpenses)
 class CategoryExpensesAdmin(admin.ModelAdmin):
     """Категории Расходов"""
-    list_display = ('pk', 'user', 'title', 'parent')
+    list_display = ('pk', 'user', 'title', 'subcategory')
     list_display_links = ('title', 'pk')
 
 @admin.register(CategoriesCurrencys)
@@ -37,7 +37,7 @@ class UserIncomesAdmin(admin.ModelAdmin):
     list_editable = ('sum', 'currency')
     list_display_links = ('user', 'pk')
 
-@admin.register(UserAccount)
+@admin.register(UserAccounts)
 class UserAccountAdmin(admin.ModelAdmin):
     """Счета пользователя"""
     list_display = ('pk', 'user', 'account', 'currency', 'sum')
