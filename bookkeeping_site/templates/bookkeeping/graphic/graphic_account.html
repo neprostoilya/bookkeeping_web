@@ -6,7 +6,7 @@
 {% endblock title %}
 
 {% block main %}
-<div class="content-wrapper" style="min-height: 669px;" >
+<div class="content-wrapper" style=" padding-bottom: 200px;">
     <div class="content border-bottom mb-2">
         <div class="container-fluid">
             <div class="row">
@@ -17,26 +17,19 @@
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{% url 'index' %}">Главная</a></li> 
                         <li class="breadcrumb-item active">
-                                 {{ title }}
+                            {{ title }}
                         </li>
                     </ol>
-                </div>
-                <br><br><br>
-                <div class="col-12 col-md-auto d-flex align-items-center justify-content-center page-actions">
-                    <a href="{% url 'create_category_expense' %}" class="btn btn-success float-right">
-                        <i class="fa fa-plus-circle"></i> &nbsp; Добавить 
-                    </a>
                 </div>
             </div>
         </div>
     </div>
     <div class="content">
-        {% include 'bookkeeping/components/_message.html' %}     
         <div class="container-fluid">
             <section id="content" class="content">
-                <div class="row">
-                    {% include 'bookkeeping/components/_table_categories_expenses.html' %} 
-                </div>
+                    <div class="graph" style="@media (max-width: 767px) {width: 200px; height: 200px;}">
+                        {{ graphic|safe }}
+                    </div>
             </section>
         </div>
     </div>

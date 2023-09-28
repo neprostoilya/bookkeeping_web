@@ -14,7 +14,7 @@ class CategoriesIncomes(models.Model):
         verbose_name='Пользователь'
     )
     title = models.CharField(
-        max_length=150, 
+        max_length=70, 
         verbose_name='Название категории дохода'
     )
     subcategory = models.ForeignKey(
@@ -47,7 +47,7 @@ class CategoriesExpenses(models.Model):
         verbose_name='Пользователь'
     )
     title = models.CharField(
-        max_length=150, 
+        max_length=70, 
         verbose_name='Название категории расхода'
     )
     subcategory = models.ForeignKey(
@@ -80,7 +80,7 @@ class CategoriesCurrencys(models.Model):
         verbose_name='Пользователь'
     )
     title = models.CharField(
-        max_length=150, 
+        max_length=70, 
         verbose_name='Название категории валюты'
     )
     course = models.FloatField(
@@ -111,7 +111,7 @@ class CategoriesAccounts(models.Model):
         verbose_name='Пользователь'
     )
     title = models.CharField(
-        max_length=150, 
+        max_length=70, 
         verbose_name='Название категории'
     )
     def __str__(self):

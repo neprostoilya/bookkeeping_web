@@ -42,6 +42,9 @@
                                     {{ form.title }}
                                     </span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
                                 </div>
+                                <div class="help-block text-red">
+                                  {{ form.title.errors }}
+                                </div>
                             </div>
                           </div>
                         </div>
@@ -56,6 +59,9 @@
                                       {{ form.subcategory }}
                                       </span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
                                       <a class="related-widget-wrapper-link add-related" data-popup="yes" href="{% url 'create_category_income' %}" title="Добавить подкатегорию "><img src="/static/admin/img/icon-addlink.svg" alt="Добавить"></a>
+                                  </div>
+                                  <div class="help-block text-red">
+                                    {{ form.subcategory.errors }}
                                   </div>
                               </div>
                             </div>

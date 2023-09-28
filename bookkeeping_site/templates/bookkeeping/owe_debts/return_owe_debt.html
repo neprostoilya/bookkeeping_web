@@ -31,15 +31,19 @@
               <form method="post" novalidate="">
                 {% csrf_token %}
                 <div class="row"><div class="col-12 col-lg-9"><div class="card"><div class="card-body">
-                        <div class="form-group">
-                            <div class="row">
-                            <label class="col-sm-3 text-left">
-                                {{ form.sum.label }}
-                                <span class="text-red">* </span>
-                            </label>
-                            <div class=" col-sm-7">
-                                <div class="related-widget-wrapper">
-                                    {{ form.sum }}
+                            <div class="form-group">
+                                <div class="row">
+                                <label class="col-sm-3 text-left">
+                                    {{ form.sum.label }}
+                                    <span class="text-red">* </span>
+                                </label>
+                                <div class=" col-sm-7">
+                                    <div class="related-widget-wrapper">
+                                        {{ form.sum }}
+                                    </div>
+                                    <div class="help-block text-red">
+                                        {{ form.sum.errors }}
+                                    </div>
                                 </div>
                             </div>
                             </div>

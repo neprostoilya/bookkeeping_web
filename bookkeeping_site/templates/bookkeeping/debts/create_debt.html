@@ -41,6 +41,9 @@
                                 <div class="related-widget-wrapper">
                                     {{ form.name }}
                                 </div>
+                                <div class="help-block text-red">
+                                  {{ form.name.errors }}
+                                </div>
                             </div>
                           </div>
                         </div>
@@ -54,6 +57,9 @@
                                   <div class="related-widget-wrapper">
                                       {{ form.data_1 }}
                                   </div>
+                                  <div class="help-block text-red">
+                                    {{ form.data_1.errors }}
+                                </div>
                               </div>
                             </div>
                         </div>
@@ -67,6 +73,9 @@
                                   <div class="related-widget-wrapper" data-model-ref="пользователь">
                                       {{ form.data_2 }}
                                   </div>
+                                  <div class="help-block text-red">
+                                    {{ form.data_2.errors }}
+                                </div>
                               </div>
                             </div>
                         </div>
@@ -82,6 +91,9 @@
                                       </span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
                                       <a class="related-widget-wrapper-link add-related" data-popup="yes" href="{% url 'create_account' %}" title="Добавить счет"><img src="/static/admin/img/icon-addlink.svg" alt="Добавить"></a>
                                   </div>
+                                  <div class="help-block text-red">
+                                    {{ form.account.errors }}
+                                </div>
                               </div>
                             </div>
                         </div>
@@ -95,6 +107,9 @@
                                   <div class="related-widget-wrapper">
                                       {{ form.comment }}
                                   </div>
+                                  <div class="help-block text-red">
+                                    {{ form.comment.errors }}
+                                </div>
                               </div>
                             </div>
                         </div>
@@ -110,6 +125,9 @@
                                     </span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
                                     <a class="related-widget-wrapper-link add-related" data-popup="yes" href="#!" title="Добавить валюту"><img src="/static/admin/img/icon-addlink.svg" alt="Добавить"></a>
                                 </div>
+                                <div class="help-block text-red">
+                                  {{ form.currency.errors }}
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -123,6 +141,9 @@
                                 <div class="related-widget-wrapper">
                                     {{ form.sum }}
                                 </div>
+                                <div class="help-block text-red">
+                                  {{ form.sum.errors }}
+                              </div>
                             </div>
                             </div>
                         </div>

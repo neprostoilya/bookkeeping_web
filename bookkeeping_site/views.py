@@ -4,10 +4,10 @@ from django.contrib.auth import login, logout
 from django.contrib import messages
 from django.forms.models import BaseModelForm
 from django.urls import reverse_lazy
-from django.views.generic import ListView, UpdateView, View, CreateView
+from django.views.generic import ListView, UpdateView, View, CreateView, TemplateView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import CategoryAccountForm, CategoryCurrencyForm, CategoryExpenseForm, CategoryIncomeForm, LoginForm, \
     RegistrationForm, UserAccountForm, UserDebtForm, UserExpenseForm, UserIncomeForm, \
@@ -15,18 +15,15 @@ from .forms import CategoryAccountForm, CategoryCurrencyForm, CategoryExpenseFor
 from .models import CategoriesAccounts, CategoriesCurrencys, CategoriesExpenses, CategoriesIncomes, UserAccounts, UserAccounts, \
     UserDebts, UserIncomes, UserExpenses, UserOweDebts, UserTransferToAccount
 from .utils import get_total_quantity, return_debts_to_account, return_owe_debts_to_account, save_expenses_or_debts_sum, \
-    save_transfer_sum, get_total_sum, graph_income_or_expense, graph_account, save_incomes_or_debts_sum
+    save_transfer_sum, get_total_sum, save_incomes_or_debts_sum
+from .tasks import graphic_account, graphic_income_or_expense
 
-
-class Page(ListView):
+class Page(TemplateView):
     """Главная страница"""
     extra_context = {
         'title': 'Главная страница',
     }
     template_name = 'bookkeeping/index.html'
-
-    def get_queryset(self):
-        pass
 
 # Регистрация и Авторизация
 
@@ -77,8 +74,7 @@ def register(request):
 
 # Счета
 
-@method_decorator(login_required, name='dispatch')
-class AccountPage(ListView):
+class AccountPage(LoginRequiredMixin, ListView):
     """Страничка счетов пользователя"""
     extra_context = {
         'title': 'Счета',
@@ -106,8 +102,7 @@ class AccountPage(ListView):
         context['total_quantity'] = get_total_quantity(self.model, self.request) 
         return context
 
-@method_decorator(login_required, name='dispatch')
-class AccountCreate(CreateView):
+class AccountCreate(LoginRequiredMixin, CreateView):
     """Создание счета"""
     extra_context = {
         'title': 'Создание счета'
@@ -116,6 +111,11 @@ class AccountCreate(CreateView):
     form_class = UserAccountForm
     template_name = 'bookkeeping/accounts/create_account.html'
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+    
     def form_valid(self, form):
         """Если форма валидна"""
         account_form = form.save(commit=False)
@@ -129,8 +129,7 @@ class AccountCreate(CreateView):
         messages.error(self.request, 'Ошибка в заполнении таблиц!')
         return super().form_invalid(form)
 
-@method_decorator(login_required, name='dispatch')
-class AccountUpdate(UpdateView):
+class AccountUpdate(LoginRequiredMixin, UpdateView):
     """Редактирование счета"""
     extra_context = {
         'title': 'Редактирование счета'
@@ -139,6 +138,11 @@ class AccountUpdate(UpdateView):
     form_class = UserAccountForm
     template_name = 'bookkeeping/accounts/update_account.html'
     success_url = reverse_lazy('accounts')
+    
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
     
     def form_valid(self, form: BaseModelForm):
         """Если форма валидна"""
@@ -150,8 +154,7 @@ class AccountUpdate(UpdateView):
         messages.error(self.request, 'Ошибка в заполнении таблиц!')
         return super().form_invalid(form)
 
-@method_decorator(login_required, name='dispatch')
-class TransferToAccount(CreateView):
+class TransferToAccount(LoginRequiredMixin, CreateView):
     """Перевод счета на счет"""
     extra_context = {
         'title': 'Перевести на счет',
@@ -160,6 +163,11 @@ class TransferToAccount(CreateView):
     form_class = UserTransferToAccountForm
     template_name = 'bookkeeping/accounts/transfer_to_account.html'
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+    
     def form_valid(self, form):
         """Если форма валидна"""
         transfer_form = form.save(commit=False)
@@ -175,23 +183,17 @@ class TransferToAccount(CreateView):
         return super().form_invalid(form)
 
 @login_required
-def graph_accounts(request):
-    """График счетов"""
-    return graph_account(request)
-
-@login_required
 def delete_accounts(request):
     """Удаление счетов"""
     if request.method == 'POST':
         selected_pks = request.POST.getlist('selected_action')
-        UserAccount.objects.filter(pk__in=selected_pks).delete()
+        UserAccounts.objects.filter(pk__in=selected_pks).delete()
         messages.success(request, 'Выбранные объекты успешно удалены.')
     return redirect('accounts')
 
 # Доходы
 
-@method_decorator(login_required, name='dispatch')
-class IncomePage(ListView):
+class IncomePage(LoginRequiredMixin, ListView):
     """Страничка доходов пользователя"""
     extra_context = {
         'title': 'Доходы',
@@ -219,8 +221,7 @@ class IncomePage(ListView):
         context['total_quantity'] = get_total_quantity(self.model, self.request) 
         return context
 
-@method_decorator(login_required, name='dispatch')
-class IncomeCreate(CreateView):
+class IncomeCreate(LoginRequiredMixin, CreateView):
     """Создание дохода"""
     extra_context = {
         'title': 'Создание дохода'
@@ -229,6 +230,11 @@ class IncomeCreate(CreateView):
     form_class = UserIncomeForm
     template_name = 'bookkeeping/incomes/create_income.html'
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+    
     def form_valid(self, form):
         """Если форма валидна"""
         incomes_form = form.save(commit=False)
@@ -243,8 +249,7 @@ class IncomeCreate(CreateView):
         messages.error(self.request, 'Ошибка в заполнении формы!')
         return super().form_invalid(form)
 
-@method_decorator(login_required, name='dispatch')
-class IncomeUpdate(UpdateView):
+class IncomeUpdate(LoginRequiredMixin, UpdateView):
     """Редактирование дохода"""
     extra_context = {
         'title': 'Редактирование дохода'
@@ -254,6 +259,11 @@ class IncomeUpdate(UpdateView):
     template_name = 'bookkeeping/incomes/update_income.html'
     success_url = reverse_lazy('incomes')
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+    
     def form_valid(self, form: BaseModelForm):
         """Если форма валидна"""
         messages.success(self.request, 'Доход успешно отредактирован!')
@@ -264,11 +274,6 @@ class IncomeUpdate(UpdateView):
         messages.error(self.request, 'Ошибка в заполнении формы!')
         return super().form_invalid(form)
 
-@login_required
-def graph_incomes(request):
-    """График доходов"""
-    return graph_income_or_expense(request, 'График Доходов', UserIncomes)
-    
 @login_required    
 def delete_incomes(request):
     """Удаление доходов"""
@@ -280,8 +285,7 @@ def delete_incomes(request):
 
 # Расходы
 
-@method_decorator(login_required, name='dispatch')
-class ExpensePage(ListView):
+class ExpensePage(LoginRequiredMixin, ListView):
     """Страничка Расходов пользователя"""
     extra_context = {
         'title': 'Расходы',
@@ -309,8 +313,7 @@ class ExpensePage(ListView):
         context['total_quantity'] = get_total_quantity(self.model, self.request) 
         return context
 
-@method_decorator(login_required, name='dispatch')
-class ExpenseCreate(CreateView):
+class ExpenseCreate(LoginRequiredMixin, CreateView):
     """Создание расхода"""
     extra_context = {
         'title': 'Создание расхода'
@@ -319,6 +322,11 @@ class ExpenseCreate(CreateView):
     form_class = UserExpenseForm
     template_name = 'bookkeeping/expenses/create_expense.html'
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+    
     def form_valid(self, form):
         """Если форма валидна"""
         expense_form = form.save(commit=False)
@@ -333,8 +341,7 @@ class ExpenseCreate(CreateView):
         messages.error(self.request, 'Ошибка в заполнении таблиц!')
         return super().form_invalid(form) 
 
-@method_decorator(login_required, name='dispatch')
-class ExpenseUpdate(UpdateView):
+class ExpenseUpdate(LoginRequiredMixin, UpdateView):
     """Редактирование расхода"""
     extra_context = {
         'title': 'Редактирование расхода'
@@ -344,6 +351,11 @@ class ExpenseUpdate(UpdateView):
     template_name = 'bookkeeping/expenses/update_expense.html'
     success_url = reverse_lazy('expenses')
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+    
     def form_valid(self, form: BaseModelForm):
         """Если форма валидна"""
         messages.success(self.request, 'Расход успешно отредактирован!')
@@ -353,11 +365,6 @@ class ExpenseUpdate(UpdateView):
         """Если форма не валидна"""
         messages.error(self.request, 'Ошибка в заполнении таблиц!')
         return super().form_invalid(form)
-
-@login_required
-def graph_expenses(request):
-    """График расходов"""
-    return graph_income_or_expense(request, 'График Расходов', UserExpenses)
 
 @login_required
 def delete_expenses(request):
@@ -371,8 +378,7 @@ def delete_expenses(request):
 
 # Долги пользователя
 
-@method_decorator(login_required, name='dispatch')
-class OweDebtPage(ListView):
+class OweDebtPage(LoginRequiredMixin, ListView):
     """Страничка Долгов пользователя"""
     extra_context = {
         'title': 'Мои Долги',
@@ -400,8 +406,7 @@ class OweDebtPage(ListView):
         context['total_quantity'] = get_total_quantity(self.model, self.request) 
         return context
 
-@method_decorator(login_required, name='dispatch')
-class OweDebtCreate(CreateView):
+class OweDebtCreate(LoginRequiredMixin, CreateView):
     """Создание долга пользователя"""
     extra_context = {
         'title': 'Создание долга'
@@ -410,6 +415,11 @@ class OweDebtCreate(CreateView):
     form_class = UserOweDebtForm
     template_name = 'bookkeeping/owe_debts/create_owe_debt.html'
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+    
     def form_valid(self, form):
         """Если форма валидна"""
         owe_debt_form = form.save(commit=False)
@@ -425,9 +435,8 @@ class OweDebtCreate(CreateView):
         messages.error(self.request, 'Ошибка в заполнении формы!')
         return super().form_invalid(form)
 
-@method_decorator(login_required, name='dispatch')
-class OweDebtUpdate(UpdateView):
-    """ долга"""
+class OweDebtUpdate(LoginRequiredMixin, UpdateView):
+    """Редактирование долга"""
     extra_context = {
         'title': 'Редактирование долга'
     }
@@ -436,6 +445,11 @@ class OweDebtUpdate(UpdateView):
     template_name = 'bookkeeping/owe_debts/update_owe_debt.html'
     success_url = reverse_lazy('owe_debts')
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+    
     def form_valid(self, form: BaseModelForm):
         """Если форма валидна"""
         messages.success(self.request, 'Долг успешно отредактирован!')
@@ -446,8 +460,7 @@ class OweDebtUpdate(UpdateView):
         messages.error(self.request, 'Ошибка в заполнении таблиц!')
         return super().form_invalid(form)
 
-@method_decorator(login_required, name='dispatch')
-class OweDebtReturn(View):
+class OweDebtReturn(LoginRequiredMixin, View):
     """Возврат долга c счета"""
     template_name = 'bookkeeping/owe_debts/return_owe_debt.html'
 
@@ -493,8 +506,7 @@ def delete_owe_debts(request):
 
 # Долги у пользователя
 
-@method_decorator(login_required, name='dispatch')
-class DebtPage(ListView):
+class DebtPage(LoginRequiredMixin, ListView):
     """Страничка Долгов у пользователя"""
     extra_context = {
         'title': 'Долги',
@@ -522,8 +534,7 @@ class DebtPage(ListView):
         context['total_quantity'] = get_total_quantity(self.model, self.request) 
         return context
 
-@method_decorator(login_required, name='dispatch')
-class DebtCreate(CreateView):
+class DebtCreate(LoginRequiredMixin, CreateView):
     """Создание долга у пользователя"""
     extra_context = {
         'title': 'Создание долга'
@@ -532,6 +543,11 @@ class DebtCreate(CreateView):
     form_class = UserDebtForm
     template_name = 'bookkeeping/debts/create_debt.html'
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+    
     def form_valid(self, form):
         """Проверка на валидность"""
         debt_form = form.save(commit=False)
@@ -546,8 +562,7 @@ class DebtCreate(CreateView):
         messages.error(self.request, 'Ошибка в заполнении формы!')
         return super().form_invalid(form)
 
-@method_decorator(login_required, name='dispatch')
-class DebtUpdate(UpdateView):
+class DebtUpdate(LoginRequiredMixin, UpdateView):
     """Редактирование долга"""
     extra_context = {
         'title': 'Редактирование долга'
@@ -557,6 +572,11 @@ class DebtUpdate(UpdateView):
     template_name = 'bookkeeping/debts/update_debt.html'
     success_url = reverse_lazy('debts')
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+    
     def form_valid(self, form: BaseModelForm):
         """Если форма валидна"""
         messages.success(self.request, 'Долг успешно отредактирован!')
@@ -567,8 +587,7 @@ class DebtUpdate(UpdateView):
         messages.error(self.request, 'Ошибка в заполнении формы!')
         return super().form_invalid(form)
 
-@method_decorator(login_required, name='dispatch')
-class DebtReturn(View):
+class DebtReturn(LoginRequiredMixin, View):
     """Возврат долга на счет"""
     template_name = 'bookkeeping/debts/return_debt.html'
 
@@ -612,12 +631,46 @@ def delete_debts(request):
         messages.success(request, 'Выбранные объекты успешно удалены.')
     return redirect('debts')
 
-## Категории 
+## График
+from celery.result import AsyncResult
+from conf.celery import task
+
+@login_required
+def graph_accounts(request):
+    """График счетов"""
+    graphic = task.AsyncResult(graphic_account.delay())
+    context = {
+        'title':'График счетов',
+        'graphic': graphic
+    } 
+    print(graphic)
+    return render(request, 'bookkeeping/graphic/graphic_account.html', context)
 
 #
 
-@method_decorator(login_required, name='dispatch')
-class CategoryAccountPage(ListView):
+@login_required
+def graph_incomes(request):
+    """График доходов"""
+    context = {
+        'title':'График доходов',
+        'graphic': graphic_income_or_expense.delay(UserIncomes, request)
+    } 
+    return render(request, 'bookkeeping/graphic/graphic.html', context)
+
+#
+
+@login_required
+def graph_expenses(request):
+    """График расходов"""
+    context = {
+        'title':'График расходов',
+        'graphic': graphic_income_or_expense.delay(UserExpenses, request)
+    } 
+    return render(request, 'bookkeeping/graphic/graphic.html', context)
+
+## Категории 
+
+class CategoryAccountPage(LoginRequiredMixin, ListView):
     """Страничка Категорий счета"""
     extra_context = {
         'title': 'Категории Счетов',
@@ -643,8 +696,7 @@ class CategoryAccountPage(ListView):
         context['total_quantity'] = get_total_quantity(self.model, self.request) 
         return context
 
-@method_decorator(login_required, name='dispatch')
-class CategoryAccountCreate(CreateView):
+class CategoryAccountCreate(LoginRequiredMixin, CreateView):
     """Создание категории счета"""
     extra_context = {
         'title': 'Создание категории счета',
@@ -666,8 +718,7 @@ class CategoryAccountCreate(CreateView):
         messages.error(self.request, 'Ошибка в заполнении формы!')
         return super().form_invalid(form)
 
-@method_decorator(login_required, name='dispatch')
-class CategoryAccountUpdate(UpdateView):
+class CategoryAccountUpdate(LoginRequiredMixin, UpdateView):
     """Редактирование категории счета"""
     extra_context = {
         'title': 'Редактирование категории счета',
@@ -698,8 +749,7 @@ def delete_categories_accounts(request):
 
 #
 
-@method_decorator(login_required, name='dispatch')
-class CategoryIncomePage(ListView):
+class CategoryIncomePage(LoginRequiredMixin, ListView):
     """Страничка Категорий дохода"""
     extra_context = {
         'title': 'Категории доходов',
@@ -725,8 +775,7 @@ class CategoryIncomePage(ListView):
         context['total_quantity'] = get_total_quantity(self.model, self.request) 
         return context
 
-@method_decorator(login_required, name='dispatch')
-class CategoryIncomeCreate(CreateView):
+class CategoryIncomeCreate(LoginRequiredMixin, CreateView):
     """Создание категории дохода"""
     extra_context = {
         'title': 'Создание категории дохода',
@@ -734,6 +783,12 @@ class CategoryIncomeCreate(CreateView):
     model = CategoriesIncomes
     form_class = CategoryIncomeForm
     template_name = 'bookkeeping/categories/categories_incomes/create_category_income.html'
+    success_url = reverse_lazy('categories_incomes')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
     def form_valid(self, form):
         """Если форма валидна"""
@@ -741,15 +796,14 @@ class CategoryIncomeCreate(CreateView):
         category_income_form.user = self.request.user
         category_income_form.save() 
         messages.success(self.request, 'Категория дохода успешно создана!')
-        return redirect('categories_incomes')
-    
+        return super().form_valid(form)
+        
     def form_invalid(self, form):
         """Если форма не валидна"""
         messages.error(self.request, 'Ошибка в заполнении формы!')
         return super().form_invalid(form)
-
-@method_decorator(login_required, name='dispatch')
-class CategoryIncomeUpdate(UpdateView):
+    
+class CategoryIncomeUpdate(LoginRequiredMixin, UpdateView):
     """Редактирование категории дохода"""
     extra_context = {
         'title': 'Редактирование категории дохода',
@@ -758,6 +812,11 @@ class CategoryIncomeUpdate(UpdateView):
     form_class = CategoryIncomeForm
     template_name = 'bookkeeping/categories/categories_incomes/update_category_income.html'
     success_url = reverse_lazy('categories_incomes')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
     def form_valid(self, form: BaseModelForm):
         """Если форма валидна"""
@@ -780,8 +839,7 @@ def delete_categories_incomes(request):
 
 #
 
-@method_decorator(login_required, name='dispatch')
-class CategoryExpensePage(ListView):
+class CategoryExpensePage(LoginRequiredMixin, ListView):
     """Страничка Категорий расхода"""
     extra_context = {
         'title': 'Категории расходов',
@@ -807,8 +865,7 @@ class CategoryExpensePage(ListView):
         context['total_quantity'] = get_total_quantity(self.model, self.request) 
         return context
     
-@method_decorator(login_required, name='dispatch')
-class CategoryExpenseCreate(CreateView):
+class CategoryExpenseCreate(LoginRequiredMixin, CreateView):
     """Создание категории расхода"""
     extra_context = {
         'title': 'Создание категории расхода',
@@ -816,6 +873,11 @@ class CategoryExpenseCreate(CreateView):
     model = CategoriesExpenses
     form_class = CategoryExpenseForm
     template_name = 'bookkeeping/categories/categories_expenses/create_category_expense.html'
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
     def form_valid(self, form):
         """Если форма валидна"""
@@ -830,8 +892,7 @@ class CategoryExpenseCreate(CreateView):
         messages.error(self.request, 'Ошибка в заполнении формы!')
         return super().form_invalid(form)
 
-@method_decorator(login_required, name='dispatch')
-class CategoryExpenseUpdate(UpdateView):
+class CategoryExpenseUpdate(LoginRequiredMixin, UpdateView):
     """Редактирование категории расхода"""
     extra_context = {
         'title': 'Редактирование категории расхода',
@@ -840,6 +901,11 @@ class CategoryExpenseUpdate(UpdateView):
     form_class = CategoryExpenseForm
     template_name = 'bookkeeping/categories/categories_expenses/update_category_expense.html'
     success_url = reverse_lazy('categories_expenses')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
     def form_valid(self, form: BaseModelForm):
         """Если форма валидна"""
@@ -862,8 +928,7 @@ def delete_categories_expenses(request):
 
 # 
 
-@method_decorator(login_required, name='dispatch')
-class CategoryCurrencyPage(ListView):
+class CategoryCurrencyPage(LoginRequiredMixin, ListView):
     """Страничка Категорий валюты"""
 
     extra_context = {
@@ -890,8 +955,7 @@ class CategoryCurrencyPage(ListView):
         context['total_quantity'] = get_total_quantity(self.model, self.request) 
         return context
 
-@method_decorator(login_required, name='dispatch')
-class CategoryCurrencyCreate(CreateView):
+class CategoryCurrencyCreate(LoginRequiredMixin, CreateView):
     """Создание категории валюты"""
     extra_context = {
         'title': 'Создание категории валюты',
@@ -899,6 +963,11 @@ class CategoryCurrencyCreate(CreateView):
     model = CategoriesCurrencys
     form_class = CategoryCurrencyForm
     template_name = 'bookkeeping/categories/categories_currencys/create_category_currency.html'
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
     def form_valid(self, form):
         """Если форма валидна"""
@@ -913,8 +982,7 @@ class CategoryCurrencyCreate(CreateView):
         messages.error(self.request, 'Ошибка в заполнении формы!')
         return super().form_invalid(form)
 
-@method_decorator(login_required, name='dispatch')
-class CategoryCurrencyUpdate(UpdateView):
+class CategoryCurrencyUpdate(LoginRequiredMixin, UpdateView):
     """Редактирование категории валюты"""
     extra_context = {
         'title': 'Редактирование категории валюты',
@@ -923,6 +991,11 @@ class CategoryCurrencyUpdate(UpdateView):
     form_class = CategoryCurrencyForm
     template_name = 'bookkeeping/categories/categories_currencys/update_category_currency.html'
     success_url = reverse_lazy('categories_currencys')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
     def form_valid(self, form: BaseModelForm):
         """Если форма валидна"""

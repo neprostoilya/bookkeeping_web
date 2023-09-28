@@ -1,5 +1,4 @@
-import plotly.graph_objs as go
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
 
 from .models import UserAccounts, CategoriesCurrencys
 
@@ -55,65 +54,6 @@ def return_owe_debts_to_account(sum, owe_debts):
     account_sum = int((sum * owe_debts.currency.course) / owe_debts.account.currency.course)
     account.sum = account.sum - account_sum
     account.save()
-
-def graph(list_values, list_keys):
-    """Функция для вывода графика"""
-    if list_values and list_keys:
-        fig = go.Figure()
-        pull = [0]*len(list_values)
-        pull[list_values.index(max(list_values))] = 0.2
-        fig.add_trace(go.Pie(values=list_values, labels=list_keys, pull=pull, hole=0.9))
-
-        fig.update_layout(
-            margin=dict(l=50, r=50, b=100, t=100, pad=2),
-            legend_orientation="h",
-            template='plotly_white'
-        )    
-        return fig.to_html(full_html=False)
-    else:
-        return None
-
-def graph_income_or_expense(request, title, name_object):
-    """Отображение графика дохода и расхода на странице"""
-    objects = name_object.objects.filter(user=request.user)
-    objects_dict = {}
-    for object in objects:
-        if object.category.title in objects_dict:
-            objects_dict[object.category.title + ' - ' + str(object.sum) + ' ' + object.currency.title] += object.get_total_sum
-        else:
-            objects_dict[object.category.title + ' - ' + str(object.sum) + ' ' + object.currency.title] = object.get_total_sum
-
-    list_values = list(objects_dict.values())
-    list_keys = list(objects_dict.keys())
-
-    graphic = graph(list_values, list_keys)
-
-    context = {
-        'title': title,
-        'graphic': graphic
-    }
-    return render(request, 'bookkeeping/statistics.html', context)
-
-def graph_account(request):
-    """Отображение графика счетов на странице"""
-    objects = UserAccounts.objects.filter(user=request.user)
-    objects_dict = {}
-    for object in objects:
-        if object.account.title in objects_dict:
-            objects_dict[object.account.title + ' - ' + str(object.sum) + ' ' + object.currency.title ] += object.get_total_sum
-        else:
-            objects_dict[object.account.title + ' - ' + str(object.sum) + ' ' + object.currency.title] = object.get_total_sum
-
-    list_values = list(objects_dict.values())
-    list_keys = list(objects_dict.keys())
-
-    graphic = graph(list_values, list_keys)
-
-    context = {
-        'title': 'График счетов',
-        'graphic': graphic
-    }
-    return render(request, 'bookkeeping/statistics.html', context)
 
 def get_total_quantity(object, request):
     """Получение всего колл-ва обьекта"""

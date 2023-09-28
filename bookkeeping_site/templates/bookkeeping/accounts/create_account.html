@@ -43,6 +43,9 @@
                                 </span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
                                 <a class="related-widget-wrapper-link add-related" data-popup="yes" title="Добавить счет"><img src="/static/admin/img/icon-addlink.svg" alt="Добавить"></a>
                             </div>
+                            <div class="help-block text-red">
+                                {{ form.account.errors }}
+                            </div>
                         </div>
                     </div>
                   </div>
@@ -58,6 +61,9 @@
                                 </span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
                                 <a class="related-widget-wrapper-link add-related" data-popup="yes" href="#!" title="Добавить валюту"><img src="/static/admin/img/icon-addlink.svg" alt="Добавить"></a>
                             </div>
+                            <div class="help-block text-red">
+                                {{ form.currency.errors }}
+                            </div>
                         </div>
                       </div>
                   </div>
@@ -71,7 +77,11 @@
                                 <div class="related-widget-wrapper">
                                     {{ form.sum }}
                                 </div>
+                                <div class="help-block text-red">
+                                    {{ form.sum.errors }}
+                                </div>
                             </div>
+                            
                         </div>
                   </div>
                 </div></div></div>

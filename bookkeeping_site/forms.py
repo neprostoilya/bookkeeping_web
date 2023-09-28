@@ -61,6 +61,12 @@ class UserAccountForm(forms.ModelForm):
             })
         }
 
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+        self.fields['account'].queryset = UserAccounts.objects.filter(user=user)
+        self.fields['currency'].queryset = CategoriesCurrencys.objects.filter(user=user)
+
 class UserTransferToAccountForm(forms.ModelForm):
     """Форма создания счета"""
 
@@ -76,6 +82,12 @@ class UserTransferToAccountForm(forms.ModelForm):
             'sum': forms.TextInput(attrs={
             })
         }
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+        self.fields['account1'].queryset = CategoriesAccounts.objects.filter(user=user)
+        self.fields['account2'].queryset = CategoriesAccounts.objects.filter(user=user)
 
 class UserIncomeForm(forms.ModelForm):
     """Форма создания дохода"""
@@ -104,6 +116,14 @@ class UserIncomeForm(forms.ModelForm):
             })        
         }
 
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+        self.fields['category'].queryset = CategoriesIncomes.objects.filter(user=user)
+        self.fields['subcategory'].queryset = CategoriesIncomes.objects.filter(user=user)
+        self.fields['account'].queryset = UserAccounts.objects.filter(user=user)
+        self.fields['currency'].queryset = CategoriesCurrencys.objects.filter(user=user)
+
 class UserExpenseForm(forms.ModelForm):
     """Форма создания расхода"""
 
@@ -127,9 +147,16 @@ class UserExpenseForm(forms.ModelForm):
             'created_at': forms.DateInput(attrs={
                 'type': 'date',
                 'id': 'date_sel',
-                'class': 'form-control',
             })        
         }
+        
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+        self.fields['category'].queryset = CategoriesExpenses.objects.filter(user=user)
+        self.fields['subcategory'].queryset = CategoriesExpenses.objects.filter(user=user)
+        self.fields['account'].queryset = UserAccounts.objects.filter(user=user)
+        self.fields['currency'].queryset = CategoriesCurrencys.objects.filter(user=user)
 
 class UserOweDebtForm(forms.ModelForm):
     """Форма создания долга"""
@@ -140,38 +167,31 @@ class UserOweDebtForm(forms.ModelForm):
         fields = ('name', 'data_1', 'data_2', 'account', 'comment', 'currency', 'sum')
         widgets = {
             'name': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Имя'
             }),
             'data_1': forms.DateInput(attrs={
                 'type': 'date',
                 'id': 'date_sel',
                 'class': 'form-control',
-                'placeholder': 'Дата выдачи'
             }),
             'data_2': forms.DateInput(attrs={
                 'type': 'date',
                 'id': 'date_sel2',
-                'class': 'form-control',
-                'placeholder': 'Дата возврата'
             }),
             'comment': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Коментарий'
             }),
             'account': forms.Select(attrs={
-                'class': 'form-control',
-                'placeholder': 'Счет'
             }),
             'currency': forms.Select(attrs={
-                'class': 'form-control',
-                'placeholder': 'Валюта'
             }),
             'sum': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Сумма'
             })        
         }
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+        self.fields['account'].queryset = UserAccounts.objects.filter(user=user)
+        self.fields['currency'].queryset = CategoriesCurrencys.objects.filter(user=user)
 
 class UserDebtForm(forms.ModelForm):
     """Форма создания долга"""
@@ -202,6 +222,12 @@ class UserDebtForm(forms.ModelForm):
             'sum': forms.TextInput(attrs={
             })        
         }
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+        self.fields['account'].queryset = UserAccounts.objects.filter(user=user)
+        self.fields['currency'].queryset = CategoriesCurrencys.objects.filter(user=user)
 
 class UserReturnDebtForm(forms.ModelForm):
     """Форма возврата долга"""
@@ -248,6 +274,11 @@ class CategoryIncomeForm(forms.ModelForm):
             'subcategory': forms.Select()  
         }
 
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+        self.fields['subcategory'].queryset = CategoriesIncomes.objects.filter(user=user)
+
 class CategoryExpenseForm(forms.ModelForm):
     """Форма создания категории расхода"""
 
@@ -259,6 +290,11 @@ class CategoryExpenseForm(forms.ModelForm):
             'title': forms.TextInput(),      
             'subcategory': forms.Select()  
         }
+    
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+        self.fields['subcategory'].queryset = CategoriesExpenses.objects.filter(user=user)
 
 class CategoryCurrencyForm(forms.ModelForm):
     """Форма создания категории валюты"""
@@ -271,3 +307,5 @@ class CategoryCurrencyForm(forms.ModelForm):
             'title': forms.TextInput(),   
             'course': forms.TextInput(),      
         }
+    
+    
