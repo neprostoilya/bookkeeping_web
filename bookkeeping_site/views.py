@@ -9,14 +9,15 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from bookkeeping_site.tasks import send_activation_code
+
 from .forms import CategoryAccountForm, CategoryCurrencyForm, CategoryExpenseForm, CategoryIncomeForm, LoginForm, \
-    RegistrationForm, UserAccountForm, UserDebtForm, UserExpenseForm, UserIncomeForm, \
+    RegistrationForm, UserAccountForm, UserDebtForm, UserExpenseForm, UserIncomeForm, ActivationCodeForm, \
     UserOweDebtForm, UserReturnDebtForm, UserReturnOweDebtForm, UserTransferToAccountForm
 from .models import CategoriesAccounts, CategoriesCurrencys, CategoriesExpenses, CategoriesIncomes, UserAccounts, UserAccounts, \
     UserDebts, UserIncomes, UserExpenses, UserOweDebts, UserTransferToAccount
 from .utils import get_total_quantity, return_debts_to_account, return_owe_debts_to_account, save_expenses_or_debts_sum, \
-    save_transfer_sum, get_total_sum, save_incomes_or_debts_sum
-from .tasks import graphic_account, graphic_income_or_expense
+    save_transfer_sum, get_total_sum, save_incomes_or_debts_sum, render_graphic_account, render_graphic_income_or_expense
 
 class Page(TemplateView):
     """Главная страница"""
@@ -31,7 +32,7 @@ def login_registration(request):
     """Регистрация пользователя"""
     context = {
         'title': 'Зарегистрироваться',
-        'registration_form': RegistrationForm()
+        'form': RegistrationForm()
     }
 
     return render(request, 'bookkeeping/login_registration.html', context)
@@ -62,15 +63,33 @@ def user_logout(request):
     return redirect('index')
 
 def register(request):
-    """Регистрация аккаунта"""
-    form = RegistrationForm(data=request.POST)
-    if form.is_valid():
-        form.save()
-        messages.success(request, 'Аккаунт успешно создан. Войдите в аккаунт')
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            send_activation_code.delay(request, user.id)
+            return redirect('activation_code')
     else:
-        for error in form.errors:
-            messages.error(request, form.errors[error].as_text())
-    return redirect('login_registration')
+        form = RegistrationForm()
+    return render(request, 'bookkeeping/activation_code.html', {'form': ActivationCodeForm})
+
+@login_required
+def activation_code(request):
+    if request.method == 'POST':
+        form = ActivationCodeForm(request.POST)
+        if form.is_valid():
+            code = form.cleaned_data['code']
+            if code == request.session.get('activation_code'):
+                request.user.is_active = True
+                request.user.save()
+                del request.session['activation_code']
+                return redirect('index')
+            else:
+                messages.error(request, 'Неверный код!')
+    else:
+        form = ActivationCodeForm()
+    return render(request, 'bookkeeping_site/activation_code.html', {'form': form})
 
 # Счета
 
@@ -126,7 +145,7 @@ class AccountCreate(LoginRequiredMixin, CreateView):
 
     def form_invalid(self, form):
         """Если форма не валидна"""
-        messages.error(self.request, 'Ошибка в заполнении таблиц!')
+        messages.error(self.request, 'Ошибка в заполнении формы!')
         return super().form_invalid(form)
 
 class AccountUpdate(LoginRequiredMixin, UpdateView):
@@ -151,7 +170,7 @@ class AccountUpdate(LoginRequiredMixin, UpdateView):
 
     def form_invalid(self, form):
         """Если форма не валидна"""
-        messages.error(self.request, 'Ошибка в заполнении таблиц!')
+        messages.error(self.request, 'Ошибка в заполнении формы!')
         return super().form_invalid(form)
 
 class TransferToAccount(LoginRequiredMixin, CreateView):
@@ -638,12 +657,10 @@ from conf.celery import task
 @login_required
 def graph_accounts(request):
     """График счетов"""
-    graphic = task.AsyncResult(graphic_account.delay())
     context = {
         'title':'График счетов',
-        'graphic': graphic
+        'graphic': render_graphic_account(request)
     } 
-    print(graphic)
     return render(request, 'bookkeeping/graphic/graphic_account.html', context)
 
 #
@@ -653,18 +670,18 @@ def graph_incomes(request):
     """График доходов"""
     context = {
         'title':'График доходов',
-        'graphic': graphic_income_or_expense.delay(UserIncomes, request)
+        'graphic': render_graphic_income_or_expense(UserIncomes, request)
     } 
     return render(request, 'bookkeeping/graphic/graphic.html', context)
 
-#
+# #
 
 @login_required
 def graph_expenses(request):
     """График расходов"""
     context = {
         'title':'График расходов',
-        'graphic': graphic_income_or_expense.delay(UserExpenses, request)
+        'graphic': render_graphic_income_or_expense(UserExpenses, request)
     } 
     return render(request, 'bookkeeping/graphic/graphic.html', context)
 

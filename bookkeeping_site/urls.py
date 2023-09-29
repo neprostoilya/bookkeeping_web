@@ -9,6 +9,7 @@ urlpatterns = [
     path('login', user_login, name='login'),
     path('logout', user_logout, name='logout'),
     path('register', register, name='register'),
+    path('activation_code/', activation_code, name='activate'),
     # Счета
     path('accounts/', AccountPage.as_view(), name='accounts'),
     path('accounts/create/', AccountCreate.as_view(), name='create_account'),
@@ -42,7 +43,6 @@ urlpatterns = [
     path('graphic/incomes/', graph_incomes, name='graphic_incomes'), 
     path('graphic/expenses/', graph_expenses, name='graphic_expenses'), 
     ## Категории
-    #
     path('categories/accounts/', CategoryAccountPage.as_view(), name='categories_accounts'), 
     path('categories/accounts/create/', CategoryAccountCreate.as_view(), name='create_category_account'), 
     path('categories/accounts/update/<int:pk>/', CategoryAccountUpdate.as_view(), name='update_category_account'), 

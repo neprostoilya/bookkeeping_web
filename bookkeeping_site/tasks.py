@@ -1,29 +1,21 @@
-from bookkeeping_site.models import UserAccounts
-from conf.celery import task
+from celery import shared_task
+from django.core.mail import send_mail
 
-from .service import graph
+from conf import settings
 
-@task.task
-def graphic_account():
-    """График счета"""
-    objects = UserAccounts.objects.filter(user='admin')
-    objects_dict = {}
-    for object in objects:
-        if object.account.title in objects_dict:
-            objects_dict[object.account.title + ' - ' + str(object.sum) + ' ' + object.currency.title ] += object.get_total_sum
-        else:
-            objects_dict[object.account.title + ' - ' + str(object.sum) + ' ' + object.currency.title] = object.get_total_sum
+from .models import User
+from .service import generate_activation_code
 
-    list_values = list(objects_dict.values())
-    list_keys = list(objects_dict.keys())
-
-    graphic = graph(list_values, list_keys)
-    return graphic
-    
-
-@task.task
-def graphic_income_or_expense(model, request):
-    """График дохода или расхода"""
-    # return render_graphic_income_or_expense(model, request)
-    pass
-    
+@shared_task
+def send_activation_code(request, user_id):
+    user = User.objects.get(id=user_id)
+    code = generate_activation_code()
+    send_mail(
+        subject='Бухгалтерия',
+        message=code,
+        from_email=settings.EMAIL_HOST_USER,
+        recipient_list=[user.email],
+        fail_silently=False
+    )
+    request.session['activation_code'] = code
+    request.save()

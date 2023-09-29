@@ -45,6 +45,9 @@ class RegistrationForm(UserCreationForm):
             })
         }
 
+class ActivationCodeForm(forms.Form):
+    code = forms.CharField(max_length=10)
+
 class UserAccountForm(forms.ModelForm):
     """Форма создания счета"""
     
