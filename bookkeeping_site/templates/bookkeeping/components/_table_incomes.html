@@ -1,19 +1,12 @@
 {% load tags %}
 {% get_sorted_table as data %}
   <div class="col-12 ">
-    <form method="post" action="{% url 'delete_incomes' %}">
       {% csrf_token %}
-      {% include 'bookkeeping/components/_delete_list.html' %}     
       <div class="card">
         <div class="card-body table-responsive p-0">
             <table id="result_list" class="table table-striped">
                 <thead>
                     <tr>
-                        <th tabindex="0" rowspan="1" colspan="1">
-                            <div class="text">
-                                    <span><input type="checkbox" class="chk-all"></span>
-                            </div>
-                        </th>                        
                         <th tabindex="0" rowspan="1" colspan="1">
                             <div class="text">
                               <span>ID</span>
@@ -36,8 +29,6 @@
                 <tbody>
                   {% for income in incomes %}
                     <tr role="row">
-                        <td class="action-checkbox"><input type="checkbox" name="selected_action" value="{{ income.pk }}" class="checkbox">
-                        </td>
                         <th class="field-pk">
                           <a href="{% url 'update_income' income.pk %}">{{ income.pk }}</a>
                         </th>
@@ -69,5 +60,4 @@
             </table>
         </div>
       </div>  
-    </form>
   </div>

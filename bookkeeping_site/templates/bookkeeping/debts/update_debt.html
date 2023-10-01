@@ -31,128 +31,132 @@
               <form method="post" novalidate="">
                 {% csrf_token %}
                 <div class="row"><div class="col-12 col-lg-9"><div class="card"><div class="card-body">
-                  <div class="form-group">
-                    <div class="row">
-                      <label class="col-sm-3 text-left">
-                          {{ form.name.label }}
-                        <span class="text-red">* </span>
-                      </label>
-                      <div class=" col-sm-7">
-                          <div class="related-widget-wrapper">
-                              {{ form.name }}
-                          </div>
-                          <div class="help-block text-red">
-                            {{ form.name.errors }}
-                          </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="form-group">
+                  <div class="row"><div class="col-12 col-lg-9"><div class="card"><div class="card-body">
+                    <div class="form-group">
                       <div class="row">
                         <label class="col-sm-3 text-left">
-                            {{ form.data_1.label }}
-                          <span class="text-red">* </span>
-                        </label>
-                        <div class=" col-sm-7 field-user">
-                            <div class="related-widget-wrapper">
-                                {{ form.data_1 }}
-                            </div>
-                            <div class="help-block text-red">
-                              {{ form.data_1.errors }}
-                          </div>
-                        </div>
-                      </div>
-                  </div>
-                  <div class="form-group">
-                      <div class="row">
-                        <label class="col-sm-3 text-left" for="id_user">
-                            {{ form.data_2.label }}
-                          <span class="text-red">* </span>
-                        </label>
-                        <div class=" col-sm-7 field-user">
-                            <div class="related-widget-wrapper" data-model-ref="пользователь">
-                                {{ form.data_2 }}
-                            </div>
-                            <div class="help-block text-red">
-                              {{ form.data_2.errors }}
-                          </div>
-                        </div>
-                      </div>
-                  </div>
-                  <div class="form-group">
-                      <div class="row">
-                        <label class="col-sm-3 text-left" for="id_user">
-                            {{ form.account.label }}
-                          <span class="text-red">* </span>
-                        </label>
-                        <div class=" col-sm-7 field-user">
-                            <div class="related-widget-wrapper" data-model-ref="пользователь">
-                                {{ form.account }}
-                                </span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
-                                <a class="related-widget-wrapper-link add-related" data-popup="yes" href="{% url 'create_account' %}" title="Добавить счет"><img src="/static/admin/img/icon-addlink.svg" alt="Добавить"></a>
-                            </div>
-                            <div class="help-block text-red">
-                              {{ form.account.errors }}
-                          </div>
-                        </div>
-                      </div>
-                  </div>
-                  <div class="form-group">
-                      <div class="row">
-                        <label class="col-sm-3 text-left">
-                            {{ form.comment.label }}
+                            {{ form.name.label }}
                           <span class="text-red">* </span>
                         </label>
                         <div class=" col-sm-7">
                             <div class="related-widget-wrapper">
-                                {{ form.comment }}
+                                {{ form.name }}
                             </div>
                             <div class="help-block text-red">
-                              {{ form.comment.errors }}
-                          </div>
-                        </div>
-                      </div>
-                  </div>
-                  <div class="form-group">
-                    <div class="row">
-                      <label class="col-sm-3 text-left">
-                          {{ form.currency.label }}
-                        <span class="text-red">* </span>
-                      </label>
-                      <div class=" col-sm-7">
-                          <div class="related-widget-wrapper">
-                              {{ form.currency }}
-                              </span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
-                              <a class="related-widget-wrapper-link add-related" data-popup="yes" href="#!" title="Добавить валюту"><img src="/static/admin/img/icon-addlink.svg" alt="Добавить"></a>
-                          </div>
-                          <div class="help-block text-red">
-                            {{ form.currency.errors }}
+                              {{ form.name.errors }}
+                            </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div class="form-group">
-                      <div class="row">
-                      <label class="col-sm-3 text-left">
-                          {{ form.sum.label }}
-                          <span class="text-red">* </span>
-                      </label>
-                      <div class=" col-sm-7">
-                          <div class="related-widget-wrapper">
-                              {{ form.sum }}
+                    <div class="form-group">
+                        <div class="row">
+                          <label class="col-sm-3 text-left">
+                              {{ form.data_1.label }}
+                            <span class="text-red">* </span>
+                          </label>
+                          <div class=" col-sm-7 field-user">
+                              <div class="related-widget-wrapper">
+                                  {{ form.data_1 }}
+                              </div>
+                              <div class="help-block text-red">
+                                {{ form.data_1.errors }}
+                            </div>
                           </div>
-                          <div class="help-block text-red">
-                            {{ form.sum.errors }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                          <label class="col-sm-3 text-left" for="id_user">
+                              {{ form.data_2.label }}
+                            <span class="text-red">* </span>
+                          </label>
+                          <div class=" col-sm-7 field-user">
+                              <div class="related-widget-wrapper" data-model-ref="пользователь">
+                                  {{ form.data_2 }}
+                              </div>
+                              <div class="help-block text-red">
+                                {{ form.data_2.errors }}
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                          <label class="col-sm-3 text-left" for="id_user">
+                              {{ form.account.label }}
+                            <span class="text-red">* </span>
+                          </label>
+                          <div class=" col-sm-7 field-user">
+                              <div class="related-widget-wrapper" data-model-ref="пользователь">
+                                  {{ form.account }}
+                                  </span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+                                  <a class="related-widget-wrapper-link add-related" data-popup="yes" href="{% url 'create_account' %}" title="Добавить счет"><img src="/static/admin/img/icon-addlink.svg" alt="Добавить"></a>
+                              </div>
+                              <div class="help-block text-red">
+                                {{ form.account.errors }}
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                          <label class="col-sm-3 text-left">
+                              {{ form.comment.label }}
+                            <span class="text-red">* </span>
+                          </label>
+                          <div class=" col-sm-7">
+                              <div class="related-widget-wrapper">
+                                  {{ form.comment }}
+                              </div>
+                              <div class="help-block text-red">
+                                {{ form.comment.errors }}
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="row">
+                        <label class="col-sm-3 text-left">
+                            {{ form.currency.label }}
+                          <span class="text-red">* </span>
+                        </label>
+                        <div class=" col-sm-7">
+                            <div class="related-widget-wrapper">
+                                {{ form.currency }}
+                                </span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+                                <a class="related-widget-wrapper-link add-related" data-popup="yes" href="{% url 'create_category_currency' %}"title="Добавить валюту"><img src="/static/admin/img/icon-addlink.svg" alt="Добавить"></a>
+                            </div>
+                            <div class="help-block text-red">
+                              {{ form.currency.errors }}
+                          </div>
                         </div>
                       </div>
-                      </div>
-                  </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                        <label class="col-sm-3 text-left">
+                            {{ form.sum.label }}
+                            <span class="text-red">* </span>
+                        </label>
+                        <div class=" col-sm-7">
+                            <div class="related-widget-wrapper">
+                                {{ form.sum }}
+                            </div>
+                            <div class="help-block text-red">
+                              {{ form.sum.errors }}
+                          </div>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
                   </div>
                 </div>
-              </div>
                 <div class="col-12 col-lg-3">
                   <div class="form-group">
                     <input type="submit" value="Сохранить" class="btn btn-success form-control">
+                  </div>
+                  <div class="form-group">
+                    <a href="{% url 'delete_debt' debt.pk %}" class="btn btn-danger form-control">Удалить</a>
                   </div>
                   <div class="form-group">
                     <a href="{% url 'debts' %}" class="btn btn-info form-control">Отмена</a>

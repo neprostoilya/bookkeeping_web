@@ -1,19 +1,12 @@
 {% load tags %}
 {% get_sorted_table_categories as data %}
   <div class="col-12 ">
-    <form method="post" action="{% url 'delete_categories_expenses' %}">
       {% csrf_token %}
-      {% include 'bookkeeping/components/_delete_list.html' %}     
       <div class="card">
         <div class="card-body table-responsive p-0">
             <table id="result_list" class="table table-striped">
                 <thead>
                     <tr>
-                        <th tabindex="0" rowspan="1" colspan="1">
-                            <div class="text">
-                                    <span><input type="checkbox" class="chk-all"></span>
-                            </div>
-                        </th>                        
                         <th tabindex="0" rowspan="1" colspan="1">
                             <div class="text">
                               <span>ID</span>
@@ -36,8 +29,6 @@
                 <tbody>
                   {% for category in categories %}
                     <tr role="row">
-                        <td class="action-checkbox"><input type="checkbox" name="selected_action" value="{{ category.pk }}" class="checkbox">
-                        </td>
                         <th class="field-pk">
                           <a href="{% url 'update_category_expense' category.pk %}">{{ category.pk }}</a>
                         </th>
@@ -55,5 +46,4 @@
             </table>
         </div>
       </div>  
-    </form>
   </div>

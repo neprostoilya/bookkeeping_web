@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ title }}
+{% endblock title %}
+
+{% block main %}
+<div class="content-wrapper" style="min-height: 797.552px;">
+    <div class="content border-bottom mb-2">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 col-md-auto d-flex flex-grow-1 align-items-center">
+                    <h1 class="h4 m-0 pr-3 mr-3 border-right">
+                        {{ title }}
+                    </h1>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'index' %}">Главная</a></li>
+                        <li class="breadcrumb-item active">
+                            {{ title }}
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+	<div class="content">
+		<div class="container-fluid">
+			<section id="content" class="content">
+				<div class="row">
+					<div class="col-12">
+						<div class="card card-danger card-outline">
+							<div class="card-header with-border">
+								<h4 class="card-title"> Удалить {{ object }} </h4>
+							</div>
+							<div class="card-body">
+								<div id="content-main">
+									<p>Вы уверены, что хотите удалить Счет "{{ object }}"?</p>
+									<div class="row float-right">
+											<form method="post">
+                                                {% csrf_token %}
+												<div class="form-group"> <input type="submit" class="btn btn-danger form-control" value="Да, я уверен"> </div>
+												<div class="form-group"> <a href="{% url 'index' %}" class="btn btn-danger cancel-link form-control">Нет, отменить</a> </div>
+											</form>
+                                    </div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+	</div>
+</div>
+{% endblock main %}

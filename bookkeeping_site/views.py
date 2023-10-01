@@ -1,23 +1,31 @@
+import base64
 from typing import Any, Dict
 
 from django.contrib.auth import login, logout
 from django.contrib import messages
 from django.forms.models import BaseModelForm
 from django.urls import reverse_lazy
-from django.views.generic import ListView, UpdateView, View, CreateView, TemplateView
+from django.views.generic import ListView, UpdateView, View, CreateView, TemplateView, DeleteView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-
-from bookkeeping_site.tasks import send_activation_code
+from django.contrib.auth.tokens import default_token_generator
+from django.urls import reverse_lazy
+from django.shortcuts import get_object_or_404
+from django.contrib.auth import get_user_model
+from bookkeeping_site.tasks import send_activate_email_message_task
 
 from .forms import CategoryAccountForm, CategoryCurrencyForm, CategoryExpenseForm, CategoryIncomeForm, LoginForm, \
-    RegistrationForm, UserAccountForm, UserDebtForm, UserExpenseForm, UserIncomeForm, ActivationCodeForm, \
+    RegistrationForm, UserAccountForm, UserDebtForm, UserExpenseForm, UserIncomeForm,  \
     UserOweDebtForm, UserReturnDebtForm, UserReturnOweDebtForm, UserTransferToAccountForm
 from .models import CategoriesAccounts, CategoriesCurrencys, CategoriesExpenses, CategoriesIncomes, UserAccounts, UserAccounts, \
     UserDebts, UserIncomes, UserExpenses, UserOweDebts, UserTransferToAccount
 from .utils import get_total_quantity, return_debts_to_account, return_owe_debts_to_account, save_expenses_or_debts_sum, \
     save_transfer_sum, get_total_sum, save_incomes_or_debts_sum, render_graphic_account, render_graphic_income_or_expense
+
+User = get_user_model()
+
+# Главная страница
 
 class Page(TemplateView):
     """Главная страница"""
@@ -28,23 +36,13 @@ class Page(TemplateView):
 
 # Регистрация и Авторизация
 
-def login_registration(request):
-    """Регистрация пользователя"""
-    context = {
-        'title': 'Зарегистрироваться',
-        'form': RegistrationForm()
-    }
-
-    return render(request, 'bookkeeping/login_registration.html', context)
-
 def login_authentication(request):
     """Аутендификации пользователя"""
     context = {
         'title': 'Войти',
         'login_form': LoginForm()
     }
-
-    return render(request, 'bookkeeping/login_authentication.html', context)
+    return render(request, 'bookkeeping/register/login_authentication.html', context)
 
 def user_login(request):
     """Вход в аккаунт"""
@@ -56,41 +54,60 @@ def user_login(request):
     else:
         messages.error(request, 'Не верное имя пользователя или пароль')
         return redirect('login_authentication')
-
+    
 def user_logout(request):
     """Выход из аккаунта"""
     logout(request)
     return redirect('index')
 
-def register(request):
-    if request.method == 'POST':
-        form = RegistrationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
+class UserRegisterView(CreateView):
+    form_class = RegistrationForm
+    success_url = reverse_lazy('index')
+    template_name = 'bookkeeping/register/user_register.html'
+    extra_context = {
+        'title': 'Регистрация на сайте',
+    }
+
+    def form_valid(self, form):
+        user = form.save(commit=False)
+        user.is_active = False
+        user.save()
+        send_activate_email_message_task.delay(user.id)
+        return redirect('email_confirmation_sent')
+
+class UserConfirmEmailView(View):
+    def get(self, request, uidb64, token):
+        try:
+            uid = base64.b64decode(uidb64+'=').decode('utf-8')
+            user = User.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            user = None
+        if user is not None and default_token_generator.check_token(user, token):
+            user.is_active = True
+            user.save()
             login(request, user)
-            send_activation_code.delay(request, user.id)
-            return redirect('activation_code')
-    else:
-        form = RegistrationForm()
-    return render(request, 'bookkeeping/activation_code.html', {'form': ActivationCodeForm})
+            return redirect('email_confirmed')
+        else:
+            return redirect('email_confirmation_failed')
+        
+class EmailConfirmationSentView(TemplateView):
+    template_name = 'bookkeeping/register/email_confirmation_sent.html'
+    extra_context = {
+        'title': 'Письмо активации отправлено',
+    }
+ 
+class EmailConfirmedView(TemplateView):
+    template_name = 'bookkeeping/register/email_confirmed.html'
+    extra_context = {
+        'title': 'Ваш электронный адрес активирован!',
+    }
 
-@login_required
-def activation_code(request):
-    if request.method == 'POST':
-        form = ActivationCodeForm(request.POST)
-        if form.is_valid():
-            code = form.cleaned_data['code']
-            if code == request.session.get('activation_code'):
-                request.user.is_active = True
-                request.user.save()
-                del request.session['activation_code']
-                return redirect('index')
-            else:
-                messages.error(request, 'Неверный код!')
-    else:
-        form = ActivationCodeForm()
-    return render(request, 'bookkeeping_site/activation_code.html', {'form': form})
-
+class EmailConfirmationFailedView(TemplateView):
+    template_name = 'bookkeeping/register/email_confirmation_failed.html'
+    extra_context = {
+        'title': 'Ваш электронный адрес не активирован!',
+    }
+    
 # Счета
 
 class AccountPage(LoginRequiredMixin, ListView):
@@ -157,7 +174,8 @@ class AccountUpdate(LoginRequiredMixin, UpdateView):
     form_class = UserAccountForm
     template_name = 'bookkeeping/accounts/update_account.html'
     success_url = reverse_lazy('accounts')
-    
+    context_object_name = 'account'
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
@@ -173,7 +191,7 @@ class AccountUpdate(LoginRequiredMixin, UpdateView):
         messages.error(self.request, 'Ошибка в заполнении формы!')
         return super().form_invalid(form)
 
-class TransferToAccount(LoginRequiredMixin, CreateView):
+class AccountTransfer(LoginRequiredMixin, CreateView):
     """Перевод счета на счет"""
     extra_context = {
         'title': 'Перевести на счет',
@@ -181,6 +199,7 @@ class TransferToAccount(LoginRequiredMixin, CreateView):
     model = UserTransferToAccount
     form_class = UserTransferToAccountForm
     template_name = 'bookkeeping/accounts/transfer_to_account.html'
+    context_object_name = 'account'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -201,14 +220,14 @@ class TransferToAccount(LoginRequiredMixin, CreateView):
         messages.error(self.request, 'Ошибка в заполнении формы!')
         return super().form_invalid(form)
 
-@login_required
-def delete_accounts(request):
-    """Удаление счетов"""
-    if request.method == 'POST':
-        selected_pks = request.POST.getlist('selected_action')
-        UserAccounts.objects.filter(pk__in=selected_pks).delete()
-        messages.success(request, 'Выбранные объекты успешно удалены.')
-    return redirect('accounts')
+class AccountDelete(LoginRequiredMixin, DeleteView):
+    """Удаление счета"""
+    extra_context = {
+        'title': 'Удаление счета'
+    }
+    model = UserAccounts
+    template_name = 'bookkeeping/components/confirm_delete.html'
+    success_url = reverse_lazy('accounts')
 
 # Доходы
 
@@ -277,6 +296,7 @@ class IncomeUpdate(LoginRequiredMixin, UpdateView):
     form_class = UserIncomeForm
     template_name = 'bookkeeping/incomes/update_income.html'
     success_url = reverse_lazy('incomes')
+    context_object_name = 'income'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -293,14 +313,14 @@ class IncomeUpdate(LoginRequiredMixin, UpdateView):
         messages.error(self.request, 'Ошибка в заполнении формы!')
         return super().form_invalid(form)
 
-@login_required    
-def delete_incomes(request):
-    """Удаление доходов"""
-    if request.method == 'POST':
-        selected_pks = request.POST.getlist('selected_action')
-        UserIncomes.objects.filter(pk__in=selected_pks).delete()
-        messages.success(request, 'Выбранные объекты успешно удалены.')
-    return redirect('incomes')
+class IncomeDelete(LoginRequiredMixin, DeleteView):
+    """Удаление дохода"""
+    extra_context = {
+        'title': 'Удаление дохода'
+    }
+    model = UserIncomes
+    template_name = 'bookkeeping/components/confirm_delete.html'
+    success_url = reverse_lazy('incomes')
 
 # Расходы
 
@@ -369,6 +389,7 @@ class ExpenseUpdate(LoginRequiredMixin, UpdateView):
     form_class = UserExpenseForm
     template_name = 'bookkeeping/expenses/update_expense.html'
     success_url = reverse_lazy('expenses')
+    context_object_name = 'expense'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -385,15 +406,14 @@ class ExpenseUpdate(LoginRequiredMixin, UpdateView):
         messages.error(self.request, 'Ошибка в заполнении таблиц!')
         return super().form_invalid(form)
 
-@login_required
-def delete_expenses(request):
-    """Удаление расходов"""
-    if request.method == 'POST':
-        selected_pks = request.POST.getlist('selected_action')
-        UserExpenses.objects.filter(pk__in=selected_pks).delete()
-        messages.success(request, 'Выбранные объекты успешно удалены.')
-
-    return redirect('expenses')
+class ExpenseDelete(LoginRequiredMixin, DeleteView):
+    """Удаление расхода"""
+    extra_context = {
+        'title': 'Удаление расхода'
+    }
+    model = UserExpenses
+    template_name = 'bookkeeping/components/confirm_delete.html'
+    success_url = reverse_lazy('expenses')
 
 # Долги пользователя
 
@@ -463,6 +483,7 @@ class OweDebtUpdate(LoginRequiredMixin, UpdateView):
     form_class = UserOweDebtForm
     template_name = 'bookkeeping/owe_debts/update_owe_debt.html'
     success_url = reverse_lazy('owe_debts')
+    context_object_name = 'owe_debt'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -514,14 +535,14 @@ class OweDebtReturn(LoginRequiredMixin, View):
             'form': form,
         })
 
-@login_required
-def delete_owe_debts(request):
-    """Удаление долгов пользователя"""
-    if request.method == 'POST':
-        selected_pks = request.POST.getlist('selected_action')
-        UserOweDebts.objects.filter(pk__in=selected_pks).delete()
-        messages.success(request, 'Выбранные объекты успешно удалены.')
-    redirect('owe_debts')
+class OweDebtDelete(LoginRequiredMixin, DeleteView):
+    """Удаление долга пользователя"""
+    extra_context = {
+        'title': 'Удаление долга'
+    }
+    model = UserOweDebts
+    template_name = 'bookkeeping/components/confirm_delete.html'
+    success_url = reverse_lazy('owe_debts')
 
 # Долги у пользователя
 
@@ -590,6 +611,7 @@ class DebtUpdate(LoginRequiredMixin, UpdateView):
     form_class = UserDebtForm
     template_name = 'bookkeeping/debts/update_debt.html'
     success_url = reverse_lazy('debts')
+    context_object_name = 'debt'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -641,18 +663,16 @@ class DebtReturn(LoginRequiredMixin, View):
             'form': form,
         })
 
-@login_required
-def delete_debts(request):
-    """Удаление расходов"""
-    if request.method == 'POST':
-        selected_pks = request.POST.getlist('selected_action')
-        UserDebts.objects.filter(pk__in=selected_pks).delete()
-        messages.success(request, 'Выбранные объекты успешно удалены.')
-    return redirect('debts')
+class DebtDelete(LoginRequiredMixin, DeleteView):
+    """Удаление долга у пользователя"""
+    extra_context = {
+        'title': 'Удаление долга'
+    }
+    model = UserDebts
+    template_name = 'bookkeeping/components/confirm_delete.html'
+    success_url = reverse_lazy('debts')
 
 ## График
-from celery.result import AsyncResult
-from conf.celery import task
 
 @login_required
 def graph_accounts(request):
@@ -674,7 +694,7 @@ def graph_incomes(request):
     } 
     return render(request, 'bookkeeping/graphic/graphic.html', context)
 
-# #
+# 
 
 @login_required
 def graph_expenses(request):
@@ -744,6 +764,7 @@ class CategoryAccountUpdate(LoginRequiredMixin, UpdateView):
     form_class = CategoryAccountForm
     template_name = 'bookkeeping/categories/categories_accounts/update_category_account.html'
     success_url = reverse_lazy('categories_accounts')
+    context_object_name = 'category_account'
 
     def form_valid(self, form: BaseModelForm):
         """Если форма валидна"""
@@ -755,15 +776,14 @@ class CategoryAccountUpdate(LoginRequiredMixin, UpdateView):
         messages.error(self.request, 'Ошибка в заполнении таблиц!')
         return super().form_invalid(form)
     
-@login_required
-def delete_categories_accounts(request):
-    """Удаление категорий счетов"""
-    if request.method == 'POST':
-        selected_pks = request.POST.getlist('selected_action')
-        CategoriesAccounts.objects.filter(pk__in=selected_pks).delete()
-        messages.success(request, 'Выбранные объекты успешно удалены.')
-    return redirect('categories_accounts')
-
+class CategoryAccountDelete(LoginRequiredMixin, DeleteView):
+    """Удаление категории счета"""
+    extra_context = {
+        'title': 'Удаление категории счета'
+    }
+    model = CategoriesAccounts
+    template_name = 'bookkeeping/components/confirm_delete.html'
+    success_url = reverse_lazy('categories_accounts')
 #
 
 class CategoryIncomePage(LoginRequiredMixin, ListView):
@@ -829,6 +849,7 @@ class CategoryIncomeUpdate(LoginRequiredMixin, UpdateView):
     form_class = CategoryIncomeForm
     template_name = 'bookkeeping/categories/categories_incomes/update_category_income.html'
     success_url = reverse_lazy('categories_incomes')
+    context_object_name = 'category_income'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -845,15 +866,14 @@ class CategoryIncomeUpdate(LoginRequiredMixin, UpdateView):
         messages.error(self.request, 'Ошибка в заполнении таблиц!')
         return super().form_invalid(form)
 
-@login_required
-def delete_categories_incomes(request):
-    """Удаление категорий доходов"""
-    if request.method == 'POST':
-        selected_pks = request.POST.getlist('selected_action')
-        CategoriesIncomes.objects.filter(pk__in=selected_pks).delete()
-        messages.success(request, 'Выбранные объекты успешно удалены.')
-    return redirect('categories_incomes')
-
+class CategoryIncomeDelete(LoginRequiredMixin, DeleteView):
+    """Удаление категории дохода"""
+    extra_context = {
+        'title': 'Удаление категории дохода'
+    }
+    model = CategoriesIncomes
+    template_name = 'bookkeeping/components/confirm_delete.html'
+    success_url = reverse_lazy('categories_incomes')
 #
 
 class CategoryExpensePage(LoginRequiredMixin, ListView):
@@ -918,6 +938,8 @@ class CategoryExpenseUpdate(LoginRequiredMixin, UpdateView):
     form_class = CategoryExpenseForm
     template_name = 'bookkeeping/categories/categories_expenses/update_category_expense.html'
     success_url = reverse_lazy('categories_expenses')
+    context_object_name = 'category_expense'
+
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -934,14 +956,14 @@ class CategoryExpenseUpdate(LoginRequiredMixin, UpdateView):
         messages.error(self.request, 'Ошибка в заполнении таблиц!')
         return super().form_invalid(form)
 
-@login_required
-def delete_categories_expenses(request):
-    """Удаление категорий расходов"""
-    if request.method == 'POST':
-        selected_pks = request.POST.getlist('selected_action')
-        CategoriesExpenses.objects.filter(pk__in=selected_pks).delete()
-        messages.success(request, 'Выбранные объекты успешно удалены.')
-    return redirect('categories_expenses')
+class CategoryExpenseDelete(LoginRequiredMixin, DeleteView):
+    """Удаление категории расхода"""
+    extra_context = {
+        'title': 'Удаление категории расхода'
+    }
+    model = CategoriesExpenses
+    template_name = 'bookkeeping/components/confirm_delete.html'
+    success_url = reverse_lazy('categories_expenses')
 
 # 
 
@@ -981,11 +1003,6 @@ class CategoryCurrencyCreate(LoginRequiredMixin, CreateView):
     form_class = CategoryCurrencyForm
     template_name = 'bookkeeping/categories/categories_currencys/create_category_currency.html'
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
-        return kwargs
-
     def form_valid(self, form):
         """Если форма валидна"""
         category_currency_form = form.save(commit=False)
@@ -1008,11 +1025,7 @@ class CategoryCurrencyUpdate(LoginRequiredMixin, UpdateView):
     form_class = CategoryCurrencyForm
     template_name = 'bookkeeping/categories/categories_currencys/update_category_currency.html'
     success_url = reverse_lazy('categories_currencys')
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
-        return kwargs
+    context_object_name = 'category_currency'
 
     def form_valid(self, form: BaseModelForm):
         """Если форма валидна"""
@@ -1024,12 +1037,11 @@ class CategoryCurrencyUpdate(LoginRequiredMixin, UpdateView):
         messages.error(self.request, 'Ошибка в заполнении таблиц!')
         return super().form_invalid(form)
 
-@login_required
-def delete_categories_currencys(request):
-    """Удаление категорий валют"""
-    if request.method == 'POST':
-        selected_pks = request.POST.getlist('selected_action')
-        CategoriesCurrencys.objects.filter(pk__in=selected_pks).delete()
-        messages.success(request, 'Выбранные объекты успешно удалены.')
-    return redirect('categories_currencys')
-
+class CategoryCurrencyDelete(LoginRequiredMixin, DeleteView):
+    """Удаление категории валюты"""
+    extra_context = {
+        'title': 'Удаление категории валюты'
+    }
+    model = CategoriesCurrencys
+    template_name = 'bookkeeping/components/confirm_delete.html'
+    success_url = reverse_lazy('categories_currencys')

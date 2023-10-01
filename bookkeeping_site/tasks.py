@@ -1,21 +1,12 @@
-from celery import shared_task
-from django.core.mail import send_mail
+from django.conf import settings
 
-from conf import settings
+from conf.celery import app
 
-from .models import User
-from .service import generate_activation_code
+from .service import send_activate_email_message
 
-@shared_task
-def send_activation_code(request, user_id):
-    user = User.objects.get(id=user_id)
-    code = generate_activation_code()
-    send_mail(
-        subject='Бухгалтерия',
-        message=code,
-        from_email=settings.EMAIL_HOST_USER,
-        recipient_list=[user.email],
-        fail_silently=False
-    )
-    request.session['activation_code'] = code
-    request.save()
+
+@app.task
+def send_activate_email_message_task(user_id):
+    """Отправка письма подтверждения осуществляется через функцию: send_activate_email_message"""
+    return send_activate_email_message(user_id)
+

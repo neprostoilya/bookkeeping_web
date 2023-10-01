@@ -22,8 +22,9 @@ def save_transfer_sum(form):
     if form.account1.pk != form.account2.pk:
         account_1 = get_object_or_404(UserAccounts, pk=form.account1.pk)
         account_2 = get_object_or_404(UserAccounts, pk=form.account2.pk)
-        account_1.sum = account_1.sum - form.sum
-        transfer_sum2 = int((form.sum * form.account1.currency.course) / form.account2.currency.course)
+        transfer_sum1 = int((form.sum * form.currency.course) / form.account1.currency.course)
+        account_1.sum = account_1.sum - transfer_sum1
+        transfer_sum2 = int((form.sum * form.currency.course) / form.account2.currency.course)
         account_2.sum = account_2.sum + transfer_sum2
         account_1.save()
         account_2.save()

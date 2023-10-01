@@ -331,6 +331,11 @@ class UserTransferToAccount(models.Model):
         null=False,
         verbose_name='На счет счета'
     )
+    currency = models.ForeignKey(
+        CategoriesCurrencys,
+        on_delete=models.CASCADE,
+        verbose_name='Валюта'
+    )
     sum = models.IntegerField(
         verbose_name='Сумма'
     )

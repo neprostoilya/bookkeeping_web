@@ -45,9 +45,6 @@ class RegistrationForm(UserCreationForm):
             })
         }
 
-class ActivationCodeForm(forms.Form):
-    code = forms.CharField(max_length=10)
-
 class UserAccountForm(forms.ModelForm):
     """Форма создания счета"""
     
@@ -67,7 +64,7 @@ class UserAccountForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
-        self.fields['account'].queryset = UserAccounts.objects.filter(user=user)
+        self.fields['account'].queryset = CategoriesAccounts.objects.filter(user=user)
         self.fields['currency'].queryset = CategoriesCurrencys.objects.filter(user=user)
 
 class UserTransferToAccountForm(forms.ModelForm):
@@ -76,11 +73,13 @@ class UserTransferToAccountForm(forms.ModelForm):
     class Meta:
         """Поведенческий харакатер класса"""
         model = UserTransferToAccount
-        fields = ('account1', 'account2', 'sum')
+        fields = ('account1', 'account2', 'currency', 'sum')
         widgets = {
             'account1': forms.Select(attrs={
             }),
             'account2': forms.Select(attrs={
+            }),
+            'currency': forms.Select(attrs={
             }),
             'sum': forms.TextInput(attrs={
             })
@@ -89,8 +88,9 @@ class UserTransferToAccountForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
-        self.fields['account1'].queryset = CategoriesAccounts.objects.filter(user=user)
-        self.fields['account2'].queryset = CategoriesAccounts.objects.filter(user=user)
+        self.fields['account1'].queryset = UserAccounts.objects.filter(user=user)
+        self.fields['account2'].queryset = UserAccounts.objects.filter(user=user)
+        self.fields['currency'].queryset = CategoriesCurrencys.objects.filter(user=user)
 
 class UserIncomeForm(forms.ModelForm):
     """Форма создания дохода"""
@@ -150,6 +150,7 @@ class UserExpenseForm(forms.ModelForm):
             'created_at': forms.DateInput(attrs={
                 'type': 'date',
                 'id': 'date_sel',
+                'class': 'form-control',
             })        
         }
         
@@ -179,6 +180,7 @@ class UserOweDebtForm(forms.ModelForm):
             'data_2': forms.DateInput(attrs={
                 'type': 'date',
                 'id': 'date_sel2',
+                'class': 'form-control',
             }),
             'comment': forms.TextInput(attrs={
             }),
@@ -310,5 +312,4 @@ class CategoryCurrencyForm(forms.ModelForm):
             'title': forms.TextInput(),   
             'course': forms.TextInput(),      
         }
-    
     

@@ -1,17 +1,8 @@
 <div class="col-12 pb-2" id="change-list-filters" data-select2-id="select2-data-change-list-filters">
-	<form id="changelist-search" class="form-inline" method="GET" data-select2-id="select2-data-changelist-search">
-		<div class="form-group">
-			<select class="form-control search-filter select2-hidden-accessible" style="width: 100%;" tabindex="-1" aria-hidden="true" data-name="created_at" data-select2-id="select2-data-4-ggzx">
-				<option value="" data-select2-id="select2-data-6-00jy">Дата</option>
-				<option value="">---------</option>
-				<option data-name="created_at__gte" value="2023-09-12"> Сегодня </option>
-				<option data-name="created_at__gte" value="2023-09-05"> Последние 7 дней </option>
-				<option data-name="created_at__gte" value="2023-09-01"> Этот месяц </option>
-				<option data-name="created_at__gte" value="2023-01-01"> Этот год </option>
-			</select>
-		</div>
-		<div class="form-group" id="search_group">
-			<button type="submit" class="btn btn-primary">Найти</button>
-		</div>
-	</form>
+	<div class="related-widget-wrapper">
+		<label style="width: 180px;">
+			<input type="month" id="date_sel" class="form-control calendar p-3" required="">
+		</label>
+		<button type="submit" class="btn btn-primary" style="margin-left: 10px;" title="Выполнить выбранное действие" value="0">Найти</button>
+	</div>
 </div>

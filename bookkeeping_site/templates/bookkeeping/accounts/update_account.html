@@ -42,7 +42,7 @@
                                 <div class="related-widget-wrapper">
                                     {{ form.account }}
                                     </span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
-                                    <a class="related-widget-wrapper-link add-related" data-popup="yes" href="#!" title="Добавить валюту"><img src="/static/admin/img/icon-addlink.svg" alt="Добавить"></a>
+                                    <a class="related-widget-wrapper-link add-related" data-popup="yes" href="{% url 'create_category_account' %}" title="Добавить валюту"><img src="/static/admin/img/icon-addlink.svg" alt="Добавить"></a>
                                 </div>
                                   <div class="help-block text-red">
                                     {{ form.account.errors }}
@@ -60,7 +60,7 @@
                                 <div class="related-widget-wrapper">
                                     {{ form.currency }}
                                     </span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
-                                    <a class="related-widget-wrapper-link add-related" data-popup="yes" href="#!" title="Добавить валюту"><img src="/static/admin/img/icon-addlink.svg" alt="Добавить"></a>
+                                    <a class="related-widget-wrapper-link add-related" data-popup="yes" href="{% url 'create_category_currency' %}" title="Добавить валюту"><img src="/static/admin/img/icon-addlink.svg" alt="Добавить"></a>
                                 </div>
                                 <div class="help-block text-red">
                                     {{ form.currency.errors }}
@@ -70,25 +70,29 @@
                         </div>
                         <div class="form-group">
                             <div class="row">
-                                <label class="col-sm-3 text-left">
-                                    {{ form.sum.label }}
-                                    <span class="text-red">* </span>
-                                </label>
-                                <div class=" col-sm-7">
-                                    <div class="related-widget-wrapper">
-                                        {{ form.sum }}
-                                    </div>
+                              <label class="col-sm-3 text-left" for="id_user">
+                                  {{ form.sum.label }}
+                                <span class="text-red">* </span>
+                              </label>
+                            <div class=" col-sm-7">
+                                <div class="related-widget-wrapper">
+                                    {{ form.sum }}
                                 </div>
-                                <div class="help-block text-red">
+                                  <div class="help-block text-red">
                                     {{ form.sum.errors }}
                                   </div>
+                              </div>
                             </div>
                         </div>
+                      </div>
                     </div>
-z                </div>
+                    </div>
                     <div class="col-12 col-lg-3">
                     <div class="form-group">
                         <input type="submit" value="Сохранить" class="btn btn-success form-control">
+                    </div>
+                    <div class="form-group">
+                        <a href="{% url 'delete_account' account.pk %}" class="btn btn-danger form-control">Удалить</a>
                     </div>
                     <div class="form-group">
                         <a href="{% url 'accounts' %}" class="btn btn-info form-control">Отмена</a>
