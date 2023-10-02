@@ -313,3 +313,9 @@ class CategoryCurrencyForm(forms.ModelForm):
             'course': forms.TextInput(),      
         }
     
+class SortForm(forms.BaseForm):
+    """Форма сортировки по дате"""
+    date_month = forms.DateField(widget=forms.DateInput(attrs={
+        'type': 'month',
+        'class': 'form-control calendar p-3'
+    }))

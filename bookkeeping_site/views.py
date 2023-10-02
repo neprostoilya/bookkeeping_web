@@ -13,7 +13,8 @@ from django.contrib.auth.tokens import default_token_generator
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
-from bookkeeping_site.tasks import send_activate_email_message_task
+from .tasks import render_graphic_account_task, send_activate_email_message_task, render_graphic_incomes_task, \
+    render_graphic_expenses_task
 
 from .forms import CategoryAccountForm, CategoryCurrencyForm, CategoryExpenseForm, CategoryIncomeForm, LoginForm, \
     RegistrationForm, UserAccountForm, UserDebtForm, UserExpenseForm, UserIncomeForm,  \
@@ -21,7 +22,7 @@ from .forms import CategoryAccountForm, CategoryCurrencyForm, CategoryExpenseFor
 from .models import CategoriesAccounts, CategoriesCurrencys, CategoriesExpenses, CategoriesIncomes, UserAccounts, UserAccounts, \
     UserDebts, UserIncomes, UserExpenses, UserOweDebts, UserTransferToAccount
 from .utils import get_total_quantity, return_debts_to_account, return_owe_debts_to_account, save_expenses_or_debts_sum, \
-    save_transfer_sum, get_total_sum, save_incomes_or_debts_sum, render_graphic_account, render_graphic_income_or_expense
+    save_transfer_sum, get_total_sum, save_incomes_or_debts_sum
 
 User = get_user_model()
 
@@ -679,9 +680,13 @@ def graph_accounts(request):
     """График счетов"""
     context = {
         'title':'График счетов',
-        'graphic': render_graphic_account(request)
+        'graphic': render_graphic_account_task.delay(request.user.pk).get()
     } 
-    return render(request, 'bookkeeping/graphic/graphic_account.html', context)
+    return render(request, 'bookkeeping/graphic/graphic.html', context)
+
+# @login_required
+# def sort_graph_accounts(request):
+    
 
 #
 
@@ -690,7 +695,7 @@ def graph_incomes(request):
     """График доходов"""
     context = {
         'title':'График доходов',
-        'graphic': render_graphic_income_or_expense(UserIncomes, request)
+        'graphic': render_graphic_incomes_task.delay(request.user.pk).get()
     } 
     return render(request, 'bookkeeping/graphic/graphic.html', context)
 
@@ -701,7 +706,7 @@ def graph_expenses(request):
     """График расходов"""
     context = {
         'title':'График расходов',
-        'graphic': render_graphic_income_or_expense(UserExpenses, request)
+        'graphic': render_graphic_expenses_task.delay(request.user.pk).get()
     } 
     return render(request, 'bookkeeping/graphic/graphic.html', context)
 
