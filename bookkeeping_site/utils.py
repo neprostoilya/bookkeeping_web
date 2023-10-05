@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import plotly.graph_objs as go
 from django.shortcuts import get_object_or_404
 
@@ -5,17 +7,14 @@ from .models import UserAccounts, CategoriesCurrencys
 
 def decimal(total_sum):
     """Функция которая возвращает сумму с пробелами"""
-    return '{0:,}'.format(int(total_sum)).replace(',', ' ')    
+    return '{0:,}'.format(int(total_sum)).replace(',', '.')    
 
-def get_total_sum(request, object):
+def get_total_sum(objects):
     """Получение полной суммы всех счетов"""
-    account = object.objects.filter(
-        user=request.user
-    )
     total_sum = sum(
-        [_.get_total_sum for _ in account]
+        [_.get_total_sum for _ in objects]
     )
-    return total_sum
+    return decimal(total_sum)
     
 def save_transfer_sum(form):
     """Сохранение перевода в базу данных"""
@@ -62,3 +61,13 @@ def get_total_quantity(object, request):
     return len(object.objects.filter(
         user=request.user
     ))
+
+def sort_by_month_and_year(request):
+    date_str = request.POST.get('date_sel')
+    if date_str:
+        date = datetime.strptime(date_str, '%Y-%m')
+        year = date.year
+        month = date.month
+    else:
+        year, month = None, None
+    return year, month

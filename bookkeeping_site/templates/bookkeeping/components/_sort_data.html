@@ -1,8 +1,12 @@
-<div class="col-12 pb-2" id="change-list-filters" data-select2-id="select2-data-change-list-filters">
-	<div class="related-widget-wrapper">
+<form method="post" novalidate="">
+	{% csrf_token %}
+	<div class="col-12 pb-2" id="change-list-filters" data-select2-id="select2-data-change-list-filters">
+	  <div class="related-widget-wrapper">
 		<label style="width: 180px;">
-			<input type="month" id="date_sel" class="form-control calendar p-3" required="">
+		  <input type="month" name="date_sel" class="form-control calendar p-3" required="">
 		</label>
 		<button type="submit" class="btn btn-primary" style="margin-left: 10px;" title="Выполнить выбранное действие" value="0">Найти</button>
+	  </div>
 	</div>
-</div>
+</form> 
+	

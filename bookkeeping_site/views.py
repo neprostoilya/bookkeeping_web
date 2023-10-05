@@ -22,9 +22,10 @@ from .forms import CategoryAccountForm, CategoryCurrencyForm, CategoryExpenseFor
 from .models import CategoriesAccounts, CategoriesCurrencys, CategoriesExpenses, CategoriesIncomes, UserAccounts, UserAccounts, \
     UserDebts, UserIncomes, UserExpenses, UserOweDebts, UserTransferToAccount
 from .utils import get_total_quantity, return_debts_to_account, return_owe_debts_to_account, save_expenses_or_debts_sum, \
-    save_transfer_sum, get_total_sum, save_incomes_or_debts_sum
+    save_transfer_sum, get_total_sum, save_incomes_or_debts_sum, sort_by_month_and_year
 
 User = get_user_model()
+
 
 # Главная страница
 
@@ -136,7 +137,6 @@ class AccountPage(LoginRequiredMixin, ListView):
         """Вывод дополнительных элементов на главную страничку"""
         context = super().get_context_data()
         context['total_sum'] = get_total_sum(self.request, self.model)
-        context['total_quantity'] = get_total_quantity(self.model, self.request) 
         return context
 
 class AccountCreate(LoginRequiredMixin, CreateView):
@@ -242,24 +242,34 @@ class IncomePage(LoginRequiredMixin, ListView):
     template_name = 'bookkeeping/incomes/incomes.html'
 
     def get_queryset(self):
-        """Сортировка в таблице""" 
-        incomes = UserIncomes.objects.filter(
-            user=self.request.user
-        ).order_by(
-            '?'
+        """Возвращает список доходов пользователя"""
+        return self.model.objects.filter(user=self.request.user)
+
+    def post(self, request):
+        """Сортировка списка по месяцам и годам"""
+        year, month = sort_by_month_and_year(self.request)
+        incomes = self.get_queryset().filter(
+            created_at__year=year,
+            created_at__month=month
         )
-        sort_field = self.request.GET.get('sort')
+
+        sort_field = request.GET.get('sort')
         if sort_field:
             incomes = incomes.order_by(sort_field)
-        return incomes[:6]
+        
+        context = {
+            'title': 'Доходы',
+            'incomes': incomes,
+            'total_sum': get_total_sum(incomes)
+        }
+        return render(self.request, self.template_name, context)
 
-    def get_context_data(self):
+    def get_context_data(self, **kwargs):
         """Вывод дополнительных элементов на главную страничку"""
-        context = super().get_context_data()
-        context['total_sum'] = get_total_sum(self.request, self.model)
-        context['total_quantity'] = get_total_quantity(self.model, self.request) 
+        context = super().get_context_data(**kwargs)
+        context['total_sum'] = get_total_sum(self.get_queryset())
         return context
-
+    
 class IncomeCreate(LoginRequiredMixin, CreateView):
     """Создание дохода"""
     extra_context = {
@@ -335,24 +345,34 @@ class ExpensePage(LoginRequiredMixin, ListView):
     template_name = 'bookkeeping/expenses/expenses.html'
 
     def get_queryset(self):
-        """Сортировка в таблице""" 
-        expenses = UserExpenses.objects.filter(
-            user=self.request.user
-        ).order_by(
-            '?'
+        """Возвращает список расходов пользователя"""
+        return self.model.objects.filter(user=self.request.user)
+
+    def post(self, request):
+        """Сортировка списка по месяцам и годам"""
+        year, month = sort_by_month_and_year(self.request)
+        expenses = self.get_queryset().filter(
+            created_at__year=year,
+            created_at__month=month
         )
-        sort_field = self.request.GET.get('sort')
+
+        sort_field = request.GET.get('sort')
         if sort_field:
             expenses = expenses.order_by(sort_field)
-        return expenses[:6] 
-    
-    def get_context_data(self):
-        """Вывод дополнительных элементов на главную страничку"""
-        context = super().get_context_data()
-        context['total_sum'] = get_total_sum(self.request, self.model)
-        context['total_quantity'] = get_total_quantity(self.model, self.request) 
-        return context
+        
+        context = {
+            'title': 'Расходы',
+            'expenses': expenses,
+            'total_sum': get_total_sum(expenses)
+        }
+        return render(self.request, self.template_name, context)
 
+    def get_context_data(self, **kwargs):
+        """Вывод дополнительных элементов на главную страничку"""
+        context = super().get_context_data(**kwargs)
+        context['total_sum'] = get_total_sum(self.get_queryset())
+        return context
+    
 class ExpenseCreate(LoginRequiredMixin, CreateView):
     """Создание расхода"""
     extra_context = {
@@ -443,7 +463,6 @@ class OweDebtPage(LoginRequiredMixin, ListView):
         """Вывод дополнительных элементов на главную страничку"""
         context = super().get_context_data()
         context['total_sum'] = get_total_sum(self.request, self.model)
-        context['total_quantity'] = get_total_quantity(self.model, self.request) 
         return context
 
 class OweDebtCreate(LoginRequiredMixin, CreateView):
@@ -572,7 +591,6 @@ class DebtPage(LoginRequiredMixin, ListView):
         """Вывод дополнительных элементов на главную страничку"""
         context = super().get_context_data()
         context['total_sum'] = get_total_sum(self.request, self.model)
-        context['total_quantity'] = get_total_quantity(self.model, self.request) 
         return context
 
 class DebtCreate(LoginRequiredMixin, CreateView):
@@ -682,21 +700,17 @@ def graph_accounts(request):
         'title':'График счетов',
         'graphic': render_graphic_account_task.delay(request.user.pk).get()
     } 
-    return render(request, 'bookkeeping/graphic/graphic.html', context)
-
-# @login_required
-# def sort_graph_accounts(request):
+    return render(request, 'bookkeeping/graphic/graphic_account.html', context)
     
-
 #
-
 @login_required
 def graph_incomes(request):
     """График доходов"""
+    year, month = sort_by_month_and_year(request)
     context = {
         'title':'График доходов',
-        'graphic': render_graphic_incomes_task.delay(request.user.pk).get()
-    } 
+        'graphic': render_graphic_incomes_task.delay(request.user.pk, year, month).get()
+    }
     return render(request, 'bookkeeping/graphic/graphic.html', context)
 
 # 
@@ -704,11 +718,13 @@ def graph_incomes(request):
 @login_required
 def graph_expenses(request):
     """График расходов"""
+    year, month = sort_by_month_and_year(request)
     context = {
         'title':'График расходов',
-        'graphic': render_graphic_expenses_task.delay(request.user.pk).get()
-    } 
+        'graphic': render_graphic_expenses_task.delay(request.user.pk, year, month).get()
+    }
     return render(request, 'bookkeeping/graphic/graphic.html', context)
+
 
 ## Категории 
 
