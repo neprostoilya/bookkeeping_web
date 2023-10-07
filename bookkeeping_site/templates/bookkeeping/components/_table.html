@@ -1,6 +1,6 @@
 {% load tags %}
 {% get_sorted_table_accounts as data %}
-  <div class="col-12 ">
+  <div class="col-12 d-none">
       {% csrf_token %}
       <div class="card">
         <div class="card-body table-responsive p-0">
@@ -45,3 +45,21 @@
         </div>
       </div>  
   </div>
+<div class="col-12 ">   
+  <table id="result_list" class="table table-info">
+  <tbody>
+  {% for account in accounts %}
+  <tr role="row">
+    <td>
+      <div class="column-table">
+        № {{ account.pk }} 
+        {{ account.account }}
+        {{ account.sum }}
+      </div>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+  </table>
+</div>
+  

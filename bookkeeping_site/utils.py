@@ -62,12 +62,20 @@ def get_total_quantity(object, request):
         user=request.user
     ))
 
-def sort_by_month_and_year(request):
-    date_str = request.POST.get('date_sel')
-    if date_str:
-        date = datetime.strptime(date_str, '%Y-%m')
+def get_month_and_year(request):
+    """Получение года и месяца из выбранного списка"""
+    date = request.POST.get('date_sel')
+    if date:
+        date = datetime.strptime(date, '%Y-%m')
         year = date.year
         month = date.month
     else:
-        year, month = None, None
+        year = month = None
     return year, month
+
+def get_date1_and_date2(request):
+    """Получение двух дат из выбранных списков"""
+    date_1 = request.POST.get('date_1')
+    date_2 = request.POST.get('date_2')
+    return date_1, date_2
+    

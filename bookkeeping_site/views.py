@@ -21,8 +21,8 @@ from .forms import CategoryAccountForm, CategoryCurrencyForm, CategoryExpenseFor
     UserOweDebtForm, UserReturnDebtForm, UserReturnOweDebtForm, UserTransferToAccountForm
 from .models import CategoriesAccounts, CategoriesCurrencys, CategoriesExpenses, CategoriesIncomes, UserAccounts, UserAccounts, \
     UserDebts, UserIncomes, UserExpenses, UserOweDebts, UserTransferToAccount
-from .utils import get_total_quantity, return_debts_to_account, return_owe_debts_to_account, save_expenses_or_debts_sum, \
-    save_transfer_sum, get_total_sum, save_incomes_or_debts_sum, sort_by_month_and_year
+from .utils import get_date1_and_date2, get_total_quantity, return_debts_to_account, return_owe_debts_to_account, save_expenses_or_debts_sum, \
+    save_transfer_sum, get_total_sum, save_incomes_or_debts_sum, get_month_and_year
 
 User = get_user_model()
 
@@ -63,6 +63,7 @@ def user_logout(request):
     return redirect('index')
 
 class UserRegisterView(CreateView):
+    """Страничка регистрации"""
     form_class = RegistrationForm
     success_url = reverse_lazy('index')
     template_name = 'bookkeeping/register/user_register.html'
@@ -78,6 +79,8 @@ class UserRegisterView(CreateView):
         return redirect('email_confirmation_sent')
 
 class UserConfirmEmailView(View):
+    """Проверка потдверждения аккаунта"""
+
     def get(self, request, uidb64, token):
         try:
             uid = base64.b64decode(uidb64+'=').decode('utf-8')
@@ -93,18 +96,21 @@ class UserConfirmEmailView(View):
             return redirect('email_confirmation_failed')
         
 class EmailConfirmationSentView(TemplateView):
+    """Страничка отправления письма активации"""
     template_name = 'bookkeeping/register/email_confirmation_sent.html'
     extra_context = {
         'title': 'Письмо активации отправлено',
     }
  
 class EmailConfirmedView(TemplateView):
+    """Страничка потдвержденого адреса"""
     template_name = 'bookkeeping/register/email_confirmed.html'
     extra_context = {
         'title': 'Ваш электронный адрес активирован!',
     }
 
 class EmailConfirmationFailedView(TemplateView):
+    """Страничка не потдвержденого адреса"""
     template_name = 'bookkeeping/register/email_confirmation_failed.html'
     extra_context = {
         'title': 'Ваш электронный адрес не активирован!',
@@ -136,7 +142,7 @@ class AccountPage(LoginRequiredMixin, ListView):
     def get_context_data(self):
         """Вывод дополнительных элементов на главную страничку"""
         context = super().get_context_data()
-        context['total_sum'] = get_total_sum(self.request, self.model)
+        context['total_sum'] = get_total_sum(self.get_queryset())
         return context
 
 class AccountCreate(LoginRequiredMixin, CreateView):
@@ -227,7 +233,7 @@ class AccountDelete(LoginRequiredMixin, DeleteView):
         'title': 'Удаление счета'
     }
     model = UserAccounts
-    template_name = 'bookkeeping/components/confirm_delete.html'
+    template_name = 'bookkeeping/components/_confirm_delete_account.html'
     success_url = reverse_lazy('accounts')
 
 # Доходы
@@ -243,15 +249,18 @@ class IncomePage(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         """Возвращает список доходов пользователя"""
-        return self.model.objects.filter(user=self.request.user)
+        return self.model.objects.filter(user=self.request.user).order_by('?')
 
     def post(self, request):
         """Сортировка списка по месяцам и годам"""
-        year, month = sort_by_month_and_year(self.request)
-        incomes = self.get_queryset().filter(
-            created_at__year=year,
-            created_at__month=month
-        )
+        year, month = get_month_and_year(self.request)
+        if year and month:
+            incomes = self.get_queryset().filter(
+                created_at__year=year,
+                created_at__month=month
+            )
+        else:
+            incomes = self.get_queryset().order_by('?')
 
         sort_field = request.GET.get('sort')
         if sort_field:
@@ -260,12 +269,12 @@ class IncomePage(LoginRequiredMixin, ListView):
         context = {
             'title': 'Доходы',
             'incomes': incomes,
-            'total_sum': get_total_sum(incomes)
+            'title': self.extra_context['title']
         }
         return render(self.request, self.template_name, context)
 
     def get_context_data(self, **kwargs):
-        """Вывод дополнительных элементов на главную страничку"""
+        """Вывод дополнительных элементов на гловную страничку"""
         context = super().get_context_data(**kwargs)
         context['total_sum'] = get_total_sum(self.get_queryset())
         return context
@@ -330,7 +339,7 @@ class IncomeDelete(LoginRequiredMixin, DeleteView):
         'title': 'Удаление дохода'
     }
     model = UserIncomes
-    template_name = 'bookkeeping/components/confirm_delete.html'
+    template_name = 'bookkeeping/components/_confirm_delete.html'
     success_url = reverse_lazy('incomes')
 
 # Расходы
@@ -346,22 +355,25 @@ class ExpensePage(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         """Возвращает список расходов пользователя"""
-        return self.model.objects.filter(user=self.request.user)
+        return self.model.objects.filter(user=self.request.user).order_by('?')
 
     def post(self, request):
         """Сортировка списка по месяцам и годам"""
-        year, month = sort_by_month_and_year(self.request)
-        expenses = self.get_queryset().filter(
-            created_at__year=year,
-            created_at__month=month
-        )
+        year, month = get_month_and_year(self.request)
+        if year and month:
+            expenses = self.get_queryset().filter(
+                created_at__year=year,
+                created_at__month=month
+            )
+        else:
+            expenses = self.get_queryset().order_by('?')
 
         sort_field = request.GET.get('sort')
         if sort_field:
             expenses = expenses.order_by(sort_field)
         
         context = {
-            'title': 'Расходы',
+            'title': self.extra_context['title'],
             'expenses': expenses,
             'total_sum': get_total_sum(expenses)
         }
@@ -433,7 +445,7 @@ class ExpenseDelete(LoginRequiredMixin, DeleteView):
         'title': 'Удаление расхода'
     }
     model = UserExpenses
-    template_name = 'bookkeeping/components/confirm_delete.html'
+    template_name = 'bookkeeping/components/_confirm_delete_debts_and_incomes_expenses.html'
     success_url = reverse_lazy('expenses')
 
 # Долги пользователя
@@ -448,23 +460,36 @@ class OweDebtPage(LoginRequiredMixin, ListView):
     template_name = 'bookkeeping/owe_debts/owe_debts.html'
 
     def get_queryset(self):
-        """Сортировка в таблице""" 
-        owe_debts = UserOweDebts.objects.filter(
-            user=self.request.user
-        ).order_by(
-            '?'
-        )
-        sort_field = self.request.GET.get('sort')
+        """Возвращает список долгов пользователя"""
+        return self.model.objects.filter(user=self.request.user).order_by('?')
+
+    def post(self, request):
+        """Сортировка списка по месяцам и годам"""
+        date_1, date_2 = get_date1_and_date2(self.request)
+        if date_1 and date_2:
+            owe_debts = self.get_queryset().filter(
+                data_1__gte=date_1,
+                data_2__lte=date_2
+            )
+        else:
+            owe_debts = self.get_queryset().order_by('?')
+        sort_field = request.GET.get('sort')
         if sort_field:
             owe_debts = owe_debts.order_by(sort_field)
-        return owe_debts[:6]
-    
-    def get_context_data(self):
-        """Вывод дополнительных элементов на главную страничку"""
-        context = super().get_context_data()
-        context['total_sum'] = get_total_sum(self.request, self.model)
-        return context
+        
+        context = {
+            'title': self.extra_context['title'],
+            'owe_debts': owe_debts,
+            'total_sum': get_total_sum(owe_debts)
+        }
+        return render(self.request, self.template_name, context)
 
+    def get_context_data(self, **kwargs):
+        """Вывод дополнительных элементов на главную страничку"""
+        context = super().get_context_data(**kwargs)
+        context['total_sum'] = get_total_sum(self.get_queryset())
+        return context
+    
 class OweDebtCreate(LoginRequiredMixin, CreateView):
     """Создание долга пользователя"""
     extra_context = {
@@ -561,7 +586,7 @@ class OweDebtDelete(LoginRequiredMixin, DeleteView):
         'title': 'Удаление долга'
     }
     model = UserOweDebts
-    template_name = 'bookkeeping/components/confirm_delete.html'
+    template_name = 'bookkeeping/components/_confirm_delete_debts_and_incomes_expenses.html'
     success_url = reverse_lazy('owe_debts')
 
 # Долги у пользователя
@@ -576,23 +601,36 @@ class DebtPage(LoginRequiredMixin, ListView):
     template_name = 'bookkeeping/debts/debts.html'
 
     def get_queryset(self):
-        """Сортировка в таблице""" 
-        debts = UserDebts.objects.filter(
-            user=self.request.user
-        ).order_by(
-            '?'
-        )
-        sort_field = self.request.GET.get('sort')
+        """Возвращает список долгов у пользователя"""
+        return self.model.objects.filter(user=self.request.user).order_by('?')
+
+    def post(self, request):
+        """Сортировка списка по месяцам и годам"""
+        date_1, date_2 = get_date1_and_date2(self.request)
+        if date_1 and date_2:
+            owe_debts = self.get_queryset().filter(
+                data_1__gte=date_1,
+                data_2__lte=date_2
+            )
+        else:
+            owe_debts = self.get_queryset().order_by('?')
+        sort_field = request.GET.get('sort')
         if sort_field:
-            debts = debts.order_by(sort_field)
-        return debts[:6]
+            owe_debts = owe_debts.order_by(sort_field)
+        
+        context = {
+            'title': self.extra_context['title'],
+            'debts': owe_debts,
+            'total_sum': get_total_sum(owe_debts)
+        }
+        return render(self.request, self.template_name, context)
 
-    def get_context_data(self):
+    def get_context_data(self, **kwargs):
         """Вывод дополнительных элементов на главную страничку"""
-        context = super().get_context_data()
-        context['total_sum'] = get_total_sum(self.request, self.model)
+        context = super().get_context_data(**kwargs)    
+        context['total_sum'] = get_total_sum(self.get_queryset())
         return context
-
+    
 class DebtCreate(LoginRequiredMixin, CreateView):
     """Создание долга у пользователя"""
     extra_context = {
@@ -688,7 +726,7 @@ class DebtDelete(LoginRequiredMixin, DeleteView):
         'title': 'Удаление долга'
     }
     model = UserDebts
-    template_name = 'bookkeeping/components/confirm_delete.html'
+    template_name = 'bookkeeping/components/_confirm_delete_debts_and_incomes_expenses.html'
     success_url = reverse_lazy('debts')
 
 ## График
@@ -703,10 +741,11 @@ def graph_accounts(request):
     return render(request, 'bookkeeping/graphic/graphic_account.html', context)
     
 #
+
 @login_required
 def graph_incomes(request):
     """График доходов"""
-    year, month = sort_by_month_and_year(request)
+    year, month = get_month_and_year(request)
     context = {
         'title':'График доходов',
         'graphic': render_graphic_incomes_task.delay(request.user.pk, year, month).get()
@@ -718,7 +757,7 @@ def graph_incomes(request):
 @login_required
 def graph_expenses(request):
     """График расходов"""
-    year, month = sort_by_month_and_year(request)
+    year, month = get_month_and_year(request)
     context = {
         'title':'График расходов',
         'graphic': render_graphic_expenses_task.delay(request.user.pk, year, month).get()
@@ -803,8 +842,9 @@ class CategoryAccountDelete(LoginRequiredMixin, DeleteView):
         'title': 'Удаление категории счета'
     }
     model = CategoriesAccounts
-    template_name = 'bookkeeping/components/confirm_delete.html'
+    template_name = 'bookkeeping/components/_confirm_delete.html'
     success_url = reverse_lazy('categories_accounts')
+
 #
 
 class CategoryIncomePage(LoginRequiredMixin, ListView):
@@ -893,8 +933,9 @@ class CategoryIncomeDelete(LoginRequiredMixin, DeleteView):
         'title': 'Удаление категории дохода'
     }
     model = CategoriesIncomes
-    template_name = 'bookkeeping/components/confirm_delete.html'
+    template_name = 'bookkeeping/components/_confirm_delete.html'
     success_url = reverse_lazy('categories_incomes')
+
 #
 
 class CategoryExpensePage(LoginRequiredMixin, ListView):
@@ -983,7 +1024,7 @@ class CategoryExpenseDelete(LoginRequiredMixin, DeleteView):
         'title': 'Удаление категории расхода'
     }
     model = CategoriesExpenses
-    template_name = 'bookkeeping/components/confirm_delete.html'
+    template_name = 'bookkeeping/components/_confirm_delete.html'
     success_url = reverse_lazy('categories_expenses')
 
 # 
@@ -1064,5 +1105,5 @@ class CategoryCurrencyDelete(LoginRequiredMixin, DeleteView):
         'title': 'Удаление категории валюты'
     }
     model = CategoriesCurrencys
-    template_name = 'bookkeeping/components/confirm_delete.html'
+    template_name = 'bookkeeping/components/_confirm_delete.html'
     success_url = reverse_lazy('categories_currencys')

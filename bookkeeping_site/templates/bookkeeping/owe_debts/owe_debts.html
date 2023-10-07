@@ -21,11 +21,6 @@
                         </li>
                     </ol>
                 </div>
-                <div class="col-12 col-md-auto d-flex align-items-center justify-content-center page-actions">
-                    <a href="#!" class="btn btn-success float-right">
-                        <i class="fa fa-save"></i> &nbsp; Сохранить в таблицу 
-                    </a>
-                </div>
                 <br><br><br>
                 <div class="col-12 col-md-auto d-flex align-items-center justify-content-center page-actions">
                     <a href="{% url 'create_owe_debt' %}" class="btn btn-success float-right">
@@ -40,7 +35,7 @@
         <div class="container-fluid">
             <section id="content" class="content">
                 <div class="row">
-                    {% include 'bookkeeping/components/_sort_data.html' %}     
+                    {% include 'bookkeeping/components/_sort_by_date1_and_date2.html' %}     
                 </div>
                 <div class="row">
                     {% include 'bookkeeping/components/_table_owe_debts.html' %} 
