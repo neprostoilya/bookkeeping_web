@@ -34,11 +34,6 @@ def get_sorted_table():
         },
         {
             'sorters': [
-                ('currency', 'Валюта')
-            ]
-        },
-        {
-            'sorters': [
                 ('sum', 'Сумма')
             ]
         }
@@ -57,11 +52,6 @@ def get_sorted_table_accounts():
         },
         {
             'sorters': [
-                ('currency', 'Валюта')
-            ]
-        },
-        {
-            'sorters': [
                 ('sum', 'Сумма')
             ]
         }
@@ -72,6 +62,11 @@ def get_sorted_table_accounts():
 def get_sorted_table_debts():
     """Сортировка таблицы долгов"""
     sorters = [
+        {
+            'sorters': [
+                ('name', 'Имя')
+            ]
+        },
         {
             'sorters': [
                 ('data_1', 'Дата выдачи')
@@ -90,12 +85,6 @@ def get_sorted_table_debts():
         {
             'sorters': [
                 ('comment', 'Коментарий')
-
-            ]
-        },
-        {
-            'sorters': [
-                ('currency', 'Валюта')
 
             ]
         },

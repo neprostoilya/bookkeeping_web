@@ -267,7 +267,6 @@ class IncomePage(LoginRequiredMixin, ListView):
             incomes = incomes.order_by(sort_field)
         
         context = {
-            'title': 'Доходы',
             'incomes': incomes,
             'title': self.extra_context['title']
         }

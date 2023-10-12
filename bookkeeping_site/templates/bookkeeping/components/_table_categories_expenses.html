@@ -7,11 +7,6 @@
             <table id="result_list" class="table table-striped">
                 <thead>
                     <tr>
-                        <th tabindex="0" rowspan="1" colspan="1">
-                            <div class="text">
-                              <span>ID</span>
-                            </div>
-                        </th>
                         {% for key in data %}
                         <th class="sorting" tabindex="0" rowspan="1" colspan="1">
                           <div class="text">
@@ -29,10 +24,9 @@
                 <tbody>
                   {% for category in categories %}
                     <tr role="row">
-                        <th class="field-pk">
-                          <a href="{% url 'update_category_expense' category.pk %}">{{ category.pk }}</a>
-                        </th>
-                        <td class="field-category">{{ category.title }}</th>
+                        <td class="field-category">
+                          <a href="{% url 'update_category_expense' category.pk %}">{{ category.title }}</a>
+                        </td>
                         <td class="field-subcategory">
                           {% if category.subcategory %} 
                           {{ category.subcategory }}

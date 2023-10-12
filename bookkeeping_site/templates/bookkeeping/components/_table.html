@@ -1,17 +1,12 @@
 {% load tags %}
 {% get_sorted_table_accounts as data %}
-  <div class="col-12 d-none">
+  <div class="col-12 ">
       {% csrf_token %}
       <div class="card">
         <div class="card-body table-responsive p-0">
             <table id="result_list" class="table table-striped">
                 <thead>
                     <tr>
-                        <th tabindex="0" rowspan="1" colspan="1">
-                            <div class="text">
-                              <span>ID</span>
-                            </div>
-                        </th>
                         {% for key in data %}
                         <th class="sorting" tabindex="0" rowspan="1" colspan="1">
                           <div class="text">
@@ -29,12 +24,10 @@
                 <tbody>
                   {% for account in accounts %}
                     <tr role="row">
-                        <th class="field-pk">
-                          <a href="{% url 'update_account' account.pk %}">{{ account.pk }}
-                          </a>
-                        <td class="field-account">{{ account.account }}</td>
-                        <td class="field-currency">{{ account.currency }}</td>
-                        <td class="field-sum">{{ account.sum }}</td>
+                        <td class="field-account">
+                          <a href="{% url 'update_account' account.pk %}">{{ account.account }}</a>
+                        </td>
+                        <td class="field-sum">{{ account.sum }} {{ account.currency }}</td>
                     {% endfor %}
                       </tr>
                       <tr role="row">
@@ -45,21 +38,3 @@
         </div>
       </div>  
   </div>
-<div class="col-12 ">   
-  <table id="result_list" class="table table-info">
-  <tbody>
-  {% for account in accounts %}
-  <tr role="row">
-    <td>
-      <div class="column-table">
-        № {{ account.pk }} 
-        {{ account.account }}
-        {{ account.sum }}
-      </div>
-    </td>
-  </tr>
-  {% endfor %}
-  </tbody>
-  </table>
-</div>
-  
