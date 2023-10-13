@@ -8,47 +8,74 @@
 <div class="content-wrapper">
     <br>
     <div class="d-flex flex-column">
-      <dt class="text-center col-sm h2 fw-bolder font-monospace col-sm">Моя бухгалтерия - домашняя бухгалтерия в облаке</dt>
+      <dt class="text-center col-sm h2 fw-bolder font-monospace col-sm">Моя Личная Бухгалтерия - это облачная бухгалтерия</dt>
       <br>
       <div class="d-flex justify-content-center text-index fs-4 font-monospace ">
-        <span class="col-sm"><strong>Моя бухгалтерия</strong> - это закрытый семейный сервис для введения домашней бухгалтерии. <br>
-              Сервис поможет взять семье под контроль все расходы и доходы.</span>
+        <span class="col-sm"><strong>Моя Личная Бухгалтерия</strong> - это бесплатный сервис для введения бухгалтерии. <br>
+              Сервис поможет взять под контроль все расходы и доходы.</span>
       </div>
       <br>
-      <div class="d-flex d-flex justify-content text-index fs-4">
+      <div class="d-flex justify-content text-index fs-4">
+        
         <p class="p-1 col-sm">
+          
           <strong>Сервис нужен тем, кто: </strong>
-          <br> ➜ Хочет финансовой стабильности в семье.
-          <br> ➜ Планирует уменьшить свои расходы.
-          <br> ➜ Мечтает распрощаться со старыми долгами и не брать новые.
-          <br> ➜ Хочет научиться экономить и копить эффективно.
-          <br> ➜ Хочет ответить на вопрос: «куда пропадают деньги?»
+          <br><i class="fa-solid fa-right-long" style="color: #146aff;"></i>  Хочет финансовой стабильности в семье.
+          <br><i class="fa-solid fa-right-long" style="color: #146aff;"></i>  Планирует уменьшить свои расходы.
+          <br><i class="fa-solid fa-right-long" style="color: #146aff;"></i>  Мечтает распрощаться со старыми долгами и не брать новые.
+          <br><i class="fa-solid fa-right-long" style="color: #146aff;"></i>  Хочет научиться экономить и копить эффективно.
+          <br><i class="fa-solid fa-right-long" style="color: #146aff;"></i>  Хочет ответить на вопрос: «куда пропадают деньги?»
           <br>
         </p>
       </div>
-      <div class="d-flex text-index fs-4">
-        <div class="col-sm">
-          <i class="fs-4 bi-plus-circle"></i>
-          <a href="" class="ms-2 fs-2 fw-bolder d-none d-sm-inline font-monospace">
-                      Расход
-                  </a>
+      <div class="content-div">
+        <div class="content-block">
+          <a href="{% url 'incomes' %}" class="ms-2 fs-2 fw-bolder  d-sm-inline font-monospace">
+            Доходы
+          </a>
           <p></p>
-          <p>✔️ Удобная таблица расходов.</p>
-          <p>✔️ Удобная таблица остатков на счетах.</p>
-          <p>✔️ Мини-отчеты на странице.</p>
+          <p><i class="fa-regular fa-circle-check" style="color: #0fcc1c;"></i>  Удаление, Редактирование доходов.  </p>
+          <p><i class="fa-regular fa-circle-check" style="color: #0fcc1c;"></i>  Сортировка в таблице.</p>
+          <p><i class="fa-regular fa-circle-check" style="color: #0fcc1c;"></i>  Сортировка по месяцам.</p>
         </div>
-        <div class="col-sm">
-          <i class="fs-4 bi-dash-circle"></i>
-          <a href="{% url 'incomes' %}" class="ms-2 fs-2 fw-bolder d-none d-sm-inline font-monospace">
-                      Доход
-                  </a>
+        <div class="content-block">
+          <a href="{% url 'expenses' %}" class="ms-2 fs-2 fw-bolder  d-sm-inline font-monospace">
+            Расходы
+          </a>
           <p></p>
-          <p>✔️ Любая валюта мира.</p>
-          <p>✔️ ТОП-5 доходов.</p>
-          <p>✔️ Удобный справочник доходов.</p>
+          <p><i class="fa-regular fa-circle-check" style="color: #0fcc1c;"></i>  Добавить расход за пару кликов.</p>
+          <p><i class="fa-regular fa-circle-check" style="color: #0fcc1c;"></i>  Удобная таблица.</p>
+          <p><i class="fa-regular fa-circle-check" style="color: #0fcc1c;"></i>  Показ полной суммы.</p>
         </div>
-      </div>
+        <div class="content-block">
+          <a href="{% url 'owe_debts' %}" class="ms-2 fs-2 fw-bolder  d-sm-inline font-monospace">
+            Мои долги
+          </a>
+          <p></p>
+          <p><i class="fa-regular fa-circle-check" style="color: #0fcc1c;"></i>  Возврат долга.</p>
+          <p><i class="fa-regular fa-circle-check" style="color: #0fcc1c;"></i>  Сортировка от даты до даты</p>
+          <p><i class="fa-regular fa-circle-check" style="color: #0fcc1c;"></i>  Сортировка в таблице.</p>
+        </div>
+        <div class="content-block">
+          <a href="{% url 'debts' %}" class="ms-2 fs-2 fw-bolder  d-sm-inline font-monospace">
+            Мне должны
+          </a>
+          <p></p>
+          <p><i class="fa-regular fa-circle-check" style="color: #0fcc1c;"></i>  Возврат долга.</p>
+          <p><i class="fa-regular fa-circle-check" style="color: #0fcc1c;"></i>  Сортировка долгов от даты до даты.</p>
+          <p><i class="fa-regular fa-circle-check" style="color: #0fcc1c;"></i>  Показ полной суммы всех долгов.</p>
+          
+        </div>
+        <div class="content-block">
+          <a href="{% url 'accounts' %}" class="ms-2 fs-2 fw-bolder d-sm-inline font-monospace">
+            Счета
+          </a>
+          <p></p>
+          <p><i class="fa-regular fa-circle-check" style="color: #0fcc1c;"></i>  Удобная таблица.</p>
+          <p><i class="fa-regular fa-circle-check" style="color: #0fcc1c;"></i>  Создать счет за пару кликов.</p>
+          <p><i class="fa-regular fa-circle-check" style="color: #0fcc1c;"></i>  Показ полной суммы.</p>
+        </div>
     </div>
   </div>
-
+</div>
 {% endblock main %}

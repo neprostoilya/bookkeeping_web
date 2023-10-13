@@ -233,7 +233,7 @@ class AccountDelete(LoginRequiredMixin, DeleteView):
         'title': 'Удаление счета'
     }
     model = UserAccounts
-    template_name = 'bookkeeping/components/_confirm_delete_account.html'
+    template_name = 'bookkeeping/components/_confirm_delete.html'
     success_url = reverse_lazy('accounts')
 
 # Доходы
@@ -268,7 +268,8 @@ class IncomePage(LoginRequiredMixin, ListView):
         
         context = {
             'incomes': incomes,
-            'title': self.extra_context['title']
+            'title': self.extra_context['title'],
+            'total_sum': get_total_sum(incomes)
         }
         return render(self.request, self.template_name, context)
 

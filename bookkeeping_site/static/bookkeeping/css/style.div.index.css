@@ -4,3 +4,30 @@
     font-family:  sans-serif;
     font-size: 25px;
 }
+
+.content-div {
+    display: flex;
+    margin-left: 13%;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    margin-right: 10%;
+} 
+
+.content-block {
+    flex: auto;
+    max-width: 450px;
+    padding: 8px;
+    font-size: 18px;
+    margin-left: 10px;
+    margin-right: 20px;
+    padding: 20px;
+}
+
+div {
+    display: block;
+}
+
+.content-block a {
+    font-weight: bold;
+    font-size: 20px;
+}
