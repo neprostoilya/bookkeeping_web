@@ -16,7 +16,7 @@ packaging==23.1
 Pillow==10.0.1
 plotly==5.17.0
 prompt-toolkit==3.0.39
-psycopg2
+psycopg2-binary
 pycparser==2.21
 pyparsing==3.1.1
 python-dateutil==2.8.2
