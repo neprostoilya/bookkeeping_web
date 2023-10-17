@@ -1,4 +1,4 @@
-﻿﻿amqp==5.1.1
+﻿﻿amqp
 asgiref==3.7.2
 celery==5.3.4
 cffi==1.16.0
@@ -16,7 +16,7 @@ packaging==23.1
 Pillow==10.0.1
 plotly==5.17.0
 prompt-toolkit==3.0.39
-psycopg2-binary
+psycopg2
 pycparser==2.21
 pyparsing==3.1.1
 python-dateutil==2.8.2
