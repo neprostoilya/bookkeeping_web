@@ -7,12 +7,12 @@ services:
     ports:
       - 8000:8000
     command: >
-       bash start_project.sh
+       bash ./start_project.sh
     depends_on:
       - redis
     volumes:
-      - .:/var/www/bookkeeping_web/
-      - static:/var/www/bookkeeping_web/static/
+      - .:/bookkeeping_web/
+      - static:/bookkeeping_web/static/
       
   redis:
     image: redis:alpine
@@ -27,7 +27,7 @@ services:
   nginx: 
     build: ./nginx
     volumes:
-      - static:/var/www/bookkeeping_web/static
+      - static:/bookkeeping_web/static
     depends_on:
       - app
     ports:
