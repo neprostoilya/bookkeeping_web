@@ -15,7 +15,7 @@ ALLOWED_HOSTS = ['*']
 
 LOGIN_URL = '/login_authentication/'
 
-CSRF_TRUSTED_ORIGINS = ['https://7883-95-46-66-182.ngrok-free.app']
+CSRF_TRUSTED_ORIGINS = ['localhost']
 
 INSTALLED_APPS = [
     'jazzmin',
@@ -131,7 +131,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # REDIS
 
-REDIS_HOST = os.getenv('REDIS_HOST')
+REDIS_HOST = str(os.getenv('REDIS_HOST'))
 REDIS_PORT = os.getenv('REDIS_PORT')
 
 # EMAIl

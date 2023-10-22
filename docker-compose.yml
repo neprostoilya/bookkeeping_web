@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - 8000:8000
+    command: >
+       bash start_project.sh
+    depends_on:
+      - redis
+    volumes:
+      - .:/var/www/bookkeeping_web/
+      - static:/var/www/bookkeeping_web/static/
+      
+  redis:
+    image: redis:alpine
+  celery:
+    restart: always
+    build: 
+      context: .
+    command: celery -A conf worker -l INFO 
+    depends_on:
+      - redis
+      - app
+  nginx: 
+    build: ./nginx
+    volumes:
+      - static:/var/www/bookkeeping_web/static
+    depends_on:
+      - app
+    ports:
+      - 80:80
+volumes:
+  static:
