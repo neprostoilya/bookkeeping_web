@@ -29,4 +29,3 @@ gunicorn
 tenacity==8.2.3
 vine==5.0.0
 wcwidth==0.2.6
-eventlet
