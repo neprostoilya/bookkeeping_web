@@ -38,7 +38,7 @@ services:
     restart: always
     build: 
       context: .
-    command: celery -A conf worker --loglevel=info -P eventlet
+    command: celery -A conf worker --loglevel=info
     depends_on:
       - redis
       - app
