@@ -27,7 +27,7 @@
       <div class="container-fluid">
           <section id="content" class="content">
               {% include 'bookkeeping/components/_message.html' %}     
-              <form action="{% url 'register' %}" method="post" novalidate="">
+              <form action="{% url 'login' %}" method="post" novalidate="">
                 {% csrf_token %}
                 <div class="row"><div class="col-12 col-lg-9"><div class="card"><div class="card-body">
                         <div class="form-group">
@@ -49,47 +49,15 @@
                         <div class="form-group">
                             <div class="row">
                               <label class="col-sm-3 text-left">
-                                  {{ form.email.label }}
+                                  {{ form.password.label }}
                                 <span class="text-red">* </span>
                               </label>
                               <div class=" col-sm-7 field-subcategory">
                                   <div class="related-widget-wrapper">
-                                      {{ form.email }}
+                                      {{ form.password }}
                                   </div>
                                   <div class="help-block text-red">
-                                    {{ form.email.errors }}
-                                  </div>
-                              </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="row">
-                              <label class="col-sm-3 text-left">
-                                  {{ form.password1.label }}
-                                <span class="text-red">* </span>
-                              </label>
-                              <div class=" col-sm-7 field-subcategory">
-                                  <div class="related-widget-wrapper">
-                                      {{ form.password1 }}
-                                  </div>
-                                  <div class="help-block text-red">
-                                    {{ form.password1.errors }}
-                                  </div>
-                              </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="row">
-                              <label class="col-sm-3 text-left">
-                                  {{ form.password2.label }}
-                                <span class="text-red">* </span>
-                              </label>
-                              <div class=" col-sm-7 field-subcategory">
-                                  <div class="related-widget-wrapper">
-                                      {{ form.password2 }}
-                                  </div>
-                                  <div class="help-block text-red">
-                                    {{ form.password2.errors }}
+                                    {{ form.password.errors }}
                                   </div>
                               </div>
                             </div>

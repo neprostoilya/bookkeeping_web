@@ -4,6 +4,7 @@ from typing import Any, Dict
 from django.contrib.auth import login, logout
 from django.contrib import messages
 from django.forms.models import BaseModelForm
+from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import ListView, UpdateView, View, CreateView, TemplateView, DeleteView
 from django.shortcuts import render, redirect, get_object_or_404
@@ -42,9 +43,9 @@ def login_authentication(request):
     """Аутендификации пользователя"""
     context = {
         'title': 'Войти',
-        'login_form': LoginForm()
+        'form': LoginForm()
     }
-    return render(request, 'bookkeeping/register/login_authentication.html', context)
+    return render(request, 'bookkeeping/register/user_authentication.html', context)
 
 def user_login(request):
     """Вход в аккаунт"""
@@ -54,7 +55,7 @@ def user_login(request):
         login(request, user)
         return redirect('index')
     else:
-        messages.error(request, 'Не верное имя пользователя или пароль')
+        messages.error(request, 'Ошибка в заполнении формы!')
         return redirect('login_authentication')
     
 def user_logout(request):
@@ -65,7 +66,7 @@ def user_logout(request):
 class UserRegisterView(CreateView):
     """Страничка регистрации"""
     form_class = RegistrationForm
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('email-confirmation-sent')
     template_name = 'bookkeeping/register/user_register.html'
     extra_context = {
         'title': 'Регистрация на сайте',
@@ -76,7 +77,11 @@ class UserRegisterView(CreateView):
         user.is_active = False
         user.save()
         send_activate_email_message_task.delay(user.id)
-        return redirect('email_confirmation_sent')
+        return super().form_valid(form)
+    
+    def form_invalid(self, form):
+        messages.error(self.request, 'Ошибка в заполнении формы!')
+        return super().form_invalid(form)
 
 class UserConfirmEmailView(View):
     """Проверка потдверждения аккаунта"""

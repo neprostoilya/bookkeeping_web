@@ -7,13 +7,14 @@ from .models import UserAccounts, CategoriesCurrencys
 
 def decimal(total_sum):
     """Функция которая возвращает сумму с пробелами"""
-    return '{0:,}'.format(int(total_sum)).replace(',', '.')    
+    return '{0:,}'.format(int(total_sum)).replace(',', '')    
 
 def get_total_sum(objects):
-    """Получение полной суммы всех счетов"""
+    """Получение полной суммы"""
     total_sum = sum(
         [_.get_total_sum for _ in objects]
     )
+    
     return decimal(total_sum)
     
 def save_transfer_sum(form):

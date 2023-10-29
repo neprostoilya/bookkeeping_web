@@ -18,6 +18,11 @@ class LoginForm(AuthenticationForm):
         'placeholder': "Пароль"
     }))
 
+    def __init__(self, *args, **kwargs):
+        """Кастомные заголовки"""
+        super(LoginForm, self).__init__(*args, **kwargs)
+        self.fields['password'].label = 'Пароль'
+
 class RegistrationForm(UserCreationForm):
     """Форма регистрации"""
     password1 = forms.CharField(widget=forms.PasswordInput(attrs={
@@ -29,6 +34,12 @@ class RegistrationForm(UserCreationForm):
         'class': 'form-control',
         'placeholder': 'Подтвердите пароль'
     }))
+
+    def __init__(self, *args, **kwargs):
+        """Кастомные заголовки"""
+        super(RegistrationForm, self).__init__(*args, **kwargs)
+        self.fields['password1'].label = 'Пароль'
+        self.fields['password2'].label = 'Подтвердите пароль'
 
     class Meta:
         """Поведенческий харакатер класса"""
