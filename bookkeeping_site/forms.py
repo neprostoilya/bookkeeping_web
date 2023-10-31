@@ -6,11 +6,11 @@ from .models import CategoriesAccounts, CategoriesCurrencys, CategoriesCurrencys
 
 
 
-class LoginForm(AuthenticationForm):
+class LoginForm(forms.Form):
     """Форма аутендификации"""
     username = forms.CharField(widget=forms.TextInput(attrs={
         'class': 'form-control',
-        'placeholder': 'Имя пользователя'
+        'placeholder': 'Имя пользователя',
     }))
 
     password = forms.CharField(widget=forms.PasswordInput(attrs={
@@ -22,6 +22,7 @@ class LoginForm(AuthenticationForm):
         """Кастомные заголовки"""
         super(LoginForm, self).__init__(*args, **kwargs)
         self.fields['password'].label = 'Пароль'
+        self.fields['username'].label = 'Имя пользователя'
 
 class RegistrationForm(UserCreationForm):
     """Форма регистрации"""

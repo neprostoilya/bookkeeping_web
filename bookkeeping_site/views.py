@@ -1,10 +1,10 @@
 import base64
 from typing import Any, Dict
 
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from django.forms.models import BaseModelForm
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, UpdateView, View, CreateView, TemplateView, DeleteView
 from django.shortcuts import render, redirect, get_object_or_404
@@ -39,24 +39,25 @@ class Page(TemplateView):
 
 # Регистрация и Авторизация
 
-def login_authentication(request):
-    """Аутендификации пользователя"""
-    context = {
-        'title': 'Войти',
-        'form': LoginForm()
-    }
-    return render(request, 'bookkeeping/register/user_authentication.html', context)
-
 def user_login(request):
-    """Вход в аккаунт"""
-    form = LoginForm(data=request.POST)
-    if form.is_valid():
-        user = form.get_user()
-        login(request, user)
-        return redirect('index')
+    title = 'Войти'
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+
+            user = authenticate(username=username, password=password)
+            if user and user.is_active:
+                login(request, user)
+                return redirect('index')
+            else:
+                messages.error(request, 'Ошибка в заполнении формы!')
+                return render(request, 'bookkeeping/register/user_authentication.html', {'form': form, 'title': title})
+        else:
+            return render(request, 'bookkeeping/register/user_authentication.html', {'form': form, 'title': title})
     else:
-        messages.error(request, 'Ошибка в заполнении формы!')
-        return redirect('login_authentication')
+        return render(request, 'bookkeeping/register/user_authentication.html', {'form': LoginForm(), 'title': title})
     
 def user_logout(request):
     """Выход из аккаунта"""

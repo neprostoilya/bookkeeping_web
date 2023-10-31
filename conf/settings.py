@@ -13,7 +13,7 @@ DEBUG = bool(int(os.getenv('DEBUG')))
 
 ALLOWED_HOSTS = ['*']
 
-LOGIN_URL = '/login_authentication/'
+LOGIN_URL = '/login/'
 
 CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1/', 'http://my-personal-bookkeeping.com/']
 

@@ -4,8 +4,7 @@ from .views import *
 urlpatterns = [
     path('', Page.as_view(), name='index'),
     # Регистрация и Авторизация
-    path('login_authentication/', login_authentication, name='login_authentication'),
-    path('login', user_login, name='login'),
+    path('login/', user_login, name='login'),
     path('logout', user_logout, name='logout'),
     path('register/', UserRegisterView.as_view(), name='register'),
     path('email-confirmation-sent/', EmailConfirmationSentView.as_view(), name='email_confirmation_sent'),
