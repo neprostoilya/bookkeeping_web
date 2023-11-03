@@ -143,7 +143,8 @@ class AccountPage(LoginRequiredMixin, ListView):
         sort_field = self.request.GET.get('sort')
         if sort_field:
             accounts = accounts.order_by(sort_field)
-        return accounts[:6]
+
+        return accounts
     
     def get_context_data(self):
         """Вывод дополнительных элементов на главную страничку"""
@@ -255,7 +256,11 @@ class IncomePage(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         """Возвращает список доходов пользователя"""
-        return self.model.objects.filter(user=self.request.user).order_by('?')
+        incomes = self.model.objects.filter(user=self.request.user).order_by('?')
+        sort_field = self.request.GET.get('sort')
+        if sort_field:
+            incomes = incomes.order_by(sort_field)
+        return incomes
 
     def post(self, request):
         """Сортировка списка по месяцам и годам"""
@@ -361,7 +366,11 @@ class ExpensePage(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         """Возвращает список расходов пользователя"""
-        return self.model.objects.filter(user=self.request.user).order_by('?')
+        expenses = self.model.objects.filter(user=self.request.user).order_by('?')
+        sort_field = self.request.GET.get('sort')
+        if sort_field:
+            expenses = expenses.order_by(sort_field)
+        return expenses
 
     def post(self, request):
         """Сортировка списка по месяцам и годам"""
@@ -467,7 +476,11 @@ class OweDebtPage(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         """Возвращает список долгов пользователя"""
-        return self.model.objects.filter(user=self.request.user).order_by('?')
+        owe_debts = self.model.objects.filter(user=self.request.user).order_by('?')
+        sort_field = self.request.GET.get('sort')
+        if sort_field:
+            owe_debts = owe_debts.order_by(sort_field)
+        return owe_debts
 
     def post(self, request):
         """Сортировка списка по месяцам и годам"""
@@ -608,26 +621,30 @@ class DebtPage(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         """Возвращает список долгов у пользователя"""
-        return self.model.objects.filter(user=self.request.user).order_by('?')
+        debts = self.model.objects.filter(user=self.request.user).order_by('?')
+        sort_field = self.request.GET.get('sort')
+        if sort_field:
+            debts = debts.order_by(sort_field)
+        return debts
 
     def post(self, request):
         """Сортировка списка по месяцам и годам"""
         date_1, date_2 = get_date1_and_date2(self.request)
         if date_1 and date_2:
-            owe_debts = self.get_queryset().filter(
+            debts = self.get_queryset().filter(
                 data_1__gte=date_1,
                 data_2__lte=date_2
             )
         else:
-            owe_debts = self.get_queryset().order_by('?')
+            debts = self.get_queryset().order_by('?')
         sort_field = request.GET.get('sort')
         if sort_field:
-            owe_debts = owe_debts.order_by(sort_field)
+            debts = debts.order_by(sort_field)
         
         context = {
             'title': self.extra_context['title'],
-            'debts': owe_debts,
-            'total_sum': get_total_sum(owe_debts)
+            'debts': debts,
+            'total_sum': get_total_sum(debts)
         }
         return render(self.request, self.template_name, context)
 
