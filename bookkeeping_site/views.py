@@ -149,7 +149,7 @@ class AccountPage(LoginRequiredMixin, ListView):
     def get_context_data(self):
         """Вывод дополнительных элементов на главную страничку"""
         context = super().get_context_data()
-        context['total_sum'] = get_total_sum(self.get_queryset())
+        context['total_sum'] = get_total_sum(self.get_queryset(), self.request)
         return context
 
 class AccountCreate(LoginRequiredMixin, CreateView):
@@ -280,14 +280,14 @@ class IncomePage(LoginRequiredMixin, ListView):
         context = {
             'incomes': incomes,
             'title': self.extra_context['title'],
-            'total_sum': get_total_sum(incomes)
+            'total_sum': get_total_sum(incomes, request)
         }
         return render(self.request, self.template_name, context)
 
     def get_context_data(self, **kwargs):
         """Вывод дополнительных элементов на гловную страничку"""
         context = super().get_context_data(**kwargs)
-        context['total_sum'] = get_total_sum(self.get_queryset())
+        context['total_sum'] = get_total_sum(self.get_queryset(), self.request)
         return context
     
 class IncomeCreate(LoginRequiredMixin, CreateView):
@@ -390,14 +390,14 @@ class ExpensePage(LoginRequiredMixin, ListView):
         context = {
             'title': self.extra_context['title'],
             'expenses': expenses,
-            'total_sum': get_total_sum(expenses)
+            'total_sum': get_total_sum(expenses, request)
         }
         return render(self.request, self.template_name, context)
 
     def get_context_data(self, **kwargs):
         """Вывод дополнительных элементов на главную страничку"""
         context = super().get_context_data(**kwargs)
-        context['total_sum'] = get_total_sum(self.get_queryset())
+        context['total_sum'] = get_total_sum(self.get_queryset(), self.request)
         return context
     
 class ExpenseCreate(LoginRequiredMixin, CreateView):
@@ -499,14 +499,14 @@ class OweDebtPage(LoginRequiredMixin, ListView):
         context = {
             'title': self.extra_context['title'],
             'owe_debts': owe_debts,
-            'total_sum': get_total_sum(owe_debts)
+            'total_sum': get_total_sum(owe_debts, request)
         }
         return render(self.request, self.template_name, context)
 
     def get_context_data(self, **kwargs):
         """Вывод дополнительных элементов на главную страничку"""
         context = super().get_context_data(**kwargs)
-        context['total_sum'] = get_total_sum(self.get_queryset())
+        context['total_sum'] = get_total_sum(self.get_queryset(), self.request)
         return context
     
 class OweDebtCreate(LoginRequiredMixin, CreateView):
@@ -644,14 +644,14 @@ class DebtPage(LoginRequiredMixin, ListView):
         context = {
             'title': self.extra_context['title'],
             'debts': debts,
-            'total_sum': get_total_sum(debts)
+            'total_sum': get_total_sum(debts, request)
         }
         return render(self.request, self.template_name, context)
 
     def get_context_data(self, **kwargs):
         """Вывод дополнительных элементов на главную страничку"""
         context = super().get_context_data(**kwargs)    
-        context['total_sum'] = get_total_sum(self.get_queryset())
+        context['total_sum'] = get_total_sum(self.get_queryset(), self.request)
         return context
     
 class DebtCreate(LoginRequiredMixin, CreateView):

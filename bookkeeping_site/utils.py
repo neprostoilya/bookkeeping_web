@@ -9,14 +9,17 @@ def decimal(total_sum):
     """Функция которая возвращает сумму с пробелами"""
     return '{0:,}'.format(int(total_sum)).replace(',', '.')    
 
-def get_total_sum(objects):
+def get_total_sum(objects, request):
     """Получение полной суммы"""
     total_sum = sum(
         [_.get_total_sum for _ in objects]
     )
     currencys = []
-    for currency in CategoriesCurrencys.objects.all():
-        currencys.append(f'<strong>{currency.title}:</strong> {decimal(total_sum / currency.course)}')
+    for currency in CategoriesCurrencys.objects.filter(user=request.user):
+        try:
+            currencys.append(f'<strong>{currency.title}:</strong> {decimal(total_sum / currency.course)}')
+        except ZeroDivisionError:
+            pass
     return currencys
     
 def save_transfer_sum(form):
