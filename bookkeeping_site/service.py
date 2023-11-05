@@ -1,3 +1,4 @@
+import datetime
 from django.template.loader import render_to_string
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
@@ -7,6 +8,7 @@ from django.urls import reverse_lazy
 from django.utils.encoding import force_bytes
 from django.shortcuts import get_object_or_404
 import plotly.graph_objs as go
+import re
 
 from .models import UserAccounts, UserExpenses, UserIncomes
 
@@ -46,16 +48,23 @@ def dont_repeat_yourself(objects):
     """DRY"""
     objects_dict = {}
     for object in objects:
-        if object.category.title in objects_dict:
-            objects_dict[object.category.title + ' - ' + str(object.sum) + ' ' + object.currency.title] += object.get_total_sum
-        else:
-            objects_dict[object.category.title + ' - ' + str(object.sum) + ' ' + object.currency.title] = object.get_total_sum
+        try:
+            if object.subcategory.title:
+                if object.subcategory.title in objects_dict:
+                    objects_dict[object.subcategory.title] += object.get_total_sum
+                else:
+                    objects_dict[object.subcategory.title] = object.get_total_sum
+        except AttributeError:
+            if object.category.title in objects_dict:
+                objects_dict[object.category.title] += object.get_total_sum
+            else:
+                objects_dict[object.category.title] = object.get_total_sum
 
     list_values = list(objects_dict.values())
     list_keys = list(objects_dict.keys())
 
     graphic = graph(list_values, list_keys)
-    return graphic 
+    return graphic
 
 def render_graphic_account(user):
     """График счетов"""

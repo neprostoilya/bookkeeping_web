@@ -70,6 +70,7 @@ class UserAccountForm(forms.ModelForm):
             'currency': forms.Select(attrs={
             }),
             'sum': forms.TextInput(attrs={
+                'id': 'space-input'
             })
         }
 
@@ -94,6 +95,7 @@ class UserTransferToAccountForm(forms.ModelForm):
             'currency': forms.Select(attrs={
             }),
             'sum': forms.TextInput(attrs={
+                'id': 'space-input'
             })
         }
 
@@ -123,6 +125,7 @@ class UserIncomeForm(forms.ModelForm):
             'currency': forms.Select(attrs={
             }),
             'sum': forms.TextInput(attrs={
+                'id': 'space-input'
             }),
             'created_at': forms.DateInput(attrs={
                 'type': 'date',
@@ -158,6 +161,7 @@ class UserExpenseForm(forms.ModelForm):
             'currency': forms.Select(attrs={
             }),
             'sum': forms.TextInput(attrs={
+                'id': 'space-input'
             }),
             'created_at': forms.DateInput(attrs={
                 'type': 'date',
@@ -201,6 +205,7 @@ class UserOweDebtForm(forms.ModelForm):
             'currency': forms.Select(attrs={
             }),
             'sum': forms.TextInput(attrs={
+                'id': 'space-input'
             })        
         }
 
@@ -237,6 +242,7 @@ class UserDebtForm(forms.ModelForm):
             'currency': forms.Select(attrs={
             }),
             'sum': forms.TextInput(attrs={
+                'id': 'space-input'
             })        
         }
 
@@ -254,7 +260,9 @@ class UserReturnDebtForm(forms.ModelForm):
         model = UserDebts
         fields = ('sum',)
         widgets = {
-            'sum': forms.TextInput(),         
+            'sum': forms.TextInput(attrs={
+                'id': 'space-input'
+            }),         
         }
 
 class UserReturnOweDebtForm(forms.ModelForm):
@@ -265,7 +273,9 @@ class UserReturnOweDebtForm(forms.ModelForm):
         model = UserOweDebts
         fields = ('sum',)
         widgets = {
-            'sum': forms.TextInput(),         
+            'sum': forms.TextInput(attrs={
+                'id': 'space-input'
+            }),         
         }
 
 class CategoryAccountForm(forms.ModelForm):

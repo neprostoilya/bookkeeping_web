@@ -67,7 +67,7 @@ def user_logout(request):
 class UserRegisterView(CreateView):
     """Страничка регистрации"""
     form_class = RegistrationForm
-    success_url = reverse_lazy('email-confirmation-sent')
+    success_url = reverse_lazy('email_confirmation_sent')
     template_name = 'bookkeeping/register/user_register.html'
     extra_context = {
         'title': 'Регистрация на сайте',
@@ -173,7 +173,7 @@ class AccountCreate(LoginRequiredMixin, CreateView):
         account_form.save() 
         messages.success(self.request, 'Счет успешно создан!')
         return redirect('accounts')
-
+    
     def form_invalid(self, form):
         """Если форма не валидна"""
         messages.error(self.request, 'Ошибка в заполнении формы!')

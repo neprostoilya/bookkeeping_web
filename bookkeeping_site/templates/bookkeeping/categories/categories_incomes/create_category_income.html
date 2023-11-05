@@ -52,13 +52,11 @@
                             <div class="row">
                               <label class="col-sm-3 text-left">
                                   {{ form.subcategory.label }}
-                                <span class="text-red">* </span>
                               </label>
                               <div class=" col-sm-7 field-subcategory">
                                   <div class="related-widget-wrapper">
                                       {{ form.subcategory }}
                                       </span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
-                                      <a class="related-widget-wrapper-link add-related" data-popup="yes" target="_blank" href="{% url 'create_category_income' %}" title="Добавить подкатегорию "><img src="/static/admin/img/icon-addlink.svg" alt="Добавить"></a>
                                   </div>
                                   <div class="help-block text-red">
                                     {{ form.subcategory.errors }}

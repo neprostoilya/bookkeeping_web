@@ -242,6 +242,16 @@ class UserExpenses(models.Model):
         currency = self.currency.course
         return sum * currency
     
+    @property
+    def get_title_category(self):
+        """Title для графика"""
+        return self.category.title + '-' + self.currency.title
+    
+    @property
+    def get_title_subcategory(self):
+        """Title для графика"""
+        return self.subcategory.title + '-' + self.currency.title
+    
 class UserIncomes(models.Model):
     """Доходы пользователя"""
     user = models.ForeignKey(
@@ -309,7 +319,17 @@ class UserIncomes(models.Model):
         sum = self.sum
         currency = self.currency.course
         return sum * currency
-
+    
+    @property
+    def get_title_category(self):
+        """Title для графика"""
+        return self.category.title + '-' + self.currency.title
+    
+    @property
+    def get_title_subcategory(self):
+        """Title для графика"""
+        return self.subcategory.title + '-' + self.currency.title
+    
 class UserTransferToAccount(models.Model):
     """Переводы пользователя с счета на счет"""
     user = models.ForeignKey(
