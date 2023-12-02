@@ -15,7 +15,7 @@ ALLOWED_HOSTS = ['*']
 
 LOGIN_URL = '/login/'
 
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1/', 'http://my-personal-bookkeeping.com/']
+CSRF_TRUSTED_ORIGINS = ['http://localhost/', 'http://my-personal-bookkeeping.com/']
 
 INSTALLED_APPS = [
     'jazzmin',
@@ -113,6 +113,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
+
 STATIC_URL = '/static/'
 
 STATIC_ROOT = BASE_DIR / 'static'
@@ -135,7 +136,6 @@ REDIS_HOST = str(os.getenv('REDIS_HOST'))
 REDIS_PORT = os.getenv('REDIS_PORT')
 
 # EMAIl
-
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.getenv('EMAIL_HOST')
 EMAIL_PORT = os.getenv('EMAIL_PORT')

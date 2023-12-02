@@ -25,12 +25,17 @@
                   {% for category in categories %}
                     <tr role="row">
                         <td class="field-category">
-                          <a href="{% url 'update_category_currency' category.pk %}">{{ category.title }}</a>
+                          <a href="{% url 'update_category_income' category.pk %}">{{ category.title }}</a>
                         </td>
-                        <td class="field-course">{{ category.course }}</th>
+                        <td class="field-subcategory">
+                          {% if category.subcategory %} 
+                          {{ category.subcategory }}
+                          {% else %}
+                          -
+                          {% endif %}
                         </th>
-                      </tr>
                     {% endfor %}
+                    </tr>
                 </tbody>
             </table>
         </div>

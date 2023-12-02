@@ -10,7 +10,6 @@ from django.views.generic import ListView, UpdateView, View, CreateView, Templat
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.tokens import default_token_generator
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
@@ -21,7 +20,7 @@ from .forms import CategoryAccountForm, CategoryCurrencyForm, CategoryExpenseFor
     RegistrationForm, UserAccountForm, UserDebtForm, UserExpenseForm, UserIncomeForm,  \
     UserOweDebtForm, UserReturnDebtForm, UserReturnOweDebtForm, UserTransferToAccountForm
 from .models import CategoriesAccounts, CategoriesCurrencys, CategoriesExpenses, CategoriesIncomes, UserAccounts, UserAccounts, \
-    UserDebts, UserIncomes, UserExpenses, UserOweDebts, UserTransferToAccount
+    UserDebts, UserIncomes, UserExpenses, UserOweDebts, UserTransferToAccount, User
 from .utils import get_date1_and_date2, get_total_quantity, return_debts_to_account, return_owe_debts_to_account, save_expenses_or_debts_sum, \
     save_transfer_sum, get_total_sum, save_incomes_or_debts_sum, get_month_and_year
 
@@ -29,6 +28,13 @@ User = get_user_model()
 
 
 # Главная страница
+
+class Manual(TemplateView):
+    """Инструкция"""
+    extra_context = {
+        'title': 'Инструкция',
+    }
+    template_name = 'bookkeeping/manual.html'
 
 class Page(TemplateView):
     """Главная страница"""
@@ -93,7 +99,7 @@ class UserConfirmEmailView(View):
             user = User.objects.get(pk=uid)
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             user = None
-        if user is not None and default_token_generator.check_token(user, token):
+        if user is not None:
             user.is_active = True
             user.save()
             login(request, user)

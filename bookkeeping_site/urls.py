@@ -3,6 +3,7 @@ from .views import *
 
 urlpatterns = [
     path('', Page.as_view(), name='index'),
+    path('manual/', Manual.as_view(), name='manual'),
     # Регистрация и Авторизация
     path('login/', user_login, name='login'),
     path('logout', user_logout, name='logout'),

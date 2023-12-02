@@ -24,7 +24,7 @@ def send_activate_email_message(user_id):
     subject = f'Активируйте свой аккаунт, {user.username}!'
     message = render_to_string('bookkeeping/register/activate_email_send.html', {
         'username': user.username,
-        'activation_url': f'http://{current_site}/{activation_url}',
+        'activation_url': f'http://{current_site}{activation_url}',
     })
     return user.email_user(subject, message)
 
