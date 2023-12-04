@@ -15,7 +15,7 @@ ALLOWED_HOSTS = ['*']
 
 LOGIN_URL = '/login/'
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost/', 'http://my-personal-bookkeeping.com/']
+CSRF_TRUSTED_ORIGINS = ['http://localhost/', 'http://my-personal-bookkeeping.twc1.net/']
 
 INSTALLED_APPS = [
     'jazzmin',
